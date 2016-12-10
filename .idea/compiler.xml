@@ -6,12 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="chapter1" />
+        <module name="chapter2" />
         <module name="chapter3" />
         <module name="Thinking_In_Java" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
-      <module name="Thinking-In-Java" target="1.8" />
+      <module name="chapter1" target="1.5" />
+      <module name="chapter2" target="1.5" />
+      <module name="Thinking-In-Java" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
