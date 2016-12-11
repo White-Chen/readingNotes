@@ -15,6 +15,7 @@
     <bytecodeTargetLevel target="1.8">
       <module name="chapter1" target="1.5" />
       <module name="chapter2" target="1.5" />
+      <module name="chapter3" target="1.5" />
       <module name="Thinking-In-Java" target="1.5" />
     </bytecodeTargetLevel>
   </component>
