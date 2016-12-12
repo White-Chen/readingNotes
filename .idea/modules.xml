@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Thinking-In-Java/Thinking-In-Java.iml" filepath="$PROJECT_DIR$/Thinking-In-Java/Thinking-In-Java.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Thinking-In-Java/chapter1/Thinking-In-Java.chapter1.iml" filepath="$PROJECT_DIR$/Thinking-In-Java/chapter1/Thinking-In-Java.chapter1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Thinking-In-Java/chapter2/Thinking-In-Java.chapter2.iml" filepath="$PROJECT_DIR$/Thinking-In-Java/chapter2/Thinking-In-Java.chapter2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Thinking-In-Java/chapter3/Thinking-In-Java.chapter3.iml" filepath="$PROJECT_DIR$/Thinking-In-Java/chapter3/Thinking-In-Java.chapter3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Thinking-In-Java/mindview/Thinking-In-Java.mindview.iml" filepath="$PROJECT_DIR$/Thinking-In-Java/mindview/Thinking-In-Java.mindview.iml" />
+    </modules>
+  </component>
+</project>
