@@ -2,17 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>readingNotes</artifactId>
+        <groupId>readingNotes</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>chenzhe.readingNotes.Thinking-In-Java</groupId>
-    <artifactId>Thinking-In-Java</artifactId>
+    <groupId>readingNotes.Thinking-In-Java</groupId>
+    <artifactId>readingNotes.Thinking-In-Java</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>chapter1</module>
         <module>chapter2</module>
         <module>chapter3</module>
-        <module>mindview</module>
         <module>chapter4</module>
+        <module>mindview</module>
     </modules>
 </project>
