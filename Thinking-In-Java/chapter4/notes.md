@@ -9,7 +9,7 @@
 + 缺点:  
     + 迭代过程中, 不可对引用做出增删改, 但是引用指向对象的内容还是可以修改的.  
     + 下标不可控, 因此只能做到顺序迭代, 而for循环则可以灵活控制. 
-+ 简单的效率对比，不同方法都有差别，总体ArrayList最快，foreach读取方法速度也不如for来的快，倒读比正读慢。
++ 简单的效率对比，不同方法都有差别，总体ArrayList最快，foreach读取方法速度也不如for来的快，倒读比正读慢.
     ```java
     import java.util.*;
     
@@ -124,7 +124,7 @@
     
 ####2. _标签控制_
 + 标签起作用的唯一地方是迭代语句之前.
-    ```java
+    ```
     lebal1:
     outer_loop{
         lebal2:
@@ -144,7 +144,7 @@
 
 ####3. _选择语句_
 + 支持 **short**, **char**, **byte**, **int** 四种基本类型以及他们的包装类, 前三种原理是将其转化为int类型.
-+ SE5开始支持枚举类
++ SE5开始支持枚举类.
     ```
     switch(short/char/byte/int/enum) {
         case value1 : statement; break;
