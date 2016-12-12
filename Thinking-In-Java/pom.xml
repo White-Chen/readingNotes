@@ -13,5 +13,6 @@
         <module>chapter2</module>
         <module>chapter3</module>
         <module>mindview</module>
+        <module>chapter4</module>
     </modules>
 </project>
