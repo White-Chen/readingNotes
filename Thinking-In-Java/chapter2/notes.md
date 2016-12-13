@@ -40,7 +40,7 @@
 ####6. _编译_
 + 书里说使用 **_Ant_** 进行编译比直接用javac编译更快, 因为有更多的优化(?).
 
-####7. _注释/Comment 和API文档/Javadoc_
+####<font color='red'>7. _注释/Comment 和API文档/Javadoc_</font>
 + 两种注释方法
     ```java
     
