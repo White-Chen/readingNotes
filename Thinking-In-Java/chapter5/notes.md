@@ -1,4 +1,4 @@
-###Chapter 5 : Initialization & Cleanup :heavy_exclamation_mark:
+###Chapter 5 : Initialization & Cleanup
 ####1. _构造器_
 + 代码规范: 构造器与类名同名, 方法名小写. 
 + 构造方法也是一种无返回值的特殊方法. 
