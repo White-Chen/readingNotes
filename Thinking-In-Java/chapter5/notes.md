@@ -214,7 +214,7 @@
 + 需要注意是可变参数列表的时候容易引起方法重载问题, 有时会使得两个重载方法之间没有区别, 从而引起错误. 所以因该保证在一个方法的所有重载版本中, 只是用一次可变参数类型, 或者尽量不用. 
 
 
-####8. _enum 枚举类_
+####11. _enum 枚举类_
 + SE5添加的新特性, 事实上就是一种类, 有自己的方法. 
 + 与 **switch** 搭配很好, 因为这样使得语义明确. 
 + 书写规范是, 内部成员用大写字母, 多个字母中间用'_'连接. 
@@ -222,8 +222,52 @@
     + _**toString():**_ 打印名称. 
     + _**ordinal():**_ 申明顺序. 
     + _**static values():**_ 返回对应int值, switch的判断机制也是讲enum转为对应的int值, 再进行判断, 总是在switch底层, 仍然只支持int类型的判断. 
-+ [enum可以实现安全的单例模式, 好处是 **简单, 线程安全, 抗序列化, 防反射攻击**.]()  :bangbang:
++ 普通的单例模式, 即使通过二次检查也仍然不能防反射攻击, 还会有指令重排优化问题.
     ```java
+    /*饿汉模式 线程安全 不能延迟加载*/
+    public class Singleton{  
+        private static Singleton instance = new Singleton();  
+        private Singleton(){}  
+        public static Singleton newInstance(){  
+            return instance;  
+        }  
+    }
+    
+    /*懒汉 延迟加载 需要用valotile阻止指令重排优化 需要二次检查解决并发问题*/
+    public class Singleton {  
+        private static volatile Singleton instance = null;  
+        private Singleton(){}  
+        public static Singleton getInstance() {  
+            if (instance == null) {  
+                synchronized (Singleton.class) {  
+                    if (instance == null) {  
+                        instance = new Singleton();  
+                    }  
+                }  
+            }  
+            return instance;  
+        }  
+    } 
+  
+    /*静态内部类 实现延迟加载+线程安全*/
+    public class Singleton{  
+        private static class SingletonHolder{  
+            public static Singleton instance = new Singleton();  
+        }  
+        private Singleton(){}  
+        public static Singleton newInstance(){  
+            return SingletonHolder.instance;  
+        }  
+    }  
+    ```
+    
++ 这些实现方式都有共同的缺点: 
+    + 需要额外的工作来实现序列化, 否则每次反序列化一个序列化的对象时都会创建一个新的实例. 
+    + 可以使用反射强行调用私有构造器(如果要避免这种情况, 可以修改构造器, 让它在创建第二个实例的时候抛异常). 
+
++ [enum可以实现安全的**单例模式**, 好处是 **简单, 线程安全, 抗序列化, 防反射攻击**.]()  :bangbang:
+    ```java
+    /*枚举类实现单例模式*/
     public enum Singleton {
         INSTANCE {
 
@@ -242,5 +286,3 @@
         protected abstract void write();
     }
     ```
-+ 补充: 普通的单例模式, 即使通过二次检查也仍然不能防反射攻击, 且如果用 **valotile** 修饰, 还会有内存问题. 
-
