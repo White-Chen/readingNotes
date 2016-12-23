@@ -145,7 +145,7 @@
     */
     ```
     
-####4. _继承类的内存清理顺序_
+####4. _继承类的内存清理_
 + 主要是注意成员变量的清理顺序是按照声明升序的逆序, 父类内存清理方法总是在当前类的清理完最后调用. 
 + 如果对象中存在与其他对象共享的成员变量, 此时内存的清理需要格外的注意, 需要添加一下额外的策略, 保证每个成员变量的清理是安全的. 
     ```java
@@ -215,7 +215,7 @@
     */
     ```
 
-+ 如果在构造方法内计数, 而不是用专门的方法计数, 会出现技术错误问题:  :heavy_exclamation_mark:
++ 如果在构造方法内计数, 而不是用专门的方法计数, 会出现技术错误问题: :heavy_exclamation_mark:
     ```java
     /* Output: 
      Creating Shared 0
@@ -232,4 +232,198 @@
      disposing Composing 4
     */
     ```
+    
++ 构造方法内部的多态方法调用会导致一种问题: 如果在父类构造方法内调用了被子类覆盖的动态绑定方法, 就要用到该方法被子类覆盖后的定义, 而如果该方法内部试图操作子类某些成员变量, 此时这种调用的效果可能相当难以预料. 因为被覆盖的方法在子类对象被完全构造之前就被调用了(调用发生在父类构造方法中), 这就会造成一些隐藏错误. 通过下面例子可以明显发现在子类成员变量 _length_ 在初始化之前已经被试图获取, 虽然结果并不是我们想要的1或者5, 但是程序运行并没有报错. 这种情况发生的原因是, 在通过关键字 **new** 一个实例对象时, 非配给该对象的内存空间已经全被初始化为二进制0, 这也就保证了初始化不会报错. [针对这样的额问题, 编写构造方法时有一条准则: 用尽可能简单的方法是对象进入正常状态, 并尽可能避免调用其他方法](). :heavy_exclamation_mark:
+    ```java
+    class Graph{
+      void draw(){System.out.println("Graph.draw()");}
+      Graph(){
+          System.out.println("before Graph draw()");  
+          draw();
+          System.out.println("after Graph draw()");  
+      }
+    }
+    class Square extends Graph{
+      private int length = 1;
+      Square(int length){
+          this.length = length;
+          System.out.println("Square length = " + length);
+      }
+      @Override
+      void draw(){
+        System.out.println("Square length = " + length);
+      }
+    }
+    public class Test{
+      public static void main(String[] args){
+          new Square(5);
+      }
+    }
+  
+    /* Output:
+    before Graph draw()
+    Square length = 0 //注意这里在调用父类构造方法是调用了子类覆盖后的方法draw(), 但是此时子类成员变量length并没有初始化, 因此返回的值既不是1也不是5, 这种调用方法就产生了我们不想得到的结果. 
+    after Graph draw()
+    Square length = 5
+    */
+    ```
+
+####5. _协变返回类型_
++ 从SE5开始提供的一种新的特性: 子类中覆盖方法的返回值类型可以是父类对应方法返回值类型的子类. 
+
+####6. _用继承进行设计_
++ 虽然继承看上去很美好, 但是在新建类时首先考虑使用继承技术, 反而会加重设计上的负担, 是的事情变得复杂起来, 更好的选择是首选使用"组合"的方式, 因为"组合"可以动态选择类型, 这样更加灵活. 
++ 书中作者给出了一条通用准则: [用继承表达行为的差异, 并用字段表达状态上的变化](). 
++ 纯继承vs扩展继承: 纯继承更加理想化, 但是想始终扩展继承更多, 不过需要注意的是扩展继承在向上类型转换时会丢失扩展的特性. 
++ JAVA在进行向下类型转化时, 会在运行时进行强制性类型检查, 无论是否进行显式的强转, 如果转换错误则会报 **ClassCastException**. [JAVA在运行时的类型检查用到了一种技术 **runtime type information(RTTI)**]() :heavy_exclamation_mark:, 这个在后面章节会进行详细介绍. 
+
+####7. _设计模式: 状态模式_ :bangbang:
++ 补充: 针对上面的设计准则, 作者提到了一种设计模式: [状态模式](). :bangbang:
+    + 用一句话来表述, 状态模式把所研究的对象的行为包装在不同的状态对象里, 每一个状态对象都属于一个抽象状态类的一个子类. 状态模式的意图是让一个对象在其内部状态改变的时候, 其行为也随之改变. 
+    + 状态模式所涉及到的角色有: 
+        + 环境(Context)角色, 也成上下文: 定义客户端所感兴趣的接口, 并且保留一个具体状态类的实例. 这个具体状态类的实例给出此环境对象的现有状态. 
+        + 抽象状态(State)角色: 定义一个接口, 用以封装环境（Context）对象的一个特定的状态所对应的行为. 
+        + 具体状态(ConcreteState)角色: 每一个具体状态类都实现了环境（Context）的一个状态所对应的行为. 
+    + 使用场景: 考虑一个在线投票系统的应用, 要实现控制同一个用户只能投一票, 如果一个用户反复投票, 而且投票次数超过5次, 则判定为恶意刷票, 要取消该用户投票的资格, 当然同时也要取消他所投的票；如果一个用户的投票次数超过8次, 将进入黑名单, 禁止再登录和使用系统. 要使用状态模式实现, 首先需要把投票过程的各种状态定义出来, 根据以上描述大致分为四种状态: 正常投票、反复投票、恶意刷票、进入黑名单. 然后创建一个投票管理对象（相当于Context）. 
+        + 抽象状态类--State
+        ```java
+        public interface VoteState {
+            /**
+             * 处理状态对应的行为
+             * @param user    投票人
+             * @param voteItem    投票项
+             * @param voteManager    投票上下文, 用来在实现状态对应的功能处理的时候, 可以回调上下文的数据
+             */
+            public void vote(String user,String voteItem,VoteManager voteManager);
+        }    
+        ```
         
+        + 具体状态类--ConcreteState--正常投票
+        ```java
+        public class NormalVoteState implements VoteState {
+            @Override
+            public void vote(String user, String voteItem, VoteManager voteManager) {
+                //正常投票, 记录到投票记录中
+                voteManager.getMapVote().put(user, voteItem);
+                System.out.println("恭喜投票成功");
+            }
+        
+        }
+        ```
+        
+        + 具体状态类--ConcreteState--重复投票
+        ```java
+        public class RepeatVoteState implements VoteState {
+            @Override
+            public void vote(String user, String voteItem, VoteManager voteManager) {
+                //重复投票, 暂时不做处理
+                System.out.println("请不要重复投票");
+            }
+        
+        }
+        ```
+        
+        + 具体状态类--ConcreteState--恶意刷票
+        ```java
+        public class SpiteVoteState implements VoteState {
+            @Override
+            public void vote(String user, String voteItem, VoteManager voteManager) {
+                // 恶意投票, 取消用户的投票资格, 并取消投票记录
+                String str = voteManager.getMapVote().get(user);
+                if(str != null){
+                    voteManager.getMapVote().remove(user);
+                }
+                System.out.println("你有恶意刷屏行为, 取消投票资格");
+            }
+        
+        }
+        ```
+        
+        + 具体状态类--ConcreteState--黑名单
+        ```java
+        public class BlackVoteState implements VoteState {
+            @Override
+            public void vote(String user, String voteItem, VoteManager voteManager) {
+                //记录黑名单中, 禁止登录系统
+                System.out.println("进入黑名单, 将禁止登录和使用本系统");
+            }
+        
+        }
+        ```
+        
+        + 环境类--ConcreteState--Context
+        ```java
+        public class VoteManager {
+            //持有状体处理对象
+            private VoteState state = null;
+            //记录用户投票的结果, Map<String,String>对应Map<用户名称, 投票的选项>
+            private Map<String,String> mapVote = new HashMap<String,String>();
+            //记录用户投票次数, Map<String,Integer>对应Map<用户名称, 投票的次数>
+            private Map<String,Integer> mapVoteCount = new HashMap<String,Integer>();
+            /**
+             * 获取用户投票结果的Map
+             */
+            public Map<String, String> getMapVote() {
+                return mapVote;
+            }
+            /**
+             * 投票
+             * @param user    投票人
+             * @param voteItem    投票的选项
+             */
+            public void vote(String user,String voteItem){
+                //1.为该用户增加投票次数
+                //从记录中取出该用户已有的投票次数
+                Integer oldVoteCount = mapVoteCount.get(user);
+                if(oldVoteCount == null){
+                    oldVoteCount = 0;
+                }
+                oldVoteCount += 1;
+                mapVoteCount.put(user, oldVoteCount);
+                //2.判断该用户的投票类型, 就相当于判断对应的状态
+                //到底是正常投票、重复投票、恶意投票还是上黑名单的状态
+                if(oldVoteCount == 1){
+                    state = new NormalVoteState();
+                }
+                else if(oldVoteCount > 1 && oldVoteCount < 5){
+                    state = new RepeatVoteState();
+                }
+                else if(oldVoteCount >= 5 && oldVoteCount <8){
+                    state = new SpiteVoteState();
+                }
+                else if(oldVoteCount > 8){
+                    state = new BlackVoteState();
+                }
+                //然后转调状态对象来进行相应的操作
+                state.vote(user, voteItem, this);
+            }
+        }
+        ```
+        
+        + 测试类
+        ```java
+        public class Client {
+            public static void main(String[] args) {
+                VoteManager vm = new VoteManager();
+                for(int i=0;i<9;i++){
+                    vm.vote("u1","A");
+                }
+            }
+        
+        }
+        ```
+        
+        + 输出
+        ```java
+        /* Output:
+        恭喜投票成功
+        请不要重复投票
+        请不要重复投票
+        请不要重复投票
+        你有恶意刷屏行为, 取消投票资格
+        你有恶意刷屏行为, 取消投票资格
+        你有恶意刷屏行为, 取消投票资格
+        你有恶意刷屏行为, 取消投票资格
+        进入黑名单, 将禁止登录和使用本系统
+        */
+        ```
