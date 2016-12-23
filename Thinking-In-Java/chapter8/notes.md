@@ -141,9 +141,10 @@
     Bread Sandwich 2
     Cheese Sandwich 2
     Lettuce Sandwich 2
-    Sandwich Sandwich 0
+    Sandwich Sandwich 0 
     */
     ```
+
 
 ####4. _继承类的内存清理_
 + 主要是注意成员变量的清理顺序是按照声明升序的逆序, 父类内存清理方法总是在当前类的清理完最后调用. 
