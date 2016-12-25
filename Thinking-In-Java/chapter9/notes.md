@@ -562,4 +562,5 @@
 + 接口以interface开始, 并包含一组默认为是public的抽象方法, 接口可以包含变量, 默认为static final的, 且必须给其初值, 所以实现类中不能重新定义, 也不能改变其值；实现接口必须实现其中的所有方法, 接口中不能有实现方法, 所有的成员方法都是abstract的. 
 + 如果一个类没有实现任何接口方法, 则它是抽象类, 并且必须以关键字abstract声明该类；实现一个接口如同与编译器达成一个协议, “我将声明该接口制定的所有方法”. 
 + [抽象类仍然是 **Object** 子类, 而接口不是!!!]() :bangbang: 以下来源于官方文档说明, 也就是说每个interface都会在内置于 **Object** 相同的方法, 但是它不是 **Object**. 
-    > If an interface has no direct superinterfaces, then the interface implicitly declares a public abstract member method m with signature s, return type r, and throws clause t corresponding to each public instance method m with signature s, return type r, and throws clause t declared in Object, unless a method with the same signature, same return type, and a compatible throws clause is explicitly declared by the interface.
+ > If an interface has no direct superinterfaces, then the interface implicitly declares a public abstract member method m with signature s, return type r, and throws clause t corresponding to each public instance method m with signature s, return type r, and throws clause t declared in Object, unless a method with the same signature, same return type, and a compatible throws clause is explicitly declared by the interface.
+ >
