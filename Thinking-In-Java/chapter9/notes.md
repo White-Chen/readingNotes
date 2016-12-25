@@ -557,7 +557,7 @@
 + [工厂方法模式与简单工厂模式的区别: 简单工厂模式中工厂直接是具体类, 没有抽象工厂接口. 在工厂方法模式中, 所有工厂类都有一个共同的抽象工厂接口. 但是工厂方法模式相比抽象工厂模式, 工厂方法模式中每个工厂类对应同一个产品抽象接口；而抽象工厂模式则需要面对多个产品抽象接口. ]() :bangbang:
 
 ####8. _接口VS抽象类_
-+ [抽象类仍然是 **Object** 子类, 而接口不是!!!]() :bangbang: 以下来源于官方文档说明, 也就是说每个interface都会在内置于 **Object** 相同的方法, 但是它不是 **Object**. 
++ [抽象类仍然是 **Object** 子类, 而接口不是!!!]() :bangbang: 以下来源于官方文档说明, 也就是说每个interface都会内置与 **Object** 相同的方法, 但是它不是 **Object**. 
     > If an interface has no direct superinterfaces, then the interface implicitly declares a public abstract member method m with signature s, return type r, and throws clause t corresponding to each public instance method m with signature s, return type r, and throws clause t declared in Object, unless a method with the same signature, same return type, and a compatible throws clause is explicitly declared by the interface.
 
 + abstract class通常含有一个或多个抽象方法, 抽象方法不提供实现；包含抽象方法的类必须声明为抽象类abstract class；abstract class的所有具体子类都必须为超类提供具体实现；子类如果没有实现超类的抽象方法, 则会产生编译错误, 除非子类也声明为abstract. 

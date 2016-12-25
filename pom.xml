@@ -11,6 +11,7 @@
 
     <modules>
         <module>Thinking-In-Java</module>
+        <module>Spring-In-Action</module>
     </modules>
     
 </project>
