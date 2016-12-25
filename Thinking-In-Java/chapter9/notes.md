@@ -557,9 +557,10 @@
 + [工厂方法模式与简单工厂模式的区别: 简单工厂模式中工厂直接是具体类, 没有抽象工厂接口. 在工厂方法模式中, 所有工厂类都有一个共同的抽象工厂接口. 但是工厂方法模式相比抽象工厂模式, 工厂方法模式中每个工厂类对应同一个产品抽象接口；而抽象工厂模式则需要面对多个产品抽象接口. ]() :bangbang:
 
 ####8. _接口VS抽象类_
++ [抽象类仍然是 **Object** 子类, 而接口不是!!!]() :bangbang: 以下来源于官方文档说明, 也就是说每个interface都会在内置于 **Object** 相同的方法, 但是它不是 **Object**. 
+    > If an interface has no direct superinterfaces, then the interface implicitly declares a public abstract member method m with signature s, return type r, and throws clause t corresponding to each public instance method m with signature s, return type r, and throws clause t declared in Object, unless a method with the same signature, same return type, and a compatible throws clause is explicitly declared by the interface.
+
 + abstract class通常含有一个或多个抽象方法, 抽象方法不提供实现；包含抽象方法的类必须声明为抽象类abstract class；abstract class的所有具体子类都必须为超类提供具体实现；子类如果没有实现超类的抽象方法, 则会产生编译错误, 除非子类也声明为abstract. 
 + abstract class声明了类层次结构中各个类的共同属性和行为；由于不能继承构造函数, 因此构造函数不能声明为抽象方法；尽管不能实例化抽象类的对象, 但是能够声明抽象类型的变量, 这种变量可用于引用子类的对象. 
 + 接口以interface开始, 并包含一组默认为是public的抽象方法, 接口可以包含变量, 默认为static final的, 且必须给其初值, 所以实现类中不能重新定义, 也不能改变其值；实现接口必须实现其中的所有方法, 接口中不能有实现方法, 所有的成员方法都是abstract的. 
 + 如果一个类没有实现任何接口方法, 则它是抽象类, 并且必须以关键字abstract声明该类；实现一个接口如同与编译器达成一个协议, “我将声明该接口制定的所有方法”. 
-+ [抽象类仍然是 **Object** 子类, 而接口不是!!!]() :bangbang: 以下来源于官方文档说明, 也就是说每个interface都会在内置于 **Object** 相同的方法, 但是它不是 **Object**. 
-    > If an interface has no direct superinterfaces, then the interface implicitly declares a public abstract member method m with signature s, return type r, and throws clause t corresponding to each public instance method m with signature s, return type r, and throws clause t declared in Object, unless a method with the same signature, same return type, and a compatible throws clause is explicitly declared by the interface.
