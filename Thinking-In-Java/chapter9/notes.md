@@ -22,7 +22,8 @@
     + 多接口可以实现多种向上转型, 提高灵活性. 
     + 不允许实例化. 
 + 子类实现 **interface** 时, 使用关键字 **implements**. 
-+ 在SE5中 **Scanner** 类可以接受任何实现了 **Readable** 接口的类, 因此使用 **Scanner** 类有一种方法就是自定义类并实现 **Readable** . 但是当自定义类没有实现 **Readable** 接口时且不允许被修改时, 我们可以通过适配器模式进行适配. 因此方法接受接口类型是一种让任何类都可以对该方法进行适配的方式. 
++ 在SE5中 **Scanner** 类可以接受任何实现了 **Readable** 接口的类, 因此使用 **Scanner** 类有一种方法就是自定义类并实现 **Readable** . 但是当自定义类没有实现 **Readable** 接口时且不允许被修改时, 我们可以通过适配器模式进行适配. 因此方法接受接口类型是一种让任何类都可以对该方法进行适配的方式.
++ 有一个有意思的特点是, JAVA中的内置接口名称大多数都是以 **able** 结尾的, 其含义是说明每一个接口对应一种能力, 这种命名方法更加容易让你理解. 
 
 ####3. [_设计模式: 策略模式_]() :bangbang:
 + 策略模式属于对象的行为模式. 策略模式是对算法的包装, 是把使用算法的责任和算法本身分割开来, 委派给不同的对象管理. 策略模式通常把一个系列的算法包装到一系列的策略类里面, 作为一个抽象策略类的子类. 用一句话来说, 就是: “准备一组算法, 并将每一个算法封装起来, 使得它们可以互换”. 策略模式使得算法可以在不影响到客户端的情况下发生变化. 
@@ -373,11 +374,13 @@
     ```java
     class ModifiedClass extends Class_1 implements interface_1, interface_2,interface_n{}
     ```
+
 + 可以向上转型为接口, 这样就意味着一个实现多个接口的类可以向上转型为多个不同的接口, 且这样的转型时安全的. 
 + 接口可以继承接口以此实现扩展接口, 使用 **extends** 关键字, [但是这里却可以继承多个接口, 这条规范显然和类单继承不一样](). :bangbang:
     ```java
     interface ModifiedInterface extends interface_1, interface_2,interface_3{}
     ```
+
 + 多接口中的名称冲突: 
     + 仍然遵循子类覆盖父类方法的书写规范. 
     + 同时实现多个接口, 接口中有名称相同且参数列表相同的方法声明时, 如果返回值相同, 编译器正常通过；如果返回值不兼容, 编译器会报错. 
@@ -552,3 +555,11 @@
 
 + 抽象工厂模式的优点是不用关心类的具体创建逻辑, 适合用于框架创建. 
 + [工厂方法模式与简单工厂模式的区别: 简单工厂模式中工厂直接是具体类, 没有抽象工厂接口. 在工厂方法模式中, 所有工厂类都有一个共同的抽象工厂接口. 但是工厂方法模式相比抽象工厂模式, 工厂方法模式中每个工厂类对应同一个产品抽象接口；而抽象工厂模式则需要面对多个产品抽象接口. ]() :bangbang:
+
+####8. _接口VS抽象类_
++ abstract class通常含有一个或多个抽象方法, 抽象方法不提供实现；包含抽象方法的类必须声明为抽象类abstract class；abstract class的所有具体子类都必须为超类提供具体实现；子类如果没有实现超类的抽象方法, 则会产生编译错误, 除非子类也声明为abstract. 
++ abstract class声明了类层次结构中各个类的共同属性和行为；由于不能继承构造函数, 因此构造函数不能声明为抽象方法；尽管不能实例化抽象类的对象, 但是能够声明抽象类型的变量, 这种变量可用于引用子类的对象. 
++ 接口以interface开始, 并包含一组默认为是public的抽象方法, 接口可以包含变量, 默认为static final的, 且必须给其初值, 所以实现类中不能重新定义, 也不能改变其值；实现接口必须实现其中的所有方法, 接口中不能有实现方法, 所有的成员方法都是abstract的. 
++ 如果一个类没有实现任何接口方法, 则它是抽象类, 并且必须以关键字abstract声明该类；实现一个接口如同与编译器达成一个协议, “我将声明该接口制定的所有方法”. 
++ [抽象类仍然是 **Object** 子类, 而接口不是!!!]() :bangbang: 以下来源于官方文档说明, 也就是说每个interface都会在内置于 **Object** 相同的方法, 但是它不是 **Object**. 
+    > If an interface has no direct superinterfaces, then the interface implicitly declares a public abstract member method m with signature s, return type r, and throws clause t corresponding to each public instance method m with signature s, return type r, and throws clause t declared in Object, unless a method with the same signature, same return type, and a compatible throws clause is explicitly declared by the interface.
