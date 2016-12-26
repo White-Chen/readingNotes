@@ -30,5 +30,15 @@
 
 ####3. _依赖注入/Dependency Injection_
 + 依赖注入(DI)：
-
++ 任何有实际意义的应用都是由两个或更多地类组成的，它们之间相互协作来完成特定的业务逻辑。通常，每个对象负责管理和自己协作的对象（它依赖的对象）引用，这就难免导致了高度耦合和难以测试。
++ 例如knights类
+    ```java
+    public interface Knight {
+        void embarkOnQuest();
+    }
+    public interface Quest {
+        void embark();
+    }
+    
+    ```
 + [mock测试就是在测试过程中，对那些不容易构建的对象用一个虚拟对象来代替测试的方法就叫mock测试. 比较常用的有Mockito]() :bangbang:
