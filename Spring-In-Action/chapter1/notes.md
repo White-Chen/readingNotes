@@ -350,12 +350,12 @@
     */
     ```
     
-####6. _使用模板消除样板式代码_ :bangbang:
+####6. [_使用模板消除样板式代码_]() :bangbang:
 + 通过模板类减少重复写样式式的代码. 比如通过JDBC访问数据库查询数据, 你总是需要重复写获取connneciton实例, try-catch等一样的代码. 
 + Spring提供了许多模板类, 从而简化了这些不必要的重复劳动. 比如基于SE5的JdbcTemplate实现的JdbcTemplate, 这样只需要关注于核心逻辑, 而不需要迎合JDBC API需求. 
 + 详细的介绍会在后面章节介绍. 
 
-####7. _bean的声明周期_ :bangabng:
+####7. [_bean的声明周期_]() :bangbang:
 + 在传统JAVA应用中bean的生命周期: 
     + 1 new实例化
     + 2 使用实例化的bean
