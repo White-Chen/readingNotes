@@ -350,4 +350,44 @@
     */
     ```
     
-####6. _使用模板消除样板式代码_
+####6. _使用模板消除样板式代码_ :bangbang:
++ 通过模板类减少重复写样式式的代码. 比如通过JDBC访问数据库查询数据, 你总是需要重复写获取connneciton实例, try-catch等一样的代码. 
++ Spring提供了许多模板类, 从而简化了这些不必要的重复劳动. 比如基于SE5的JdbcTemplate实现的JdbcTemplate, 这样只需要关注于核心逻辑, 而不需要迎合JDBC API需求. 
++ 详细的介绍会在后面章节介绍. 
+
+####7. _bean的声明周期_ :bangabng:
++ 在传统JAVA应用中bean的生命周期: 
+    + 1 new实例化
+    + 2 使用实例化的bean
+    + 3 GC根据条件自动回收bean实例
++ 在Spring中, bean的生命周期由Spring容器负责, 它是Spring框架的核心, Spring自带的容器分为两类: 
+    + [bean工厂(org.springframework.beans.factory.BeanFactory 接口)](): 提供DI支持, 但是对于大多数应用太低级, 所以应用上下文更受欢迎, 书里主要使用后者. 
+    + [应用上下文(org.springframework.context.ApplicationContext 接口)](): 基于bean工厂构建, 提供框架级别的服务. Spring自带的应用上下文最常用的有下面5个: 
+        + AnnotationConfigApplicationContext: 从一个或多个基于Java的配置类中加载Spring应用上下文. 
+        + AnnotationConfigWebApplicationContext: 从一个或多个基于Java的配置类中加载Spring Web应用上下文. 
+        + ClassPathXmlApplicationContext: 从类路径下的一个或多个XML配置文件中加载上下文定义, 把应用上下文的定义文件作为类资源. 
+        + FileSystemXmlApplicationContext: 从文件系统下的一个或多个XML配置文件中加载上下文定义. [和上面的区别在于, 一个是从文件系统中按路径查找, 一个是从所有类路径下查找.]()
+        + XmlWebApplicationContext: 从Web应用下的一个或多个XML配置文件中加载上下文定义. 
+
++ 在上面的这些Spring容器中, bean的生命周期比传统JAVA应用中的生命周期复杂的多, 详情如下:  :bangbang:
+    + 1. Spring对bean进行实例化. 
+    + 2. Spring将值和bean的引用注入到bean对应的属性中. 
+    + 3. 如果bean实现了BeanNameAware接口, Spring将bean的ID传递给setBeanName()方法. 
+    + 4. 如果bean实现了BeanFactoryAware接口, Spring将调用setBeanFactory()方法, 将BeanFactory容器实例传入. 
+    + 5. 如果bean实现了ApplicationContextAware接口, Spring将调用setApplicationContext()方法, 将bean所在的应用上下文的引用传入进来. 
+    + 6. 如果bean实现了BeanPostProcessor接口, Spring将调用它们的postProcessBeforeInitialization()方法. 
+    + 7. 如果bean实现了InitializingBean接口, Spring将调用他们的afterPropertiesSet()方法. 类似地, 如果bean使用init-method声明了初始化方法, 该方法也会被调用. 
+    + 8. 如果bean实现了BeanPostProcessor接口, Spring将调用它们的postProcessAfterInitialization()方法. 
+    + [9. 此时, bean已经准备就绪, 可以被应用程序使用, 它们将一直驻留在应用上下文中, 直到该上下文被销毁.]()
+    + 10. 如果bean实现了DisposableBean接口, Spring将调用它的destroy()接口方法, 直到该应用上下文被销毁. 
+    + 11. 如果bean实现了自定义的destroy方法, 则会被调用. 
+    
+####7. _Spring模块_
++ 核心: spring-core, spring-beans, spring-context, spring-expression, spring-context-support. 
++ 测试: spring-test. 
++ 数据访问与集成: spring-jdbc, spring-orm, spring-jms, spring-messaging, spring-oxm, spring-transaction. 
++ Web与远程调用: spring-web, spring-webmvc, spring-webmvc-portlet, ``spring-websocket. 
++ Instrumentation: 这个没听过. . . 
+
+####8. _Spring4.0新特性_
++ 详情见书P30, 不一一列举. 因为之前也没有特别的深入的使用过，所以目前对这些新的特性没有什么强烈的感觉。
