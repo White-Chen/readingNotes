@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--注入Quest bean-->
+    <bean id = "knight" class="BraveKnight">
+        <constructor-arg ref="quest"/>
+    </bean>
+
+    <!--创建SlayDragonQuest实例-->
+    <bean id="quest" class="SlayDragonQuest">
+        <constructor-arg value="#{T(System).out}"/>
+    </bean>
+
+    <!--创建Minstrel实例-->
+    <bean id="minstrel" class="Minstrel">
+        <constructor-arg value="#{T(System).out}"/>
+    </bean>
+
+    <!--AOP配置-->
+    <aop:config>
+        <!--把minstrel声明为一个切面-->
+        <aop:aspect ref="minstrel">
+            <!--切面关注点，也就是BraveKnight类的embarkOnQuest方法被调用时-->
+            <aop:pointcut id="embark"
+                          expression="execution(* *.embarkOnQuest(..))"/>
+
+            <!--在切面关注点之前执行-->
+            <aop:before pointcut-ref="embark"
+                        method="singBeforeQuest"/>
+
+            <!--在切面关注点之后执行-->
+            <aop:after  pointcut-ref="embark"
+                        method="singAfterQuest"/>
+        </aop:aspect>
+    </aop:config>
+</beans>
