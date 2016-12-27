@@ -279,7 +279,7 @@
     ```
 
 ####3. _通过XML装配bean_
-+ **现在Spring强烈推荐使用自动配置和基于Java的配置, XMLConfig应该不是你的第一选择. 新开发的项目中, 尽量使用自动发现和基于Java的配置. **
++ **现在Spring强烈推荐使用自动配置和基于Java的配置, XMLConfig应该不是你的第一选择. 新开发的项目中, 尽量使用自动发现和基于Java的配置**. 
 + **第一步**, 创建一个基本的XMLConfig. IDE提供这个功能. 
     ```xml
     <?xml version="1.0" encoding="UTF-8"?>
@@ -295,6 +295,7 @@
         <!--声明bean, 如果没有显式声明id, 默认id=xmlconfig.SgtPeppers#0-->
         <bean id="compactDisc" class="xmlconfig.SgtPeppers" />
         ```
+        
         + 缺点: 
             + 它也没有JavaConfig那样, 对Bean进行各种操作的能力. 
             + Bean声明使用的class是使用的字符串形式, Spring的XML配置并没有提供编译时检验.
@@ -467,6 +468,7 @@
     public class SystemConfig {
     }
     ```
+    
 + [**在XML配置中引用JavaConfig**](): 
     ```xml
     <?xml version="1.0" encoding="UTF-8"?>
