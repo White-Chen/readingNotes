@@ -22,7 +22,6 @@ public class CDPlayerConfig {
     @Bean
     public CDPlayer cdPlayer(CompactDisc compactDisc) {
         CDPlayer cdPlayer = new CDPlayer(compactDisc);
-        cdPlayer.setCompactDisc(compactDisc);
         return cdPlayer;
     }
 }
