@@ -222,7 +222,7 @@
     */
     ```
     
-####2. _通过Java代码转配bean_
+####2. [_通过Java代码转配bean_]() :heavy_exclamation_mark:
 + 尽管自动配置在很多情况下是很好的。但是有的时候，自动配置不能满足要求，这个时候就需要进行显式的配置。比如，你需要从第三库里面装配Bean，因为你没有权利修改源码，所以你就没有机会在类里面添加@AutoWired注解或者@Component注解，在这种情况下，你必须使用显式配置。
 + **第一步**，创建一个Java的配置类
     + @Configuration表明该类是一个Spring配置类
@@ -279,7 +279,179 @@
     ```
 
 ####3. _通过XML装配bean_
-
++ **现在Spring强烈推荐使用自动配置和基于Java的配置，XMLConfig应该不是你的第一选择. 新开发的项目中，尽量使用自动发现和基于Java的配置。**
++ **第一步**，创建一个基本的XMLConfig。IDE提供这个功能。
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+            <beans xmlns="http://www.springframework.org/schema/beans"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    </beans>
+    ```
+        
++ **第二步**，声明一个简单的Bean
+    + 如果缺少明确的身份认证id，Spring会根据该类的完全名称设定该Bean的名称，为xmlconfig.SgtPeppers#0，#0代表这是该类的第一个Bean，如果在其他地方声明了该类的另外一个Bean，则名称为soundsystem.SgtPeppers#1，后面的数据为枚举，一次枚举下去。虽然方便，但是这种自动产生的名称并没有多大的用途，所以一般情况我们都需要为Bean指定一个显式的名称。
+        ```xml
+        <!--声明bean, 如果没有显式声明id，默认id=xmlconfig.SgtPeppers#0-->
+        <bean id="compactDisc" class="xmlconfig.SgtPeppers" />
+        ```
+        + 缺点：
+            + 它也没有JavaConfig那样，对Bean进行各种操作的能力。
+            + Bean声明使用的class是使用的字符串形式, Spring的XML配置并没有提供编译时检验.
+             
++ **第三步**，构造器注入的方式初始化一个Bean。
+    + 提供两种配置方案：<constructor-arg>元素配置和c-namespace配置。[前者比后者代码片段少但是难以读懂。另一方面，前者能做一些后者不能做的事情.]()
+    + 以构造器注入为例，下面分别对应<constructor-arg>元素配置和c-namespace配置方案。[可以发现c-namespace除了代码简洁外，配置起来相对另一个复杂很多，需要使用占位符来避免名称发生变化.]()
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <beans xmlns="http://www.springframework.org/schema/beans"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:c="http://www.springframework.org/schema/c"
+           xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    
+        <!--声明bean-->
+        <bean id="compactDisc" class="xmlconfig.SgtPeppers" />
+    
+        <!--构造器注入, constructor-arg元素注入方式-->
+        <bean id="cdPlayer" class="xmlconfig.CDPlayer">
+            <constructor-arg ref="compactDisc" />
+        </bean>
+    
+        <!--构造器注入, c-namespace元素注入方式，使用它必须在xml顶部声明-->
+        <!--这个属性名字以命名空间c:开始，接下来就是需要注入的参数的名字，
+            -ref告诉Spring，后面是一个Bean的引用而不是一个String的字面值。
+            使用c-namespace比使用元素更加简洁，这是我希望它的一个原因。但是我感觉并不容易读懂。-->
+        <!---->
+        <bean id="cdPlayer2" class="xmlconfig.CDPlayer" c:cd-ref="compactDisc">
+        </bean>
+      
+        <!--直接使用的是参数的名字，当调试的时候，参数名字变化了，会导致有问题。
+            但是Spring提供了一种解决方案，通过使用参数的索引来命名属性的名字-->
+        <bean id="cdPlayer3" class="xmlconfig.CDPlayer" c:_0-ref="compactDisc">
+        </bean>
+    </beans>
+    ```
+        
+    + 上面是引用bean注入，如果直接注入字面值的话应使用下面方式。区别不大，主要是标签不一样，[需要注意的是书上第二种方式写的有问题，我自己在IDE里照着书写会报错，下面是正确的写法，中文翻译书太坑....]() :bangbang:
+    ```xml
+    <!--使用元素声明构造函数的注入，但是这里元素的值不再使用ref了，而是使用的value，
+            也就是说，ref代表的是其他Bean的引用，而使用value,代表后面跟的是一个值，而不是引用了。
+            -->
+        <bean id="compactDisc2"
+              class="xmlconfig.BlankDisc">
+            <constructor-arg value="Sgt. Pepper's Lonely Hearts Club Band" />
+            <constructor-arg value="The Beatles" />
+        </bean>
+    
+        <!--使用c-namespace的方式 参数名，这里书上写的有问题，两个参数名都多了一个_会报错-->
+        <bean id="compactDisc3" class="xmlconfig.BlankDisc" c:title="Sgt. Pepper's Lonely Hearts Club Band" c:artist="The Beatles">
+        </bean>
+    
+        <!--使用c-namespace的方式 参数索引-->
+        <bean id="compactDisc3" class="xmlconfig.BlankDisc" c:_0="Sgt. Pepper's Lonely Hearts Club Band" c:_1="The Beatles">
+        </bean>
+    ```
+    
+    + [集合注入。需要注意的是c-namespace不支持集合注入]:bangbang:
+    ```xml
+    <!--注意c-namespace不支持集合注入-->
+        <!--集合注入，这里注入的是给定值-->
+        <bean id="compactDisc4" class="xmlconfig.collections.BlankDisc">
+            <constructor-arg value="Sgt. Pepper's Lonely Hearts Club Band" />
+            <constructor-arg value="The Beatles" />
+            <constructor-arg>
+                <list>
+                    <value>Sgt. Pepper's Lonely Hearts Club Band</value>
+                    <value>With a Little Help from My Friends</value>
+                    <value>Lucy in the Sky with Diamonds</value>
+                    <value>Getting Better</value>
+                    <value>Fixing a Hole</value>
+                    <!-- ...other tracks omitted for brevity... -->
+                </list>
+            </constructor-arg>
+        </bean>
+    
+        <!--集合注入，这里注入的是引用id-->
+        <bean id="sgtPeppers" class="java.lang.String" c:_0="sgtPeppers"/>
+        <bean id="whiteAlbum" class="java.lang.String" c:_0="whiteAlbum"/>
+        <bean id="hardDaysNight" class="java.lang.String" c:_0="hardDaysNight"/>
+        <bean id="compactDisc5" class="xmlconfig.collections.BlankDisc">
+            <constructor-arg value="Sgt. Pepper's Lonely Hearts Club Band" />
+            <constructor-arg value="The Beatles" />
+            <constructor-arg>
+                <list>
+                    <ref bean="sgtPeppers" />
+                    <ref bean="whiteAlbum" />
+                    <ref bean="hardDaysNight" />
+                    <!-- ...other tracks omitted for brevity... -->
+                </>
+            </constructor-arg>
+        </bean>
+    ```
+    
++ **第四步**，设置属性。
+    + 假设有如下类，如果不设置compactDisc，那么在调用play()时会发生空指针异常。
+    ```java
+    public class CDPlayer implements MediaPlayer {
+      private CompactDisc compactDisc;
+    
+      @Autowired
+      public void setCompactDisc(CompactDisc compactDisc) {
+        this.compactDisc = compactDisc;
+      }
+    
+      public void play() {
+        compactDisc.play();
+      }
+    }
+    ```
+    
+    + 下面介绍几种用法，具体对应看注释。[下面的p-namespace用法和上面的c-namespace用法一样，只是用途不一样.]()
+    ```xml
+    <!--属性注入 使用property标签-->
+        <bean id="cdPlayer4"
+              class="xmlconfig.properties.CDPlayer">
+            <property name="compactDisc" ref="compactDisc" />
+        </bean>
+    
+        <!--属性注入 使用p-namespace标签-->
+        <bean id="cdPlayer5"
+              class="xmlconfig.properties.CDPlayer"
+              p:compactDisc-ref="compactDisc2" />
+    
+        <!--集合类属性注入 使用property标签-->
+        <bean id="compactDisc6"
+              class="xmlconfig.properties.BlankDisc">
+            <property name="title"
+                      value="Sgt. Pepper's Lonely Hearts Club Band" />
+            <property name="artist" value="The Beatles" />
+            <property name="tracks">
+                <list>
+                    <value>Sgt. Pepper's Lonely Hearts Club Band</value>
+                    <value>With a Little Help from My Friends</value>
+                    <value>Lucy in the Sky with Diamonds</value>
+                    <value>Getting Better</value>
+                    <value>Fixing a Hole</value>
+                    <!-- ...other tracks omitted for brevity... -->
+                </list>
+            </property>
+        </bean>
+    
+        <!--使用Spring提供的util-namespace去简化list的声明，首先引入命名空间-->
+        <util:list id="trackList">
+            <value>Sgt. Pepper's Lonely Hearts Club Band</value>
+            <value>With a Little Help from My Friends</value>
+            <value>Lucy in the Sky with Diamonds</value>
+            <value>Getting Better</value>
+            <value>Fixing a Hole</value>
+            <!-- ...other tracks omitted for brevity... -->
+        </util:list>
+        <bean id="compactDisc7"
+              class="xmlconfig.properties.BlankDisc"
+              p:title="Sgt. Pepper's Lonely Hearts Club Band"
+              p:artist="The Beatles"
+              p:tracks-ref="trackList"/>
+    ```
 
 ####4. _导入和混合配置_
 
