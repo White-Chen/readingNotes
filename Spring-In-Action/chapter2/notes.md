@@ -223,8 +223,60 @@
     ```
     
 ####2. _通过Java代码转配bean_
-+ 
++ 尽管自动配置在很多情况下是很好的。但是有的时候，自动配置不能满足要求，这个时候就需要进行显式的配置。比如，你需要从第三库里面装配Bean，因为你没有权利修改源码，所以你就没有机会在类里面添加@AutoWired注解或者@Component注解，在这种情况下，你必须使用显式配置。
++ **第一步**，创建一个Java的配置类
+    + @Configuration表明该类是一个Spring配置类
+    ```java
+    import org.springframework.context.annotation.Configuration;
+    @Configuration
+    public class CDPlayerConfig {
+    }
+    ```
+    
++ **第二步**，声明简单的Bean
+    + 在JavaConfig中，为了声明一个Bean，你需要创建一个方法，该方法返回你需要的Bean的类型。然后使用@Bean来注解该方法。[@Bean注解告诉Spring，该方法是用来产生Bean的方法，并且将该Bean注入到Spring上下文中去。方法的主体就是返回你希望的Bean类型的实体。默认情况下，Bean的ID跟@Component得到的ID是一样的。如果需要重新定义，指明@Bean注解的name属性就可以了.]()
+    ```java
+    @Configuration // 声明当前类为Spring配置类
+    public class CDPlayerConfig {
+        @Bean("musicClubBand")
+        public CompactDisc sgtPeppers() {
+            return new SgtPeppers();
+        }
+          
+    }
+    ```
++ **第三步**，使用JavaConfig进行注入
+    + 使用Java注入，只需要调用使用@Bean注解的方法即可。[看起来好像CDPlayer()是调用了sgtPeppers()方法，但是其实不是。它只是调用了sgtPeppers方法产生的Bean，并没有重新调用sgtPeppers方法. Sprig会拦截所有对它的调用并确保直接返回该方法所创建的bean.]()
+    ```java
+    @Configuration // 声明当前类为Spring配置类
+    public class CDPlayerConfig {
+        @Bean
+        public CompactDisc sgtPeppers() {
+            return new SgtPeppers();
+        }
+        @Bean
+        public CDPlayer cdPlayer(){
+            return new CDPlayer(sgtPeppers());
+        }
+    }
+    ```
+    
+    + 另一种注入方式：直接使用参数提供，Spring会获取该参数需要的Bean，然后注入进去。当然，通过这种方法注入之后，在函数体中，你可以随便使用这个注入的Bean。[这里使用了设置器注入的模式]()。再一次说明，@Bean注解的方法体中可以使用任意有效的java表达式，并不是只有构造器注入和设置器注入这两种方法，也可以使用其他的方法。比如：
+    ```java
+    @Bean
+    public CDPlayer cdPlayer(CompactDisc compactDisc) {
+        CDPlayer cdPlayer = new CDPlayer(compactDisc);
+        cdPlayer.setCompactDisc(compactDisc);
+        return cdPlayer;
+    }
+    ```
 
++ **第四步**，验证Java装配。这里和上面自动装配的方式想相同，需要注意的是要提前将CDPlayer类中@Autowired注解都删除，以此证明上述操作是起作用的。
+    ```java
+    /*Output: 没有报错表明通过
+    Playing Sgt. Pepper's Lonely Hearts Club Band by The beatles
+    */
+    ```
 
 ####3. _通过XML装配bean_
 
