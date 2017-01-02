@@ -245,7 +245,7 @@
     + 对于比较简单的遍历(像数组或者有序列表), 使用迭代器方式遍历较为繁琐. 
    
 ####4. _[.this 和 .new]()_ :bangbang:
-+ **OuterClassName.this**: 当需要在内部类中传递或者使用外围类的对象引用时，可以通过这种方法获得实例对象的引用。
++ **OuterClassName.this**: 当需要在内部类中传递或者使用外围类的对象引用时, 可以通过这种方法获得实例对象的引用. 
 + [**OuterClassObjectName.new**: 创建内部类的实例.]()
     ```java
     public class DotNew{
@@ -253,7 +253,7 @@
       public class Inner{}
       public static void main(String[] args){
           DotNew dn = new DotNew();
-          // 用法正确，内部类必须持有一个外围类的对象引用，除静态内部类以外
+          // 用法正确, 内部类必须持有一个外围类的对象引用, 除静态内部类以外
           DotNew.Inner inner = dn.new Inner();
           // 错误用法
           DotNew.Inner inner1 = dn.new DotNew.Inner();
@@ -261,15 +261,65 @@
     }
     ```
 
-####
+####5. _内部类的向上转型_
++ 示例: 
+    ```java
+    // 公共接口, 这里省略的包
+    public interface Destination{
+      String readLabel();
+    }
+    
+    // 公共接口, 省略包
+    public interface Contents{
+      int value();
+    }
+  
+    class Parcel4{
+      
+      private class PContents implements Contents{
+          private int i = 11;
+          public int value(){return i;}
+      }
+    
+      protected class PDestination implements Destination{
+          private String label;
+          private PDestination(String whereTo){
+              label = whereTo;  
+          }
+          public String readLabel(){return label;}
+      }
+    
+      public Destination destination(String s){
+          return new PDestination(s);  
+      }
+    
+      public Contents contents(){
+          return new PContents();  
+      }
+    }   
+  
+    public class Test{
+      /**
+      * 程序测试入口
+      */
+      public static void main(String[] args){
+          Parcel4 p = new Parcel4();
+          //完全隐藏实现, 连内部类的名称都不知道
+          Contents c = p.contents();
+          Destination d = p.destination();
+          // 错误用法, 无法获取
+          Parcel4.PContents pc = p.new PContents();
+      }
+    }
+    ```
 
-####5. _在方法或域中定义内部类_
-+ 内部类支持在方法域或其他任意域中定义，之所以实现这种复杂语法有两点原因
-    + 返回某类型接口的实现类，并隐藏其具体实现。
-    + 隐藏某些不想被使用的类。
-+ 1. 定义在方法体中：
-    + 也称为局部内部类(local inner class)。
-    + [这种定义方法中内部实现类的可获取性依据其权限修饰符，而并不是说在方法域以外不可获取]()。
+####6. _在方法或域中定义内部类_
++ 内部类支持在方法域或其他任意域中定义, 之所以实现这种复杂语法有两点原因
+    + 返回某类型接口的实现类, 并隐藏其具体实现. 
+    + 隐藏某些不想被使用的类. 
++ 1. 定义在方法体中: 
+    + 也称为局部内部类(local inner class). 
+    + [这种定义方法中内部实现类的可获取性依据其权限修饰符, 而并不是说在方法域以外不可获取](). 
     ```java
     public class Parcel5{
     
@@ -277,7 +327,7 @@
         
           /**
           * 内部类实现Destination接口
-          * 权限修饰符：friendly，表示包内其他类可以获取。
+          * 权限修饰符: friendly, 表示包内其他类可以获取. 
           */
           class ModifiedDestination implements Destination{  
               private Sting label;
@@ -297,9 +347,9 @@
     }
     ```
 
-+ 2. 在任意域中定义：
-    + [不同于在方法中定义，在其他任意域中定义的内部类只能在域内获取，域外无法直接使用.]()
-    + 如下图，定义在if作用域中的内部类，但是需要注意的是：[域内定义的类，虽然无法在域外获取，但并不是意味着程序只有执行到该代码域时才会创建类，类在编译时其实已经创建完毕.]() :bangbang:
++ 2. 在任意域中定义: 
+    + [不同于在方法中定义, 在其他任意域中定义的内部类只能在域内获取, 域外无法直接使用.]()
+    + 如下图, 定义在if作用域中的内部类, 但是需要注意的是: [域内定义的类, 虽然无法在域外获取, 但并不是意味着程序只有执行到该代码域时才会创建类, 类在编译时其实已经创建完毕.]() :bangbang:
     ```java
     public class Parcel6{
     
@@ -315,10 +365,10 @@
               String s = ts.getSlip();
           }
           //这里无法直接使用TrackingSlip类
-          //如下直接会提示错误，如果用IDE的自动补全是不会不全的
+          //如下直接会提示错误, 如果用IDE的自动补全是不会不全的
           //TrackingSlip ts = new TrackingSlip("x");
       }
     }
     ```
 
-####6. _匿名内部类_
+####7. _匿名内部类_
