@@ -243,3 +243,63 @@
     + 封装性良好, 用户只需要得到迭代器就可以遍历, 而对于遍历算法则不用去关心. 
 + 迭代器模式的缺点: 
     + 对于比较简单的遍历(像数组或者有序列表), 使用迭代器方式遍历较为繁琐. 
+    
+####4. _在方法或域中定义内部类_
++ 内部类支持在方法域或其他任意域中定义，之所以实现这种复杂语法有两点原因
+    + 返回某类型接口的实现类，并隐藏其具体实现。
+    + 隐藏某些不想被使用的类。
++ 1. 定义在方法体中：
+    + 也称为局部内部类(local inner class)。
+    + [这种定义方法中内部实现类的可获取性依据其权限修饰符，而并不是说在方法域以外不可获取]()。
+    ```java
+    public class Parcel5{
+    
+      public Destination destination(String s){
+        
+          /**
+          * 内部类实现Destination接口
+          * 权限修饰符：friendly，表示包内其他类可以获取。
+          */
+          class ModifiedDestination implements Destination{  
+              private Sting label;
+              private ModifiedDestination(String whereTo){
+                  label = whereTo;  
+              }
+          @Override
+          public String readLabel(){return label;}
+          }
+          return new ModifiedDestination(s);
+      }
+    
+      public static void main(String[] args){
+          Parcel5 p = new Parcel5();
+          Destination destination = p.destination("Nan Jing");
+      }
+    }
+    ```
+
++ 2. 在任意域中定义：
+    + [不同于在方法中定义，在其他任意域中定义的内部类只能在域内获取，域外无法直接使用.]()
+    + 如下图，定义在if作用域中的内部类，但是需要注意的是：[域内定义的类，虽然无法在域外获取，但并不是意味着程序只有执行到该代码域时才会创建类，类在编译时其实已经创建完毕.]() :bangbang:
+    ```java
+    public class Parcel6{
+    
+      private void internalTracking(boolean b){
+          //定义在if的作用域内
+          if(b){  
+              class TrackingSlip{
+                  private String id;
+                  TrackingSlip(String s){id = s;}
+                  String getSlip(){return id;}
+              }
+              TrackingSlip ts = new TrackingSlip("slip");
+              String s = ts.getSlip();
+          }
+          //这里无法直接使用TrackingSlip类
+          //如下直接会提示错误，如果用IDE的自动补全是不会不全的
+          //TrackingSlip ts = new TrackingSlip("x");
+      }
+    }
+    ```
+
+####5. _匿名内部类_
