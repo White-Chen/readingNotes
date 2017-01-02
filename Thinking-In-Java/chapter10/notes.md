@@ -4,3 +4,242 @@
 + 使用:
     + 通过 **OuterClassName.InnerClassName** 进行获取. 
     + 通过在 **OuterClassName** 内定义一个返回 **InnerClassName** 引用的可访问方法(更常用). 
+    
+####2. _内部类访问外围类成员_
++ 内部类对象持有一个指向外围类对象的引用，因此可以**无权限约束的访问**外围类的成员，包括 **private** 修饰的成员。
++ 内部类对象(非静态类)只能在与其外围类对象相关联的情况下才能被创建，反过来说这也意味着创建内部类对象的前提是外围类对象已经被创建。:heavy_exclamation_mark:
++ 示例：
+    ```java
+    package net.mindview.test;
+    
+    /**
+     * \* Created with Chen Zhe on 1/2/2017.
+     * \* Description:
+     * \* @author ChenZhe
+     * \* @author q953387601@163.com
+     * \* @version 1.0.0
+     * \
+     */
+    
+    /**
+     * 迭代器接口
+     */
+    interface InnerClassSelector{
+        /**
+         * Has next boolean.
+         *
+         * @return the boolean
+         */
+        boolean hasNext();
+    
+        /**
+         * Next object.
+         *
+         * @return the object
+         */
+        Object next();
+    }
+    
+    /**
+     * 外围类
+     */
+    public class InnerClassSequence {
+    
+        //注意这里是private，但是在内部类中仍然可以直接操作
+        private Object[] items;
+        private int next = 0;
+    
+        /**
+         * Instantiates a new Inner class sequence.
+         *
+         * @param size the size
+         */
+        public InnerClassSequence(int size){
+            items = new Object[size];
+        }
+    
+        /**
+         * Add.
+         *
+         * @param x the x
+         */
+        public void add(Object x){
+            if(next < items.length)
+                items[next++] = x;
+        }
+    
+        /**
+         * 迭代器接口通过内部类实现
+         */
+        private class SequenceSelector implements InnerClassSelector{
+    
+            private int i = 0;
+    
+            @Override
+            public boolean hasNext() {
+                return i != items.length;
+            }
+    
+            @Override
+            public Object next() {
+                return hasNext() ? items[i++] : null;
+            }
+        }
+    
+        /**
+         * Selector inner class selector.
+         *
+         * @return the inner class selector
+         */
+        public InnerClassSelector selector(){
+            return new SequenceSelector();
+        }
+    
+        /**
+         * The entry point of application.
+         *
+         * @param args the input arguments
+         */
+        public static void main(String[] args) {
+            InnerClassSequence sequence = new InnerClassSequence(10);
+            for (int i = 0; i < 10; i++) {
+                sequence.add(Integer.toString(i));
+            }
+            InnerClassSelector selector = sequence.selector();
+            while(selector.hasNext()){
+                System.out.print(selector.next() + " ");
+            }
+        }
+    }
+    
+    /*Output:
+    0 1 2 3 4 5 6 7 8 9 
+    */
+    ```
+    
+####3. [_设计模式_: 迭代器模式]() :bangbang:
++ 上面的实例中展示了一种叫做迭代器模式的简单实现，书上一带而过，下面做一些补充。
++ 定义：提供一种方法顺序访问一个聚合对象中的各种元素，而又不暴露该对象的内部表示。
++ 构成角色：
+    + 迭代器角色（Iterator）:定义遍历元素所需要的方法，一般来说会有这么三个方法：取得下一个元素的方法next()，判断是否遍历结束的方法hasNext()），移出当前对象的方法remove(),
+    + 具体迭代器角色（Concrete Iterator）：实现迭代器接口中定义的方法，完成集合的迭代。
+    + 容器角色(Aggregate):  一般是一个接口，提供一个iterator()方法，例如java中的Collection接口，List接口，Set接口等.
+    + 具体容器角色（ConcreteAggregate）：就是抽象容器的具体实现类，比如List接口的有序列表实现ArrayList，List接口的链表实现LinkList，Set接口的哈希列表的实现HashSet等。
+    
++ 应用场景：
+    + 访问一个集合对象的内容而无需暴露它的内部表示
+    + 支持对集合对象的多种遍历
+    + 为遍历不同的集合结构提供一个统一的接口
+    
++ 示例：
+    + 迭代器接口：
+    ```java
+    public interface Iterator {
+        public boolean hasNext();
+        public Object next();
+    }
+    ```
+    
+   + 迭代器实现类：
+   ```java
+    public class ConcreteIterator implements Iterator {
+        //这里自定义一个list接口，不要用系统自带的，不然可能需要实现更多的方法
+        private List list = null;
+        private int index;
+    
+        public ConcreteIterator(List list) {
+            super();
+            this.list = list;
+        }
+    
+        @Override
+        public boolean hasNext() {
+            if (index >= list.getSize()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    
+        @Override
+        public Object next() {
+            Object object = list.get(index);
+            index++;
+            return object;
+        }
+    
+    }
+    ```
+    
+    + 容器角色接口：
+    ```java
+    //定义集合可以进行的操作
+    public interface List {
+        public void add(Object obj);  
+        public Object get(int index);
+        public Iterator iterator();  
+        public int getSize();
+    }
+    ```
+    
+    + 容器角色实现类：
+    ```java
+    public class ConcreteAggregate implements List{
+    
+        private Object[] list;
+        private int size=0;
+        private int index=0;
+        public ConcreteAggregate(){
+            index=0;
+            size=0;
+            list=new Object[100];
+        }
+        @Override
+        public void add(Object obj) {
+            list[index++]=obj;
+            size++;
+        }
+    
+        @Override
+        public Iterator iterator() {
+            
+            return new ConcreteIterator(this);
+        }
+        @Override
+        public Object get(int index) {
+            
+            return list[index];
+        }
+        @Override
+        public int getSize() {
+            
+            return size;
+        }
+      
+        /**
+        * 程序入口，测试      
+        */
+        public static void main(String[] args){
+            List list=new ConcreteAggregate();
+                    list.add("a");
+                    list.add("b");
+                    list.add("c");
+                    list.add("d");
+                    Iterator it=list.iterator();
+                    while(it.hasNext()){
+                        System.out.print(it.next());
+                    }
+        }
+    }
+  
+    /*Output:
+    abcd
+    */
+    ```
+    
++ 迭代器模式的优点:
+    + 简化了遍历方式，对于对象集合的遍历，还是比较麻烦的，对于数组或者有序列表，我们尚可以通过游标来取得，但用户需要在对集合了解很清楚的前提下，自行遍历对象，但是对于hash表来说，用户遍历起来就比较麻烦了。而引入了迭代器方法后，用户用起来就简单的多了。
+    + 可以提供多种遍历方式，比如说对有序列表，我们可以根据需要提供正序遍历，倒序遍历两种迭代器，用户用起来只需要得到我们实现好的迭代器，就可以方便的对集合进行遍历了。
+    + 封装性良好，用户只需要得到迭代器就可以遍历，而对于遍历算法则不用去关心。
++ 迭代器模式的缺点：
+    + 对于比较简单的遍历（像数组或者有序列表），使用迭代器方式遍历较为繁琐。
