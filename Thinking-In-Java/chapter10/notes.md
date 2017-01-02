@@ -243,8 +243,27 @@
     + 封装性良好, 用户只需要得到迭代器就可以遍历, 而对于遍历算法则不用去关心. 
 + 迭代器模式的缺点: 
     + 对于比较简单的遍历(像数组或者有序列表), 使用迭代器方式遍历较为繁琐. 
-    
-####4. _在方法或域中定义内部类_
+   
+####4. _[.this 和 .new]()_ :bangbang:
++ **OuterClassName.this**: 当需要在内部类中传递或者使用外围类的对象引用时，可以通过这种方法获得实例对象的引用。
++ [**OuterClassObjectName.new**: 创建内部类的实例.]()
+    ```java
+    public class DotNew{
+      //空的内部类
+      public class Inner{}
+      public static void main(String[] args){
+          DotNew dn = new DotNew();
+          // 用法正确，内部类必须持有一个外围类的对象引用，除静态内部类以外
+          DotNew.Inner inner = dn.new Inner();
+          // 错误用法
+          DotNew.Inner inner1 = dn.new DotNew.Inner();
+      }
+    }
+    ```
+
+####
+
+####5. _在方法或域中定义内部类_
 + 内部类支持在方法域或其他任意域中定义，之所以实现这种复杂语法有两点原因
     + 返回某类型接口的实现类，并隐藏其具体实现。
     + 隐藏某些不想被使用的类。
@@ -302,4 +321,4 @@
     }
     ```
 
-####5. _匿名内部类_
+####6. _匿名内部类_
