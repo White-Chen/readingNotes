@@ -372,28 +372,124 @@
     ```
 
 ####7. [_匿名内部类_]():heavy_exclamation_mark:
-+ 匿名内部类的简化形式，一般是指在返回时内部类对象时直接插入类的定义。
-+ [如下面实例在匿名内部类中使用类定义以外的对象时，这里需要用final修饰形参引用，这是语法要求！！]() 
-+ [如下面示例，+匿名内部类，因为没有类名，所以不能有显式的构造方法。如果显式写构造方法，编译器会提示为方法定义返回值类型，这显然说明不能显式写构造方法]()
++ 匿名内部类的简化形式, 一般是指在返回时内部类对象时直接插入类的定义. 
++ [如下面示例, 在匿名内部类中使用类定义以外的对象时, 这里需要用final修饰形参引用, 这是语法要求. 但是需要注意的是, SE8以后可以不用写final了!!]() 
++ [如下面示例, 匿名内部类, 因为没有类名, 所以不能有显式的构造方法. 如果显式写构造方法, 编译器会提示为方法定义返回值类型, 这显然说明不能显式写构造方法]()
     ```java
     public class Parcel9 {
         /**
          * Destination destination.
          *
          * @param dest the dest
-         *             注意在匿名内部类中使用类定义以外的对象时，这里需要用final修饰形参引用，这是语法要求！！
-         * @return the destination 返回一个匿名内部类，因为没有类名，所以不能有显式的构造方法。
+         *             注意在匿名内部类中使用类定义以外的对象时, 这里需要用final修饰形参引用, 这是语法要求!!
+         * @return the destination 返回一个匿名内部类, 因为没有类名, 所以不能有显式的构造方法. 
          */
         public Destination destination(final String dest){
+            
             return new Destination() {
                 private String label = dest;
-                //Destination(){} 如果这么写，IDE会提示没有方法的返回值类型定义，这说明IDE将其识别为方法名而不是构造方法定义！！。
+                private int a = x;
+                //Destination(){} 如果这么写, IDE会提示没有方法的返回值类型定义, 这说明IDE将其识别为方法名而不是构造方法定义!!. 
                 @Override
                 public String readLabel() {
                     return label;
                 }
-            }; // 注意这里使用分号结束，因为这是一个表达式。
+            }; // 注意这里使用分号结束, 因为这是一个表达式. 
         }
     }
     ```
-+ 
+    
++ 如下面示例, 匿名内部类是否可以有参构造, 这取决于其接口类是否定义了有参构造方法. 
++ [如下面示例, 当参数引用仅传递给构造方法时, 则不需要使用final进行修饰, 这与上面的final语法要求并不矛盾.]()
+    ```java
+    public class Parcel10 {
+    
+        /**
+         * Wrapping wrapping.
+         *
+         * @param x the x               注意这里没有使用final, 这是因为x被传递给构造方法使用, 而不是其他方法
+         * @return the wrapping         有参构造方法, 这取决于其实现的类是否定义了该构造方法. 
+         */
+        public Wrapping wrapping(int x){
+            return new Wrapping(x){
+                public int value(){
+                    return super.value() * 47; // super等关键字可以正常使用
+                }
+            };
+        }
+    
+        public static void main(String[] args) {
+            Parcel10 p10 = new Parcel10();
+            Wrapping wrapping = p10.wrapping(10);
+        }
+    }
+    
+    /**
+     * The type Wrapping.
+     */
+    class Wrapping{
+        private int i;
+        public Wrapping(int x){i = x;}
+        public int value(){return i;}
+    }
+    ```
+    
++ [对于匿名内部类, 因为不能显式定义构造方法所以无法实现在构造方法中进行成员变量初始化, 但是可以通过实例初始化方法进行成员变量初始化, 如下面示例:]()
+    ```java
+    public class Parcel11 {
+        /**
+         * Get base base.
+         *
+         * @param i the         传递给构造方法的对象引用, 不需要加final
+         * @return the base     返回匿名内部类
+         */
+        public static Base getBase(int i){
+            return new Base(i) {
+                // 实例初始化, 调用优于构造器
+                {
+                    System.out.println("Inside instance initializer");
+                }
+                @Override
+                public void f() {
+                    System.out.println("In anonymous f()");
+                }
+            };
+        }
+    
+        /**
+         * The entry point of application.
+         * 测试
+         * @param args the input arguments
+         */
+        public static void main(String[] args) {
+            Base base = Parcel11.getBase(47);
+            base.f();
+        }
+    }
+    /**
+     * The type Base. 接口类
+     */
+    abstract class Base{
+        /**
+         * Instantiates a new Base.
+         * 有参构造方法
+         * @param i the
+         */
+        public Base(int i ){
+            System.out.println("Base constructor, i = " + i);
+        }
+    
+        /**
+         * F.
+         */
+        public abstract void f();
+    }
+  
+    /* Output: 
+    Base constructor, i = 47
+    Inside instance initializer
+    In anonymous f()
+    */
+    ```
++ 实例初始化方法除上述用于匿名内部类的成员变量初始化意外, 可用于在多个构造方法中需要重复书写的初始化操作, 很适合用于日志记录等或者初始化验证等功能. 
+
