@@ -371,4 +371,29 @@
     }
     ```
 
-####7. _匿名内部类_
+####7. [_匿名内部类_]():heavy_exclamation_mark:
++ 匿名内部类的简化形式，一般是指在返回时内部类对象时直接插入类的定义。
++ [如下面实例在匿名内部类中使用类定义以外的对象时，这里需要用final修饰形参引用，这是语法要求！！]() 
++ [如下面示例，+匿名内部类，因为没有类名，所以不能有显式的构造方法。如果显式写构造方法，编译器会提示为方法定义返回值类型，这显然说明不能显式写构造方法]()
+    ```java
+    public class Parcel9 {
+        /**
+         * Destination destination.
+         *
+         * @param dest the dest
+         *             注意在匿名内部类中使用类定义以外的对象时，这里需要用final修饰形参引用，这是语法要求！！
+         * @return the destination 返回一个匿名内部类，因为没有类名，所以不能有显式的构造方法。
+         */
+        public Destination destination(final String dest){
+            return new Destination() {
+                private String label = dest;
+                //Destination(){} 如果这么写，IDE会提示没有方法的返回值类型定义，这说明IDE将其识别为方法名而不是构造方法定义！！。
+                @Override
+                public String readLabel() {
+                    return label;
+                }
+            }; // 注意这里使用分号结束，因为这是一个表达式。
+        }
+    }
+    ```
++ 
