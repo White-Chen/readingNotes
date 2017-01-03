@@ -493,3 +493,105 @@
     ```
 + 实例初始化方法除上述用于匿名内部类的成员变量初始化意外, 可用于在多个构造方法中需要重复书写的初始化操作, 很适合用于日志记录等或者初始化验证等功能. 
 
+####8. [_设计模式: 基于匿名内部类的工厂方法模式_]()
++ 上一章最后有介绍工厂方法模式, 但是不是基于匿名内部类的, 这里介绍一下基于匿名内部类的工厂方法模式, 当然基于匿名内部类的更好. 
++ 示例: 
+    ```java
+    /**
+     * \* Created with Chen Zhe on 1/3/2017.
+     * \* Description:
+     * \* @author ChenZhe
+     * \* @author q953387601@163.com
+     * \* @version 1.0.0
+     * \
+     */
+    public class Factories_2 {
+    
+        public static void serviceConsumer(ServiceFactory factory){
+            Service service = factory.getService();
+            service.method1();
+            service.method2();
+        }
+    
+        public static void main(String[] args) {
+            serviceConsumer(ServiceImplementation_1.factory);
+            serviceConsumer(ServiceImplementation_2.factory);
+        }
+    }
+    
+    /**
+     * The type Service impl 2.
+     * 具体产品角色
+     */
+    class ServiceImplementation_1 implements Service{
+    
+        // 隐藏构造方法
+        private ServiceImplementation_1(){}
+    
+        @Override
+        public void method1() {
+            System.out.println("ServiceImplementaion_1 method1");
+        }
+    
+        @Override
+        public void method2() {
+            System.out.println("ServiceImplementaion_2 method1");
+        }
+    
+        /**
+         * The type Service factory impl 1.
+         * 具体工厂角色1
+         */
+        public static ServiceFactory factory =
+                new ServiceFactory() {
+                    @Override
+                    public Service getService() {
+                        return new ServiceImplementation_1();
+                    }
+                };
+    }
+    
+    /**
+     * The type Service impl 2.
+     * 具体产品角色
+     */
+    class ServiceImplementation_2 implements Service{
+    
+        // 隐藏构造方法
+        private ServiceImplementation_2(){}
+    
+        @Override
+        public void method1() {
+            System.out.println("ServiceImplementaion_2 method1");
+        }
+    
+        @Override
+        public void method2() {
+            System.out.println("ServiceImplementaion_2 method2");
+        }
+    
+        /**
+         * The type Service factory impl 1.
+         * 具体工厂角色1
+         */
+        public static ServiceFactory factory =
+                new ServiceFactory() {
+                    @Override
+                    public Service getService() {
+                        return new ServiceImplementation_2();
+                    }
+                };
+    }
+  
+    /* Output:
+    ServiceImplementaion_1 method1
+    ServiceImplementaion_2 method1
+    ServiceImplementaion_2 method1
+    ServiceImplementaion_2 method2
+    */
+    ```
+
++ [使用匿名内部类实现工厂方法模式的优点: ]() :bangbang:
+    + 产品的构造方法可以通过 **private** 隐藏. 
+    + 不需要额外创建与产品相对应的有名称的工厂类. 
+    + 因为工厂类本身往往只需要一个实例即可, 这里因为可以使用 **static** 从而减少了不必要的对象创建, 提高了程序的效率. 
