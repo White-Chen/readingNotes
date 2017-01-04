@@ -621,7 +621,8 @@
 + 回调：通过回调，对象能够携带一些信息，这些信息允许它在稍后的某个时刻调用初始的对象。Java同样可以通过内部类实现回调，并且这样相比指针回调更加安全。
 + [个人理解：把接口对应的实现类的一个实例当成一个参数传递给一个函数调用，那个函数处理过程中会调用你的这个接口中的方法。就比实现了Callable接口的线程，会返回一个Future对象，这个应该是一个实现的内部类，它在程序员与线程之间架设了一道桥梁，程序员可以有限安全地使用一些线程对象中的方法。]()
 
-####10. [_设计模式：模板方法_]() :bangbang:
+####10. [_控制框架 & 设计模式：模板方法_]() :bangbang:
++ 
 
 ####11. _继承内部类_
 + [因为内部类持续持有外围类的对象引用，而如果继承内部类则显然无法明确继承类与外围类对象之间的关系，所以需要通过必须通过如下语法实现，否则无法编译通过,]()
@@ -629,7 +630,30 @@
 
 + 示例如下：
     ```java
-
+    public class WithInner {
+        class Inner{
+            Inner(String outString){
+                System.out.println(outString);
+            }
+        }
+    }
+  
+    public class InheritInner extends WithInner.Inner{
+        //InheritInner(){} IDE会提示没有默认的构造方法
+        //如下可以实现，但是感觉不是很明白这种语法。为什么with的super会指向它的内部类？
+        InheritInner(WithInner with, String outStr){
+            with.super(outStr);
+        }
+    
+        public static void main(String[] args) {
+            WithInner wi = new WithInner();
+            InheritInner ii = new InheritInner(wi,"take easy");
+        }
+    }
+    
+    /* Output:
+    take easy
+    */
     ```
 
 ####12. _覆盖内部类_
