@@ -4,14 +4,14 @@
 + 使用:
     + 通过 **OuterClassName.InnerClassName** 进行获取. 
     + 通过在 **OuterClassName** 内定义一个返回 **InnerClassName** 引用的可访问方法(更常用). 
-+ 使用内部类的原因：
-    + 因为内部类持有外围类对象的引用，所以内部类提供了一个访问外围类成员的窗口。
-    + 内部类因为可以独立实现接口，且与外围类实现的接口不冲突，所以可以提供一种[基于内部类的多继承实现方案. 对于多接口，**implements** 关键字为我们直接提供了多继承方案，但是对于当我们需要继承多个类时，通过内部类可以实现.]()
++ 使用内部类的原因: 
+    + 因为内部类持有外围类对象的引用, 所以内部类提供了一个访问外围类成员的窗口. 
+    + 内部类因为可以独立实现接口, 且与外围类实现的接口不冲突, 所以可以提供一种[基于内部类的多继承实现方案. 对于多接口, **implements** 关键字为我们直接提供了多继承方案, 但是对于当我们需要继承多个类时, 通过内部类可以实现.]()
 + 内部类有以下几个不同的特性
-    + 1. 内部类可以有多个实例，且拥有独立于外围类的状态信息。
-    + 2. 在一个外围类内可以以不同实现方式多次实现同一个接口。
-    + 3. 内部类的创建时间不依赖于外围类的创建时间。(但是内部类的创建依赖外围类的创建，因为必须要有外围类的实例引用)
-    + 4. 内部类是独立实体，因此与外围类没有迷惑性的 **is-a** 关系。
+    + 1. 内部类可以有多个实例, 且拥有独立于外围类的状态信息. 
+    + 2. 在一个外围类内可以以不同实现方式多次实现同一个接口. 
+    + 3. 内部类的创建时间不依赖于外围类的创建时间. (但是内部类的创建依赖外围类的创建, 因为必须要有外围类的实例引用)
+    + 4. 内部类是独立实体, 因此与外围类没有迷惑性的 **is-a** 关系. 
     
 ####2. _内部类访问外围类成员_
 + 内部类对象持有一个指向外围类对象的引用, 因此可以**无权限约束的访问**外围类的成员, 包括 **private** 修饰的成员. 
@@ -617,18 +617,323 @@
 + 内部类无论嵌套多少层, 都可以访问它嵌入的外围类所有成员(注意这里说的是内部类, 不是嵌套类).
 
 ####9. [_闭包和回调/Closures & Callbacks_]()  :bangbang:
-+ 闭包是一个可调用的对象，他记录了一些信息，这些信息来自于创建它的作用域。这一概念与内部类相似，因此内部类可以看做是面向对象的闭包。
-+ 回调：通过回调，对象能够携带一些信息，这些信息允许它在稍后的某个时刻调用初始的对象。Java同样可以通过内部类实现回调，并且这样相比指针回调更加安全。
-+ [个人理解：把接口对应的实现类的一个实例当成一个参数传递给一个函数调用，那个函数处理过程中会调用你的这个接口中的方法。就比实现了Callable接口的线程，会返回一个Future对象，这个应该是一个实现的内部类，它在程序员与线程之间架设了一道桥梁，程序员可以有限安全地使用一些线程对象中的方法。]()
++ 闭包是一个可调用的对象, 他记录了一些信息, 这些信息来自于创建它的作用域. 这一概念与内部类相似, 因此内部类可以看做是面向对象的闭包. 
++ 回调: 通过回调, 对象能够携带一些信息, 这些信息允许它在稍后的某个时刻调用初始的对象. Java同样可以通过内部类实现回调, 并且这样相比指针回调更加安全. 
++ [个人理解: 把接口对应的实现类的一个实例当成一个参数传递给一个函数调用, 那个函数处理过程中会调用你的这个接口中的方法. 就比实现了Callable接口的线程, 会返回一个Future对象, 这个应该是一个实现的内部类, 它在程序员与线程之间架设了一道桥梁, 程序员可以有限安全地使用一些线程对象中的方法. ]()
 
-####10. [_控制框架 & 设计模式：模板方法_]() :bangbang:
-+ 
+####10. [_基于内部类的控制框架_]() :bangbang:
+
++ 通过内部类实现控制框架
+    + 内部类允许控制框架的完整实现由单个类创建, 从而使得实现的细节被封装起来. 内部类用来表示解决问题所必须的各种不同的action();
+    + 内部类能够很容易地访问外围类的任意成员, 所以可以避免这种实现变得笨拙. 
++ 下面是示例: 
+    ＋　通过[模板模式]()实现实现事件类. (这个模式稍后会介绍)
+    ```java
+    public abstract class Event {
+        // 事件开始时间
+        private long eventTime;
+    
+        // 模拟事件开始运行前的延时时间
+        protected final long delayTime;
+    
+        public Event(long delayTime) {
+            this.delayTime = delayTime;
+        }
+    
+        // 方法独立出来, 方便重置事件时间, 达到重用的目的
+        public void start(){
+            eventTime = System.nanoTime() + delayTime;
+        }
+    
+        // 判断事件是否运行完毕, 如果完毕返回true
+        public boolean ready(){
+            return System.nanoTime() >= eventTime;
+        }
+    
+        // 抽象方法, 定义事件的具体动作
+        public abstract void action();
+    }
+    ```
+    
+    + 框架类:  这里可以发现框架类完全不知道其成员到底做了什么, 但是可以正常的运行Event类
+    ```java
+    public class Controller {
+        private List<Event> eventList = new ArrayList<Event>();
+        public void addEvent(Event e){eventList.add(e);}
+        public void run(){
+            while (eventList.size() > 0){
+                // 这里因为需要使用remove方法, 在foreach中, 必须要重新建一个模板, 否则运行时会报错
+                for (Event event : new ArrayList<Event>(eventList)) {
+                    if(event.ready()){
+                        System.out.println(event);
+                        event.action();
+                        eventList.remove(event);
+                    }
+                }
+            }
+        }
+    }
+    ```
+    
+    + 框架类的实现类, 这里可以用于解决特定问题
+    ```java
+    public class GreenController extends Controller{
+        private boolean light = false;
+        private boolean water = false;
+        private boolean fans = false;
+        private String thermostat = "Day";
+    
+        public class LightOn extends Event{
+    
+            public LightOn(long delayTime) {
+                super(delayTime);
+            }
+    
+            @Override
+            public void action() {
+                light = true;
+            }
+    
+            @Override
+            public String toString() {
+                return "Light is on";
+            }
+        }
+    
+        public class LigthOff extends Event{
+    
+            public LigthOff(long delayTime) {
+                super(delayTime);
+            }
+    
+            @Override
+            public void action() {
+                light = false;
+            }
+    
+            @Override
+            public String toString() {
+                return "Light is off";
+            }
+        }
+    
+        public class WaterOn extends Event{
+    
+            public WaterOn(long delayTime) {
+                super(delayTime);
+            }
+    
+            @Override
+            public void action() {
+                water = true;
+            }
+    
+            @Override
+            public String toString() {
+                return "Water is on";
+            }
+        }
+    
+        public class WaterOff extends Event{
+    
+            public WaterOff(long delayTime) {
+                super(delayTime);
+            }
+    
+            @Override
+            public void action() {
+                water = false;
+            }
+    
+            @Override
+            public String toString() {
+                return "Water is off";
+            }
+        }
+    
+        public class FansOn extends Event{
+    
+            public FansOn(long delayTime) {
+                super(delayTime);
+            }
+    
+            @Override
+            public void action() {
+                light = true;
+            }
+    
+            @Override
+            public String toString() {
+                return "Fans is on";
+            }
+        }
+    
+        public class FansOff extends Event{
+    
+            public FansOff(long delayTime) {
+                super(delayTime);
+            }
+    
+            @Override
+            public void action() {
+                light = false;
+            }
+    
+            @Override
+            public String toString() {
+                return "Fans is off";
+            }
+        }
+    
+        public class ThermostatNight extends Event{
+    
+            public ThermostatNight(long delayTime) {
+                super(delayTime);
+            }
+    
+            @Override
+            public void action() {
+                thermostat = "Night";
+            }
+    
+            @Override
+            public String toString() {
+                return "Thermostat is night setting";
+            }
+        }
+    
+        public class ThermostatDay extends Event{
+    
+            public ThermostatDay(long delayTime) {
+                super(delayTime);
+            }
+    
+            @Override
+            public void action() {
+                thermostat = "Day";
+            }
+    
+            @Override
+            public String toString() {
+                return "Thermostat is day setting";
+            }
+        }
+    
+        public class Bell extends Event{
+    
+            public Bell(long delayTime) {
+                super(delayTime);
+            }
+    
+            @Override
+            public void action() {
+                addEvent(new Bell(delayTime));
+            }
+    
+            @Override
+            public String toString() {
+                return "Bing!!!";
+            }
+        }
+    
+        public class Restart extends Event{
+    
+            private Event[] eventList;
+    
+            public Restart(long delayTime, Event[] eventList) {
+                super(delayTime);
+                this.eventList = eventList;
+                for (Event event : eventList) {
+                    addEvent(event);
+                }
+            }
+    
+            @Override
+            public void action() {
+                for (Event event : eventList) {
+                    event.start();
+                    addEvent(event);
+                }
+                start();
+                addEvent(this);
+            }
+    
+            @Override
+            public String toString() {
+                return "Restarting system";
+            }
+        }
+    
+        public static class Terminate extends Event{
+    
+            public Terminate(long delayTime) {
+                super(delayTime);
+            }
+    
+            @Override
+            public void action() {
+                System.exit(0);
+            }
+    
+            @Override
+            public String toString() {
+                return "Terminating!";
+            }
+        }
+    }
+    ```
+    
+    + 测试: 基于[命令模式(稍后会介绍)]()的实现
+    ```java
+    public class GreenhouseController {
+        public static void main(String[] args) {
+            GreenController gc = new GreenController();
+            gc.addEvent(gc.new Bell(1300));
+            Event[] events = {
+                    gc.new ThermostatNight(0),
+                    gc.new LightOn(200),
+                    gc.new LigthOff(400),
+                    gc.new WaterOn(600),
+                    gc.new WaterOff(800),
+                    gc.new FansOn(1000),
+                    gc.new FansOff(1200),
+                    gc.new ThermostatDay(1400)
+            };
+            gc.addEvent(gc.new Restart(2000,events));
+            if(args.length == 1)
+                gc.addEvent(
+                        new GreenController.Terminate(
+                                new Integer(args[0])
+                        )
+                );
+            gc.run();
+        }
+    }
+    ```
+    
+    + 输入和输出: 
+    ```java
+    /* Input : 4000 
+    Output:
+    Bing!!!
+    Thermostat is night setting
+    Light is on
+    Light is off
+    Water is on
+    Water is off
+    Fans is on
+    Fans is off
+    Thermostat is day setting
+    Restarting system
+    Terminating!
+    */
+    ```
 
 ####11. _继承内部类_
-+ [因为内部类持续持有外围类的对象引用，而如果继承内部类则显然无法明确继承类与外围类对象之间的关系，所以需要通过必须通过如下语法实现，否则无法编译通过,]()
++ [因为内部类持续持有外围类的对象引用, 而如果继承内部类则显然无法明确继承类与外围类对象之间的关系, 所以需要通过必须通过如下语法实现, 否则无法编译通过,]()
     > enclosingClassReference.super();
 
-+ 示例如下：
++ 示例如下: 
     ```java
     public class WithInner {
         class Inner{
@@ -640,7 +945,7 @@
   
     public class InheritInner extends WithInner.Inner{
         //InheritInner(){} IDE会提示没有默认的构造方法
-        //如下可以实现，但是感觉不是很明白这种语法。为什么with的super会指向它的内部类？
+        //如下可以实现, 但是感觉不是很明白这种语法. 为什么with的super会指向它的内部类？
         InheritInner(WithInner with, String outStr){
             with.super(outStr);
         }
@@ -657,21 +962,21 @@
     ```
 
 ####12. _覆盖内部类_
-+ 因为内部类与外围类是在同一个命名空间下的完全分离的两个个体，而不是方法，自然不支持在子类中覆盖的功能，但是可以通过在子类中实现一个继承自父类内部类的新内部类来实现类似的覆盖效果。
++ 因为内部类与外围类是在同一个命名空间下的完全分离的两个个体, 而不是方法, 自然不支持在子类中覆盖的功能, 但是可以通过在子类中实现一个继承自父类内部类的新内部类来实现类似的覆盖效果. 
 
 ####13. _局部内部类 vs. 匿名内部类_
-+ 大多数情况下[局部内部类(上面有介绍，在方法中定义)]()与[匿名内部类]()可以实现相同的功能。
-+ 区别：局部内部类可以定义构造方法，内部类只能实例初始化。
-+ 以下两种情况用局部内部类：
-    + 重复创建内部类的多个实例。
-    + 需要自定义构造方法或重载构造方法。
++ 大多数情况下[局部内部类(上面有介绍, 在方法中定义)]()与[匿名内部类]()可以实现相同的功能. 
++ 区别: 局部内部类可以定义构造方法, 内部类只能实例初始化. 
++ 以下两种情况用局部内部类: 
+    + 重复创建内部类的多个实例. 
+    + 需要自定义构造方法或重载构造方法. 
     
 ####14. _内部类表示符$_
-+ 内部类在编译时会独立编译为.class文件，其名称符合以下规则
-    + 匿名内部类：
++ 内部类在编译时会独立编译为.class文件, 其名称符合以下规则
+    + 匿名内部类: 
     > OuterCLassName$number.class
     
-    + 普通内部类：
+    + 普通内部类: 
     > OuterClassName$InnerClassName.class
     
 
