@@ -29,7 +29,6 @@
             </plugins>
         </pluginManagement>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -74,4 +73,5 @@
             <version>1.16.1</version>
         </dependency>
     </dependencies>
+
 </project>
