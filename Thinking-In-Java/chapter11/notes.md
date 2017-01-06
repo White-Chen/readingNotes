@@ -27,7 +27,7 @@
     + [**如果发生结构性修改的是返回的子list，那么原来的list的大小也会发生变化**.]()
     + [**而如果发生结构性修改的是原来的list（不包括由于返回的子list导致的改变），那么返回的子list语义上将会是undefined。在AbstractList（ArrayList的父类）中，undefined的具体表现形式是抛出一个ConcurrentModificationException.**]()
     + 官方文档
-    >>>
+    >
         /**
             * Returns a view of the portion of this list between the specified
             * {@code fromIndex}, inclusive, and {@code toIndex}, exclusive.  (If
@@ -57,7 +57,7 @@
             * @throws IndexOutOfBoundsException {@inheritDoc}
             * @throws IllegalArgumentException {@inheritDoc}
             */
-    >>>
+    >
     
     + 示例：
     ```java
