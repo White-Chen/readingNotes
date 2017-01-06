@@ -165,11 +165,29 @@
     
     
 ####3. _List接口_
++ List接口下有两个实现类，分别代表了两种不同的用途
+    + ArrayList：随机访问速度快，但是在集合中部插入或删除操作相对较慢。
+    + LinkedList：适合顺序访问，随机访问速度较慢，但是在集合中间插入或删除操作相对较快。同时LinkedList相比ArrayList有更多的特有方法。
 
++ 内置方法：
+    + **contains()**: 通过对象内置的 **equals()** 方法判断对象是否在集合内。
+    + **containsAll()**: 判断一个集合是否在当前集合内，只是判断是否存在，所以顺序并不重要。
+    + **remove()**： 移除对象。
+    + **removeAll()**：移除调用方法存在的对象。
+    + **indexOf()**：返回对象下标。
+    + **subList()**：返回集合的子集。
+    + [**retainAll()**:交集操作，在调用方法的集合中只保留两个集合之间的交集.]() :heavy_exclamation_mark:
+    + **set()**：设置指定下标的对象。
+    + **add()**：按照List的顺序，添加对象到集合尾部。
+    + **addAll()**：添加全部对象到当前集合。这个方法有重载，支持从指定下标位置开始插入。
+    + **isEmpty()**：判断集合是否为空。
+    + **clear()**：清空当前集合。
+    + **toArray()**：将当前集合转为Array类。
+    
 + [java.util.List.subList时最好小心点.]() :bangbang:
     + 它返回原来list的从(fromIndex, toIndex)之间这一部分的视图，之所以说是视图，是因为实际上，返回的list是靠原来的list支持的。所以，你对原来的list和返回的list做的“非结构性修改”(non-structural changes)，都会影响到彼此对方。所谓的“非结构性修改”，是指不涉及到list的大小改变的修改。相反，结构性修改，指改变了list大小的修改.
-    + [**如果发生结构性修改的是返回的子list，那么原来的list的大小也会发生变化**.]()
-    + [**而如果发生结构性修改的是原来的list（不包括由于返回的子list导致的改变），那么返回的子list语义上将会是undefined。在AbstractList（ArrayList的父类）中，undefined的具体表现形式是抛出一个ConcurrentModificationException.**]()
+    + [如果发生结构性修改的是返回的子list，那么原来的list的大小也会发生变化.]()
+    + [而如果发生结构性修改的是原来的list（不包括由于返回的子list导致的改变），那么返回的子list语义上将会是undefined。在AbstractList（ArrayList的父类）中，undefined的具体表现形式是抛出一个ConcurrentModificationException.]()
     + 官方文档
     ```java
     /**
@@ -205,20 +223,91 @@
     
     + 示例：
     ```java
+    public class SubListTest {
+        public static void main(String[] args) {
+            List<Integer> list1 = new ArrayList<Integer>();
+            list1.add(1);list1.add(2);list1.add(3);
+            list1.add(4);list1.add(5);list1.add(6);
+            list1.add(7);list1.add(8);list1.add(9);
+            List<Integer> subList = list1.subList(3,6);
     
+            System.out.println(list1);
+            System.out.println(subList);
+    
+            Collections.reverse(list1);
+            System.out.println(list1);
+            System.out.println(subList);
+    
+            Collections.shuffle(list1);
+            System.out.println(list1);
+            System.out.println(subList);
+    
+            subList.remove(0);
+            System.out.println(list1);
+            System.out.println(subList);
+              
+            // 这里会报错，看下面的输出结果
+            list1.remove(2);
+            System.out.println(list1);
+            System.out.println(subList);
+    
+        }
+    }
+  
+    /*Output:
+    [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    [4, 5, 6]
+    [9, 8, 7, 6, 5, 4, 3, 2, 1]
+    [6, 5, 4]
+    [9, 4, 3, 8, 6, 5, 2, 7, 1]
+    [8, 6, 5]
+    [9, 4, 3, 6, 5, 2, 7, 1]
+    [6, 5]
+    [9, 4, 6, 5, 2, 7, 1]
+    java.util.ConcurrentModificationException
+    	at java.util.ArrayList$SubList.checkForComodification(ArrayList.java:1231)
+    	at java.util.ArrayList$SubList.listIterator(ArrayList.java:1091)
+    	at java.util.AbstractList.listIterator(AbstractList.java:299)
+    	at java.util.ArrayList$SubList.iterator(ArrayList.java:1087)
+    	at java.util.AbstractCollection.toString(AbstractCollection.java:454)
+  	    ......
+    */
     ```
     
 ####4. _ Iterator接口_
-+ 
++ 迭代器用来进一步对容器类遍历操作进行解耦的，遵循的是迭代设计模式，这个在第9章笔记中有介绍，就不详细介绍。
++ 所有实现Collection接口的具体类都提供了返回对象迭代器的方法：[containerObjectName.iterator()](), 这个方法会过匿名内部类返回实现Iterator接口的迭代器.
++ Iterator存在一定的约束性：[只能按照一个方向进行迭代输出]()，这个显然不如自己手动写foreach之类的灵活。
++ 基本方法：
+    + **next()**：指针移动到下一个，并返回指向对象。
+    + **hasNext()**：判断是否到集合的尾部。
+    + **remove()**:[这个是可选方法，也就是实现类可以不必实现，毕竟我感觉迭代器主要是用来读取的不是用来增删的.]()
 
-####5. _ListIterator接口_
-
+####5. [_ListIterator接口_]() :heavy_exclamation_mark:
++ 所有List实现类都提供了一种叫做ListIterator的迭代器，通过listIterator()方法获得，[优势是支持双向迭代.]()
++ 额外方法:
+    + **previous()**：移动到上一个位置，并返回指向对象。
+    + **previousIndex()**：返回上一处索引。
+    + **nextIndex()**: 返回上一次next操作后的指向索引。
++ 没来得及看源码，应该是有两个本地变量，一个保存next操作后来的指针位置，一个保存previous操作后的指针位置，一个是++操作，一个是--操作。
 
 ####6. _LinkedList类_
-
++ LinkedList除了在增删查操作上存在性能差别外，[更大的区别是LinkedList提供了大量的内置方法，这使得它可以被当做是栈Stack或者队列Queue使用]().
++ 额外方法:
+    + **getFirst(), element()**: 返回且不移除集合头部元素值，不存在则报错 **NoSuchElementException**，完全相同操作。
+    + **peek()**：返回集合头部元素值，不存在则返回null，这个是用于队列操作的。与上面的唯一区别是不会报错。
+    + **removeFirst(), remove()**: 与 **getFirst(),element()** 相同，唯一区别是会从集合中删除集合头部元素。
+    + **poll()**: 与 **peek()** 相同，只是会删除元素。 
+    + **add(), addLast()**：相同操作，在集合尾部添加元素。
+    + **offer()**：与上面完全相同，却别在于该命名方法一般用于队列操作。
+    + **addFirst()**：集合头部添加元素。
+    + **removeLast()**：集合尾部删除元素。
++ [通过上面方法可以发现LinkedList除实现了Queue接口的所有方法，因此可以直接转型为Queue接口类.]()
 
 ####7. _Stack类_
-
++ 一种后先出队列，Java在最早期版本内置了一个糟糕的Stack类继承自Vector接口，因为设计糟糕，本书作者不推荐使用。
++ [作者推荐直接把LinkedList当做Stack使用，如果想要语义清楚，可以自己自定义一个Stack类包装LinkedList，而不要使用Java内置的Stack类.]() :heavy_exclamation_mark:
++ 接口一般在编程语言中被用于评估表达式：这个做一下[练习15](exercises/exercise15).
 
 ####8. _Set接口_
 
