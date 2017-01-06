@@ -9,12 +9,17 @@
         + **Set(Collection的子接口)**：不能有重复元素。
         + **Queue(Collection的子接口)**：按照队列规则来确定对象产生的顺序。
     + **Map(接口)**：一组成对的“键值对”对象，允许使用键来查找值。映射表允许我们使用另一个对象查找某个对应对象。因为是键相当于值的索引，因此需要遵循[索引唯一]()原则。
+    
 + 类型安全容器：通过类型约束可以在[编译时]()检查容器相关操作是否类型安全，而不是在[运行时]()通过类型检查再报错。[需要注意的对于基础类型，应该使用它们的包装类进行声明.]()
     > Collection<ClassName> collectinon = new ArrayList<ClassName>(); 
     > Map<ClassName> map = new HashMap<ClassName,ClassName>();
 
 ####2. _Collection interface_
-+ 添加元素操作
++ 添加元素操作：_Collections.addAll()_方法可以接受一个Collectino对象；一个Array对象；或可变参数。
+    ```java
+   
+    ```
+
 
 ####3. __
 ####4. __
