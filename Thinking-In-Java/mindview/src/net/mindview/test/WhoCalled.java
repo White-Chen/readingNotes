@@ -9,33 +9,22 @@ package net.mindview.test;
  * \
  */
 public class WhoCalled {
-    static void f() throws Exception {
-        try{
-            throw new Exception();
-        } catch (Exception e){
-            throw (Exception) new Exception("f() exception").initCause(e);
-        }
-    }
-    static void g() throws Exception {
-        try {
-            f();
-        } catch (Exception e) {
-            throw (Exception) new Exception("g() exception").initCause(e);
-        }
-    }
+    static void f() throws Exception {throw new Exception();}
+    static void g() throws Exception {f();}
     static void h() throws Exception {
         try {
-            g();
-        } catch (Exception e) {
-            throw (Exception) new Exception("h() exception").initCause(e);
+            f();
+        }finally {
+            return;
         }
     }
 
     public static void main(String[] args) {
         try {
             WhoCalled.h();
+            System.out.println("can not catch exception from f()");
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("catch exception from f()");
         }
     }
 }
