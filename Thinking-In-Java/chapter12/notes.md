@@ -33,12 +33,59 @@
     + 字符串构造方法，传入可以描述当前异常信息的字符串。 
 
 ####3. _捕获异常_
++ 监控区域/guarded region: 一段可能产生异常的代码，并且后面跟着处理这些异常的代码。
++ 语法：
+    + try块，用于包围可能会抛出异常的方法块。
+    + catch块，处理try块中抛出的异常. [异常处理机制将负责搜寻参数与异常类型相匹配的第一个处理城区，然后进入catch字句执行，并且只有匹配的catch才会执行.]()
+    + finally块，可选块，表明try块中无论是否发生异常，都会执行的逻辑操作。
+    ```java
+    try{
+    // Code that might generate exceptions
+    } catch{Type id1}
+    // Handle exception of Type1
+    } catch{Type2 id2}
+    // Handle excetion of Type2
+    } catch{Type2 id2}
+    // Handle excetion of Type2
+    } finally{
+    // do something Whether or not error
+    }
+    // etc..
+    ```
 
++ [终止与恢复:]() :heavy_exclamation_mark:
+    + 终止模型：错误非常关键，一旦异常被抛出，就无法继续执行。[推荐使用.]()
+    + 恢复模型：异常被处理后能继续执行程序。通过调用方法来修正错误，或者把try块放在while循环里，直到获得满意结果。[这种模型会导致耦合，增加代码编写和维护点额困难.]() ::
 
 ####4. _自定义异常_
-
++ Java虽然提供了一些列标准异常类，但是完全可以自己通过继承异常类实现自定义异常。(最好选择意义相近的类继承)
++ [对于一个异常类来说，最重要的是它的类名，名字应该尽量能够体现改异常的信息.]()
++ 所有异常类均实现了 **Throwable** 接口，从字面意义可看出实现该接口的类可以被抛出。
++ 所有异常类的根类是 **Exception** 类，该类默认实现了两种构造方法。
++ 打印异常信息时，[推荐使用System.err输出流，因为它不会像System.out输出流一样会有可能被重定向输出.]() e.printStackTrace()默认调用的是System.err输出流。
++ 示例：
+    ```java
+    class MyException extends Exception{
+      public MyException(){}
+      public MyException(String exceptionInfo){super(exceptionInfo);}  
+    }
+  
+    public class TestException_1{
+      public static void f() throws MyException{
+        System.out.println("Throw");
+      }
+      public static void main(String[] args){
+          try{
+              f();
+          }catch (MyException e){
+              e.printStackTrace();
+          }
+      }
+    }
+    ```
 
 ####5. _异常说明_
++
 
 
 ####6. _捕获所有异常_
