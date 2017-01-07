@@ -188,7 +188,7 @@
     + 它返回原来list的从(fromIndex, toIndex)之间这一部分的视图, 之所以说是视图, 是因为实际上, 返回的list是靠原来的list支持的. 所以, 你对原来的list和返回的list做的"非结构性修改"(non-structural changes), 都会影响到彼此对方. 所谓的"非结构性修改", 是指不涉及到list的大小改变的修改. 相反, 结构性修改, 指改变了list大小的修改.
     + [如果发生结构性修改的是返回的子list, 那么原来的list的大小也会发生变化.]()
     + [而如果发生结构性修改的是原来的list(不包括由于返回的子list导致的改变), 那么返回的子list语义上将会是undefined. 在AbstractList(ArrayList的父类)中, undefined的具体表现形式是抛出一个ConcurrentModificationException.]()
-    + 官方文档
+    + 官方文档 
     ```java
     /**
     * Returns a view of the portion of this list between the specified
