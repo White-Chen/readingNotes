@@ -84,12 +84,310 @@
     }
     ```
 
-####5. _异常说明_
-+
++ 异常功能一般情况下都是与日志功能相关联的，通过在处理异常时记录日志，从而保留下程序错误的信息以供分析。  
+一般有两种写法，一种是在异常类中内置日志对象，从而在异常类被new时记录日志，还有一种是在调用异常类的类中内置日志对象记录当前类处理异常的日志。两种写法各有优势，一般由后者的比较多。下面示例显示的就是后者，其中使用了 **java.util.logging** 中的日志记录功能。  
+观察下面代码的输出，可以发现一个问题，就是明明是sout调用在前，但是输出结果却是在后面。这主要是因为一个调用的是out一个调用的是err，两者之间输出顺序会受到系统调度的影响。
+    ```java
+    class MyException2 extends Exception {
+        private int x;
+        public MyException2(){}
+        public MyException2(String mes){super(mes);}
+        public MyException2(String mes, int x){
+            super(mes);
+            this.x = x;
+        }
+        public int val(){return x;}
+    
+        @Override
+        public String getMessage() {
+            return "Detail message: " + x + " " + super.getMessage();
+        }
+    }
+    
+    public class LoggingExceptions{
+    
+        private static Logger logger =
+                Logger.getLogger("LoggingExceptions");
+    
+        static void logException(Exception e){
+            StringWriter writer = new StringWriter();
+            //使用重载方法
+            e.printStackTrace(new PrintWriter(writer));
+            logger.severe(writer.toString());
+        }
+    
+        public static void main(String[] args) {
+    
+            try{
+                throw new NullPointerException();
+            }catch (NullPointerException exception){
+                logException(exception);
+            }
+            try {
+                throw new MyException2();
+            }catch (MyException2 e){
+                logException(e);
+            }
+            try{
+                throw new MyException2("3rd try block");
+            }catch (MyException2 e){
+                logException(e);
+            }
+            try{
+                throw new MyException2("4th try block",4);
+            }catch (MyException2 e){
+                System.out.println("e.val = " + e.val());
+                logException(e);
+            }
+        }
+    }
+    
+    /*Output:
+    Jan 07, 2017 7:57:16 PM net.mindview.test.LoggingExceptions logException
+    SEVERE: java.lang.NullPointerException
+    	at net.mindview.test.LoggingExceptions.main(LoggingExceptions.java:41)
+    
+    Jan 07, 2017 7:57:16 PM net.mindview.test.LoggingExceptions logException
+    SEVERE: net.mindview.test.MyException2: Detail message: 0 null
+    	at net.mindview.test.LoggingExceptions.main(LoggingExceptions.java:46)
+    
+    Jan 07, 2017 7:57:16 PM net.mindview.test.LoggingExceptions logException
+    SEVERE: net.mindview.test.MyException2: Detail message: 0 3rd try block
+    	at net.mindview.test.LoggingExceptions.main(LoggingExceptions.java:51)
+    
+    Jan 07, 2017 7:57:16 PM net.mindview.test.LoggingExceptions logException
+    SEVERE: net.mindview.test.MyException2: Detail message: 4 4th try block
+    	at net.mindview.test.LoggingExceptions.main(LoggingExceptions.java:56)
+    
+    e.val = 4
+    */
+    ```
+    
++ 书中作者给出一个观点：大多数程序员可能仅仅只查看一下抛出的异常类型，其他就不管了，因此对异常类所添加的其他功能也许根本用不上。
 
+####5. _异常说明_
++ 通过关键 **throws** 可以用于告示使用当前类/方法的程序员，该类/方法抛出哪些异常。
++ [这是一种强制性语法，这意味如果当前类/方法能处理某些异常，那就需要对这些异常进行说明，以此来告知调用者需要处理. 也就是说对于异常，Java语法明了只有两种处理方式，要么throws要么就catch.]()
++ [有一种接口设计思路：就是明明方法不会抛出异常，但是也throws了异常，这就迫使使用者必须像真的抛出异常那样使用这个方法，这样做的好处是为了异常先占位置，以后方便抛出异常时不用修改代码。在定义抽象基类或接口时这种设计很重要，这样派生类或接口实现就能够抛出这些预先声明的异常.]()
++ 这种在编译时就能被检查的异常称为[被检查的异常]()。
 
 ####6. _捕获所有异常_
++ 只要catch所有异常的基类Exception类就可以捕获所有异常，因此需要注意[最好把它放在catch列表的末尾，以防它在其他catch语句之前先捕获了异常.]()
++ 所有实现 **Throwable** 接口的类都可以通过 _printStackTrace()/getStackTrace()_ 方法打印或者获取栈轨迹.
++ _getStackTrace()_ 会通过数组的形式返回栈轨迹，[其中每一个元素都表示栈中的一帧]()。栈顶元素是调用序列中的最后一个方法调用，这符合栈的先进后出原则。
+    ```java
+    public class WhoCalled {
+        static void f(){
+            try{
+                throw new Exception();
+            } catch (Exception e){
+                for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+                    System.out.println(stackTraceElement.getClassName() + "  " + stackTraceElement.getLineNumber());
+                }
+                System.out.println("-----------------new function-----------------");
+            }
+        }
+        static void g(){f();}
+        static void h(){g();}
+    
+        public static void main(String[] args) {
+            WhoCalled.f();
+            WhoCalled.g();
+            WhoCalled.h();
+        }
+    }
 
+    /*Output: 顺序是按照栈的出栈顺序定义的。
+    net.mindview.test.WhoCalled  14
+    net.mindview.test.WhoCalled  26
+    sun.reflect.NativeMethodAccessorImpl  -2
+    sun.reflect.NativeMethodAccessorImpl  62
+    sun.reflect.DelegatingMethodAccessorImpl  43
+    java.lang.reflect.Method  498
+    com.intellij.rt.execution.application.AppMain  147
+    -----------------new function-----------------
+    net.mindview.test.WhoCalled  14
+    net.mindview.test.WhoCalled  22
+    net.mindview.test.WhoCalled  27
+    sun.reflect.NativeMethodAccessorImpl  -2
+    sun.reflect.NativeMethodAccessorImpl  62
+    sun.reflect.DelegatingMethodAccessorImpl  43
+    java.lang.reflect.Method  498
+    com.intellij.rt.execution.application.AppMain  147
+    -----------------new function-----------------
+    net.mindview.test.WhoCalled  14
+    net.mindview.test.WhoCalled  22
+    net.mindview.test.WhoCalled  23
+    net.mindview.test.WhoCalled  28
+    sun.reflect.NativeMethodAccessorImpl  -2
+    sun.reflect.NativeMethodAccessorImpl  62
+    sun.reflect.DelegatingMethodAccessorImpl  43
+    java.lang.reflect.Method  498
+    com.intellij.rt.execution.application.AppMain  147
+    -----------------new function-----------------
+    */
+    ```
+
++ 重新抛出异常.
+    + 通过在catch语句中重新throw可以抛出当前捕获的异常. [重抛异常会把当前捕获异常抛给上一级环境中，同一个try块的后续子catch字句将被忽略.]() :heavy_exclamation_mark: 
+    ```java
+    catch(Exception exception){
+      System.out.println("Catch an exception");
+      throw exception;
+    }
+    ```
+    
+    + 但是如果仅仅只是抛出异常对象，那么上级环境在调用 _printStackTrace()_ 时只会显示原来抛出点的调用栈信息，而非重新抛出点的信息。:bangbang:
+    ```java
+    public class WhoCalled {
+        static void f() throws Exception {
+            try{
+                throw new Exception();
+            } catch (Exception e){
+                throw e;
+            }
+        }
+        static void g() throws Exception {
+            try {
+                f();
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+        static void h() throws Exception {
+            try {
+                g();
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+    
+        public static void main(String[] args) {
+            try {
+                WhoCalled.h();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+  
+    /*Output: 看下面输出信息可以明显发现e只记录了原抛出点信息，而没有记录新的抛出点位置。
+    java.lang.Exception
+    	at net.mindview.test.WhoCalled.f(WhoCalled.java:14)
+    	at net.mindview.test.WhoCalled.g(WhoCalled.java:21)
+    	at net.mindview.test.WhoCalled.h(WhoCalled.java:28)
+    	at net.mindview.test.WhoCalled.main(WhoCalled.java:36)
+  	    ......
+    */
+    ```
+    
+    + [因此可以通过fillInStackTrace()方法会将当前调用位置作为新的异常抛出点位置.]() :bangbang: 
+    ```java
+    public class WhoCalled {
+        static void f() throws Exception {
+            try{
+                throw new Exception();
+            } catch (Exception e){
+                throw e;
+            }
+        }
+        static void g() throws Exception {
+            try {
+                f();
+            } catch (Exception e) {
+                throw e;
+            }
+        }
+        static void h() throws Exception {
+            try {
+                g();
+            } catch (Exception e) {
+                throw (Exception) e.fillInStackTrace();
+            }
+        }
+    
+        public static void main(String[] args) {
+            try {
+                WhoCalled.h();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+  
+    /*Output: 可以明显发现通过fillInStackTrace()方法重新定位了异常的抛出位置。
+    java.lang.Exception
+    	at net.mindview.test.WhoCalled.h(WhoCalled.java:30)
+    	at net.mindview.test.WhoCalled.main(WhoCalled.java:36)
+  	    ......
+    */
+    ```
+    
+    + [你也可以通过在重抛异常时，抛出一个新的异常对象，效果类似调用 _fillInStackTrace()_ 方法.]()
+
++ [异常链]()：当捕获一个异常后抛出另一个新的异常，并希望吧原始异常的信息保存下来时，这个被称为异常链。 :bangbang:
+
+jdk1.4 以后所有Throwable的子类在构造器中都可以接受一个cause(因由)对象作为参数，这个cause就表示原始异常，这样就将两个异常串联起来从而具备了异常追踪的功能。
+
+但是在Throwable子类中只有 **Error**, **Exception**, **RuntimeException** 提供了带cause参数的构造器。
+
+[因此如果要把其他类型的异常链接起来，应该使用异常类提供的 _initCause()_ 方法而不是构造器.]()
+
+    ```java
+    public class WhoCalled {
+        static void f() throws Exception {
+            try{
+                throw new Exception();
+            } catch (Exception e){
+                throw (Exception) new Exception("f() exception").initCause(e);
+            }
+        }
+        static void g() throws Exception {
+            try {
+                f();
+            } catch (Exception e) {
+                throw (Exception) new Exception("g() exception").initCause(e);
+            }
+        }
+        static void h() throws Exception {
+            try {
+                g();
+            } catch (Exception e) {
+                throw (Exception) new Exception("h() exception").initCause(e);
+            }
+        }
+    
+        public static void main(String[] args) {
+            try {
+                WhoCalled.h();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    /*
+    java.lang.Exception: h() exception
+    	at net.mindview.test.WhoCalled.h(WhoCalled.java:30)
+    	at net.mindview.test.WhoCalled.main(WhoCalled.java:36)
+    	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+    	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.lang.reflect.Method.invoke(Method.java:498)
+    	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:147)
+    Caused by: java.lang.Exception: g() exception
+    	at net.mindview.test.WhoCalled.g(WhoCalled.java:23)
+    	at net.mindview.test.WhoCalled.h(WhoCalled.java:28)
+    	... 6 more
+    Caused by: java.lang.Exception: f() exception
+    	at net.mindview.test.WhoCalled.f(WhoCalled.java:16)
+    	at net.mindview.test.WhoCalled.g(WhoCalled.java:21)
+    	... 7 more
+    Caused by: java.lang.Exception
+    	at net.mindview.test.WhoCalled.f(WhoCalled.java:14)
+    	... 8 more
+    */
+    ```
 
 ####7. _JAVA标准异常_
 
