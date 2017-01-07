@@ -325,14 +325,10 @@
     
     + [你也可以通过在重抛异常时，抛出一个新的异常对象，效果类似调用 _fillInStackTrace()_ 方法.]()
 
-+ [异常链]()：当捕获一个异常后抛出另一个新的异常，并希望吧原始异常的信息保存下来时，这个被称为异常链。 :bangbang:
-
-jdk1.4 以后所有Throwable的子类在构造器中都可以接受一个cause(因由)对象作为参数，这个cause就表示原始异常，这样就将两个异常串联起来从而具备了异常追踪的功能。
-
-但是在Throwable子类中只有 **Error**, **Exception**, **RuntimeException** 提供了带cause参数的构造器。
-
-[因此如果要把其他类型的异常链接起来，应该使用异常类提供的 _initCause()_ 方法而不是构造器.]()
-
++ [异常链]()：当捕获一个异常后抛出另一个新的异常，并希望吧原始异常的信息保存下来时，这个被称为异常链。 :bangbang:  
+jdk1.4 以后所有Throwable的子类在构造器中都可以接受一个cause(因由)对象作为参数，这个cause就表示原始异常，这样就将两个异常串联起来从而具备了异常追踪的功能.  
+但是在Throwable子类中只有 **Error**, **Exception**, **RuntimeException** 提供了带cause参数的构造器。  
+[因此如果要把其他类型的异常链接起来，应该使用异常类提供的 _initCause()_ 方法而不是构造器.]()  
     ```java
     public class WhoCalled {
         static void f() throws Exception {
