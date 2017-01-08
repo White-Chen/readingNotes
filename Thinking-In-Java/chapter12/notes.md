@@ -399,7 +399,7 @@ jdk1.4 以后所有Throwable的子类在构造器中都可以接受一个cause(�
 即时使用break或者continue语句是, finally语句一样也会执行.   
 [对于有return的语句, finally一样也会在return前执行, 但是通过编译后的信息可以发现finally语句并不是在return语句返回前执行表达式, 两者是同时执行, 只是在return语句提前返回!!]()  
 + finally的用途: 当要把除内存之外的资源恢复到他们的初始状态时, 比如关闭文件或网络连接. 
-+ [异常丢失问题, 看下面代码的输出结果, 发现 _f()_ 中抛出的异常应该被捕获, 但是finally语句造成个异常的丢失问题, 这个需要注意异常的处理逻辑!!!]() :bangbang:
++ [异常丢失问题, 看下面代码的输出结果, 发现 _f()_ 中抛出的异常应该被捕获, 但是finally语句造成异常的丢失问题, 这个需要注意异常的处理逻辑!!!]() :bangbang:
     ```java
     public class WhoCalled {
         static void f() throws Exception {throw new Exception();}
@@ -428,7 +428,96 @@ jdk1.4 以后所有Throwable的子类在构造器中都可以接受一个cause(�
     ```
 
 ####9. [_异常限制_]() :bangbang:
-
++ 设计思路是在设计覆盖方法时，不能破坏基类判断捕获正确异常的能力，这样才能符合多态的面向对象特性，方便以基类的引用调用子类对象. [所以在继承和覆盖过程中，方法的"异常说明"是变小了，从范围到数量，这恰好与类接口在继承时的情形相反！]() :bangbang:  
++ 当覆盖方法时，只能抛出在基类方法的异常说明里列出的那些异常，不能增加，但是可以不对抛出异常进行显式说明。
++ [在同时实现接口与集成基类时，如果存在接口方法在基类中被定义的情况，那么异常说明以基类中的方法异常说明为准，接口方法的异常说明此时无效.]()
++ [异常限制对构造方法不起作用，子类构造方法可以抛出任何异常，而不必理会基类构造方法所抛出的异常. 但是因为基类构造方法总是会被调用，所以子类构造器的异常说明必须包含基类构造方法的异常说明!!!]()
++ 子类不能捕获基类构造方法抛出的异常? 试了下，这是因为如果要捕获就要用try，但是用了try的话super就不在一行被调用了，这违背了语法要求。
++ 子类覆盖方法的抛出异常可以是被覆盖方法抛出异常的子类，这同样不违背设计思路。
++ 示例：
+    ```java
+    class BaseballException extends Exception{}
+    class Foul extends BaseballException{}
+    class Strike extends BaseballException{}
+    class StormException extends Exception{}
+    class RainedOut extends StormException{}
+    class PopFoul extends Foul{}
+    
+    abstract class Inning{
+        public Inning() throws BaseballException{}
+        public void event() throws BaseballException{}
+        public void walk(){}
+        public abstract void asBat() throws Strike, Foul;
+    }
+    
+    interface Storm{
+        public void event() throws RainedOut;
+        public void rainHard() throws RainedOut;
+    }
+    
+    public class StormyInning extends Inning implements Storm{
+    
+        public StormyInning()
+                throws RainedOut, BaseballException {}
+    
+        // 在包含父类构造方法异常的同时，可以自己加异常，这个在其他普通方法上是不允许的。
+        public StormyInning(String s)
+            throws Foul, BaseballException{
+        }
+    
+        // 不能抛出接口异常，因为在基类中重新说明了异常
+        //public void event() throws RainedOut{}
+    
+        // 同样不能这样声明，因为基类与接口说明冲突
+        //public void event() throws BaseballException{}
+    
+        // 可以这样声明
+        public void event(){}
+    
+        // 抛出异常可以是被覆盖方法的异常子类，并且可以省略部分父类异常
+        @Override
+        public void asBat() throws PopFoul {
+            throw new PopFoul();
+        }
+    
+        // 以接口声明为主
+        @Override
+        public void rainHard() throws RainedOut {}
+    
+        public static void main(String[] args) {
+            try {
+                StormyInning si = new StormyInning();
+                si.asBat();
+            }catch (Strike e) {
+                System.out.println("Strike");
+            }catch (PopFoul e){// 捕获PopFoul
+                System.out.println("Pop foul");
+            }catch (RainedOut e){
+                System.out.println("Rained out");
+            }catch (BaseballException e){
+                System.out.println("Generic baseball exception");
+            }
+    
+            try{
+                Inning i = new StormyInning();
+                i.asBat();
+            }catch (Strike e){
+                System.out.println("Strike");
+            }catch (Foul e){ // 捕获覆盖方法的PopFoul异常，因为是子类所以可以匹配
+                System.out.println("Foul");
+            }catch (RainedOut e){
+                System.out.println("Rained out");
+            }catch (BaseballException e){
+                System.out.println("Generic baseball exception");
+            }
+        }
+    }
+  
+    /*Output:
+    Pop foul
+    Foul
+    */
+    ```
 
 ####10. _构造器_ 
 
