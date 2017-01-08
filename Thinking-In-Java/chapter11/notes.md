@@ -294,14 +294,17 @@
 ####6. _LinkedList类_
 + LinkedList除了在增删查操作上存在性能差别外, [更大的区别是LinkedList提供了大量的内置方法, 这使得它可以被当做是栈Stack或者队列Queue使用]().
 + 额外方法:
-    + **getFirst(), element()**: 返回且不移除集合头部元素值, 不存在则报错 **NoSuchElementException**, 完全相同操作. 
-    + **peek()**: 返回集合头部元素值, 不存在则返回null, 这个是用于队列操作的. 与上面的唯一区别是不会报错. 
-    + **removeFirst(), remove()**: 与 **getFirst(),element()** 相同, 唯一区别是会从集合中删除集合头部元素. 
-    + **poll()**: 与 **peek()** 相同, 只是会删除元素.  
-    + **add(), addLast()**: 相同操作, 在集合尾部添加元素. 
-    + **offer()**: 与上面完全相同, 却别在于该命名方法一般用于队列操作. 
-    + **addFirst()**: 集合头部添加元素. 
-    + **removeLast()**: 集合尾部删除元素. 
+    | 方法名                               |描述    |  
+    | -------------------------------------| -----:  |
+    | **getFirst(), element()**            | 返回且不移除集合头部元素值, 不存在则报错 **NoSuchElementException**, 完全相同操作.      |
+    | **peek()**                           | 返回集合头部元素值, 不存在则返回null, 这个是用于队列操作的. 与上面的唯一区别是不会报错.      |
+    | **removeFirst(), remove()**          | 与 **getFirst(),element()** 相同, 唯一区别是会从集合中删除集合头部元素.      |
+    | **poll()**                           | 与 **peek()** 相同, 只是会删除元素.      |
+    | **add(Object o), addLast(Object o)** | 相同操作, 在集合尾部添加元素.      |
+    | **offer(Object o))**                 | 与上面完全相同, 却别在于该命名方法一般用于队列操作.      |
+    | **addFirst(Object o))**              | 集合头部添加元素.      |
+    | **removeLast()**                     | 集合尾部删除元素.      |
+    
 + [通过上面方法可以发现LinkedList除实现了Queue接口的所有方法, 因此可以直接转型为Queue接口类.]()
 
 ####7. _Stack类_
