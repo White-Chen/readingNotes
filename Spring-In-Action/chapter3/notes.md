@@ -8,14 +8,13 @@
 > Spring3.1以后提供了一种不需要重新构建的解决方案，Spring会在运行时再根据环境决定每个bean的创建与否，这使得同一个部署单元可以适用于所有的环境！！
 
 + 配置profile bean:
-    + 在JavaConfig中，你可以使用@Profile注解去标明一个Bean属于哪个profile。比如，上面的DataSource可能像下面这样定义。
+    + 在JavaConfig中，你可以使用@Profile注解去标明一个Bean属于哪个profile。比如，上面的DataSource可能像下面这样定义.  
     ```java
     import org.springframework.context.annotation.Bean;
     import org.springframework.context.annotation.Configuration;
     import org.springframework.context.annotation.Profile;
     import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
     import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-    
     import javax.sql.DataSource;
   
     @Configuration
@@ -33,14 +32,13 @@
         }
     }
     ```
-    
+
     同时，你可能有另外的生成环境配置文件类。如下：  
     ```java
     import org.springframework.context.annotation.Bean;
     import org.springframework.context.annotation.Configuration;
     import org.springframework.context.annotation.Profile;
     import org.springframework.jndi.JndiObjectFactoryBean;
-    
     import javax.sql.DataSource;
     
     @Configuration
@@ -64,15 +62,12 @@
     [但是Spring3.2开始，可以将 **@profile** 应用在方法级别. 这个特性使得将所有Bean定义组合到一个文件中成为可能.]()  
     将上面两个配置类整合为一个:  
     ```java
-    package com.myapp;
-    
     import org.springframework.context.annotation.Bean;
     import org.springframework.context.annotation.Configuration;
     import org.springframework.context.annotation.Profile;
     import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
     import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
     import org.springframework.jndi.JndiObjectFactoryBean;
-    
     import javax.sql.DataSource;
     
     @Configuration
@@ -103,7 +98,8 @@
     ```
     
     [对于没有显示声明@Profile的方法或者配置类，其相应的bean则默认始终创建.]() :bangbang:  
-    Spring同样 **支持** 通过xml配置文件配置Profile，当然也支持在一个XML中配置多个属于不同Profile的bean.  
+    Spring同样 **支持** 通过xml配置文件配置Profile，当然也支持在一个XML中配置多个属于不同Profile的bean.
+  
     ```xml
     <!--多个Profile-->
     <?xml version="1.0" encoding="UTF-8"?>
@@ -164,21 +160,29 @@
     ```
     
     这个就是JavaConfig一样，只有在特定的profile被激活的时候，该Bean才会被创建.  
-    + 激活Profile  
-    Spring在确定哪个profile处于激活状态时，需要依赖两个独立的属性：[spring.profiles.active]()和[spring.profiles.default]()。  
-    **Step 1** 如果设置了spring.profiles.active属性的话，那么它的值就会用来确定哪个profile是激活的。  
-    **Step 2** 但如果没有设置spring.profiles.active属性的话，那Spring将会查找spring.profiles.default的值。  
-    **Step 3** 如果spring.profiles.active和spring.profiles.default均没有设置的话，那就没有激活的profile，因此**只会创建那些没有定义在profile中的bean**。  
+    
++ 激活Profile  
+Spring在确定哪个profile处于激活状态时，需要依赖两个独立的属性：[spring.profiles.active]()和[spring.profiles.default]()。  
+**Step 1** 如果设置了spring.profiles.active属性的话，那么它的值就会用来确定哪个profile是激活的。  
+**Step 2** 但如果没有设置spring.profiles.active属性的话，那Spring将会查找spring.profiles.default的值。  
+**Step 3** 如果spring.profiles.active和spring.profiles.default均没有设置的话，那就没有激活的profile，因此**只会创建那些没有定义在profile中的bean**。  
     
     [有多重方式来设置这两个属性:]()
+    
         + 作为DispatcherServlet的初始化参数；
+        
         + 作为Web应用的上下文参数；
+        
         + 作为JNDI条目；
+        
         + 作为环境变量；
+        
         + 作为JVM的系统属性；
+        
         + 在集成测试类上，使用@ActiveProfiles注解设置；
         
-    作者推荐在Web开发中使用DispatcherServlet的参数将spring.profile.default设置为开发环境的profile, [同时在Servlet上下文进行设置，主要是为了兼顾到ContextLoaderListener.]()
+作者推荐在Web开发中使用DispatcherServlet的参数将spring.profile.default设置为开发环境的profile, [同时在Servlet上下文进行设置，主要是为了兼顾到ContextLoaderListener.]()  
+
     ```xml
     <?xml version="1.0" encoding="UTF-8"?>
     <web-app version="2.5"
@@ -217,11 +221,12 @@
     </web-app>
     ```
     
-    当更换应用程序部署环境时，负责部署的人根据情况使用系统属性、环境变量或JNDI设置spring.profiles.active即可。当设置spring.profiles.active以后，至于spring.profiles.default置成什么值就已经无所谓了；系统会优先使用spring.profiles.active中所设置的profile。  
-    + 使用profile进行测试  
-    当运行集成测试时，通常会希望采用与生产环境（或者是生产环境的部分子集）相同的配置进行测试。
-    但是，如果配置中的bean定义在了profile中，那么在运行测试时，我们就需要有一种方式来启用合适的profile。
-    Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测试时要激活哪个profile。在集成测试时，通常想要激活的是开发环境的profile。例如，下面的测试类片段展现了使用@ActiveProfiles激活dev profile。  
+    当更换应用程序部署环境时，负责部署的人根据情况使用系统属性、环境变量或JNDI设置spring.profiles.active即可。当设置spring.profiles.active以后，至于spring.profiles.default置成什么值就已经无所谓了；系统会优先使用spring.profiles.active中所设置的profile。   
+     
++ 使用profile进行测试  
+当运行集成测试时，通常会希望采用与生产环境（或者是生产环境的部分子集）相同的配置进行测试。
+但是，如果配置中的bean定义在了profile中，那么在运行测试时，我们就需要有一种方式来启用合适的profile。
+Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测试时要激活哪个profile。在集成测试时，通常想要激活的是开发环境的profile。例如，下面的测试类片段展现了使用@ActiveProfiles激活dev profile。  
     
     ```java
     @RunWith(SpringJUnit4ClassRunner.class)
