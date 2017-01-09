@@ -320,9 +320,8 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     }
     ```
     
-    :bangbang:  
     > @Profile本身也使用了@Conditional注解，并且引用ProfileCondition作为Condition实现。
-    > 如下所示，ProfileCondition实现了Condition接口，并且在做出决策的过程中，考虑到了ConditionContext和AnnotatedTypeMetadata中的多个因素。  
+    > 如下所示，ProfileCondition实现了Condition接口，并且在做出决策的过程中，考虑到了ConditionContext和AnnotatedTypeMetadata中的多个因素。
     
     ```java
     /**
@@ -393,7 +392,6 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     primary="true" />
     ```
 
-:heavy_exclamation_mark: 
 > @Primary无法将可选方案的范围限定到唯一一个无歧义性的选项中。
 > 它只能标示一个优先的可选方案。
 > 当首选bean的数量超过一个时，我们并没有其他的方法进一步缩小可选范围。
@@ -407,7 +405,6 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
 
 [所有bean都会有默认的限定符，这个限定符与bean的ID相同.]()
 
-:heavy_exclamation_mark: 
 > 指定的限定符与要注入的bean的名称是紧耦合的, 对类名称的任意改动都会导致限定符失效.
 
 + 解决方法: [在申明bean的时候，创建自定义限定符]()
@@ -427,7 +424,6 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     
 > 当使用自定义的@Qualifier值时，最佳实践是为bean选择特征性或描述性的术语，而不是使用随意的名字。
 
-:heavy_exclamation_mark: 
 > 但是当多个bean都具备相同特性，仍然会遇到问题。
 
 + 解决方法: [在注入点和bean定义的地方同时再添加另外一个@Qualifier注解]()
@@ -454,7 +450,6 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     }
     ```
   
-:heavy_exclamation_mark: 
 > 这里只有一个小问题：Java不允许在同一个条目上重复出现相同类型的多个注解。编译器会提示错误。
 
 + 解决方法:[创建自定义的限定符注解]()
