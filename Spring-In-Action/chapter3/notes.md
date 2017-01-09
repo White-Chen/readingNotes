@@ -232,10 +232,122 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     }
     ```
     
-####2. _条件化的bean声明_
+####2. [_条件化的bean声明_]() :bangbang:
+条件化的bean声明可以满足一些复杂的需求，这个是Spring4.0后提供的。  
++ [@Conditional]()注解可以用到带有@Bean注解的方法上如果给定的条件计算结果为true，就会创建这个bean，否则的话，这个bean会被忽略。  
+    比如下面，@Conditional中给定了一个MagicExistsCondition，该类会进行条件判断，并返回boolean值.  
+    ```java
+    @Bean
+    //条件判断
+    @Conditional(MagicExistsCondition.class)
+    public MagicBean magicBean() {
+      return new MagicBean();
+    }
+    ```
+    
+    ```java
+    import org.springframework.context.annotation.Condition;
+    import org.springframework.context.annotation.ConditionContext;
+    import org.springframework.core.type.AnnotatedTypeMetadata;
+    import org.springframework.util.ClassUtils;
+    public class MagicExistsCondition implements Condition {
+      public boolean matches(
+          ConditionContext context, AnnotatedTypeMetadata metadata) {
+          
+          Environment env = context.getEnvironment();
+          return env.containsProperty("magic");
+      }
+    }
+    ```
+    
++ 设置给@Conditional的类可以是任意实现了 **Condition** 接口的类型. 这个接口实现起来很简单直接，只需提供matches()方法。如果matches()方法返回true，那么就会创建带有@Conditional注解的bean。如果matches()方法返回false，将不会创建这些bean。  
+    ```java
+    public interface Condition {
+      boolean matches(ConditionContext ctxt,
+                      AnnotatedTypeMetadata metadata);
+    }
+    ```
+    
++ ConditionContext接口：具体用法看我下面注释
+    ```java
+    public interface ConditionContext {
+    
+      //借助getRegistry()返回的BeanDefinitionRegistry检查bean定义
+      BeanDefinitionRegistry getRegistry();
+    
+      //借助getBeanFactory()返回的ConfigurableListableBeanFactory检查bean是否存在，甚至探查bean的属性
+      ConfigurableListableBeanFactory getBeanFactory();
+    
+      //借助getEnvironment()返回的Environment检查环境变量是否存在以及它的值是什么；
+      Environment getEnvironment();
+    
+      //读取并探查getResourceLoader()返回的ResourceLoader所加载的资源；
+      ResourceLoader getResourceLoader();
+    
+      //借助getClassLoader()返回的ClassLoader加载并检查类是否存在。
+      ClassLoader getClassLoader();
+    }
+    ```
 
-
-
++ AnnotatedTypeMetadata接口：具体用法看我下面注释
+    ```java
+    public interface AnnotatedTypeMetadata {
+      
+      //判断带有@Bean注解的方法是不是还有其他特定的注解
+      boolean isAnnotated(String annotationType);
+    
+      //一下方法用于检查@Bean注解的方法上其他注解的属性。
+      Map<String, Object> getAnnotationAttributes(String annotationType);
+      Map<String, Object> getAnnotationAttributes(
+      String annotationType, boolean classValuesAsString);
+      MultiValueMap<String, Object> getAllAnnotationAttributes(
+      String annotationType);
+      MultiValueMap<String, Object> getAllAnnotationAttributes(
+      String annotationType, boolean classValuesAsString);
+    }
+    ```
+    
++ [**@Profile** 注解的实现在Spring4.0开始同样依赖于 **@Conditional** 和 **Condition** 实现!! 以下是其定义:]() 
+    ```java
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target({ElementType.TYPE, ElementType.METHOD})
+    @Documented
+    // 依赖ProfileCondition.class这个Condition接口实现类
+    @Conditional(ProfileCondition.class)
+    public @interface Profile {
+      String[] value();
+    }
+    ```
+    
+    > @Profile本身也使用了@Conditional注解，并且引用ProfileCondition作为Condition实现。
+    > 如下所示，ProfileCondition实现了Condition接口，并且在做出决策的过程中，考虑到了ConditionContext和AnnotatedTypeMetadata中的多个因素。  
+    
+    ```java
+    /**
+     *  ProfileCondition实现类, Spring中Profile注解依赖这个
+    */
+    class ProfileCondition implements Condition {
+      public boolean matches(
+          ConditionContext context, AnnotatedTypeMetadata metadata) {
+          
+          if (context.getEnvironment() != null) {
+              MultiValueMap<String, Object> attrs =
+                                  metadata.getAllAnnotationAttributes(Profile.class.getName());
+              if (attrs != null) {
+                  for (Object value : attrs.get("value")) {
+                      if (context.getEnvironment()
+                                  .acceptsProfiles(((String[]) value))) {
+                          return true;
+                      }
+                  }
+                  return false;
+              }
+          }
+          return true;
+      }
+    }
+    ```
+    
 ####3. _自动装配与歧义性_
 
 
