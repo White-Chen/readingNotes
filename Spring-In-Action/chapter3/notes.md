@@ -170,18 +170,13 @@ Spring在确定哪个profile处于激活状态时，需要依赖两个独立的�
     [有多重方式来设置这两个属性:]()
     
         + 作为DispatcherServlet的初始化参数；
-        
         + 作为Web应用的上下文参数；
-        
         + 作为JNDI条目；
-        
         + 作为环境变量；
-        
         + 作为JVM的系统属性；
-        
         + 在集成测试类上，使用@ActiveProfiles注解设置；
         
-作者推荐在Web开发中使用DispatcherServlet的参数将spring.profile.default设置为开发环境的profile, [同时在Servlet上下文进行设置，主要是为了兼顾到ContextLoaderListener.]()  
+    作者推荐在Web开发中使用DispatcherServlet的参数将spring.profile.default设置为开发环境的profile, [同时在Servlet上下文进行设置，主要是为了兼顾到ContextLoaderListener.]()  
 
     ```xml
     <?xml version="1.0" encoding="UTF-8"?>
