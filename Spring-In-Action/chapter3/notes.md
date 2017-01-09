@@ -352,10 +352,8 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     
 ####3. _自动装配与歧义性_
 
-:heavy_exclamation_mark: 
-> 仅有一个bean匹配所需的结果时，自动装配才是有效的。如果不仅有一个bean能够匹配结果的话，这种歧义性会阻碍Spring自动装配属性、构造器参数或方法参数。  
++ 问题来源: 仅有一个bean匹配所需的结果时，自动装配才是有效的。如果不仅有一个bean能够匹配结果的话，这种歧义性会阻碍Spring自动装配属性、构造器参数或方法参数. 比如下面示例会报 **NoUniqueBeanDefinitionException** 错误.
 
-比如下面示例会报 **NoUniqueBeanDefinitionException** 错误
     ```java
     @Autowired
     public void setDessert(Dessert dessert) {
@@ -373,7 +371,7 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     
 + 解决方法: [@Primary标识首选bean]()。
 @Primary能够与@Component组合用在组件扫描的bean上，也可以与@Bean组合用在Java配置的bean声明中。  
-请注意: [不要对同一个接口实现类同时标注多个首选bean, 这样仍然会造成歧义，这一点很容易想明白]() ::
+请注意: [不要对同一个接口实现类同时标注多个首选bean, 这样仍然会造成歧义，这一点很容易想明白]()
 
     ```java
     @Component
@@ -407,7 +405,7 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
 
 [为@Qualifier注解所设置的参数就是想要注入的bean的ID。所有使用@Component注解声明的类都会创建为bean，并且bean的ID为首字母变为小写的类名.]()
 
-[所有bean都会有默认的限定符，这个限定符与bean的ID相同.]() :bangbang:
+[所有bean都会有默认的限定符，这个限定符与bean的ID相同.]()
 
 :heavy_exclamation_mark: 
 > 指定的限定符与要注入的bean的名称是紧耦合的, 对类名称的任意改动都会导致限定符失效.
@@ -482,6 +480,9 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     @Creamy
     public class IceCream implements Dessert { ... }
     ```
+
++ [**注意:Java 8允许出现重复的注解，只要这个注解本身在定义的时候带有@Repeatable注解就可以。不过，Spring的@Qualifier注解并没有在定义时添加@Repeatable注解.**]() :bangbang:
+
 
 ####4. _bean的作用域_
 
