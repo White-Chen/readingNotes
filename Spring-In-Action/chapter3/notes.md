@@ -1,4 +1,5 @@
-###Chapter 3 : 高级装配  :bangbang:
+###Chapter 3 : 高级装配  
+:bangbang: [这一章的内容以前没太接触过]()
 ####1. _Spring Profile_  
 
 > 开发软件的一个最大的挑战之一就是从开发换件到其他环境的切换。经常，在开发环境可以很好运行的软件，到其他环境就不能使用了。数据库配置、加密算法和外部系统的继承只是总舵可能会改变整个部署环境的事情中的一个。  
@@ -218,7 +219,7 @@ Spring在确定哪个profile处于激活状态时，需要依赖两个独立的�
     
     当更换应用程序部署环境时，负责部署的人根据情况使用系统属性、环境变量或JNDI设置spring.profiles.active即可。当设置spring.profiles.active以后，至于spring.profiles.default置成什么值就已经无所谓了；系统会优先使用spring.profiles.active中所设置的profile。   
      
-+ 使用profile进行测试  
++ 使用profile进行测试  :bangbang:
 当运行集成测试时，通常会希望采用与生产环境（或者是生产环境的部分子集）相同的配置进行测试。
 但是，如果配置中的bean定义在了profile中，那么在运行测试时，我们就需要有一种方式来启用合适的profile。
 Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测试时要激活哪个profile。在集成测试时，通常想要激活的是开发环境的profile。例如，下面的测试类片段展现了使用@ActiveProfiles激活dev profile。  
@@ -307,7 +308,7 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     }
     ```
     
-+ [**@Profile** 注解的实现在Spring4.0开始同样依赖于 **@Conditional** 和 **Condition** 实现!! 以下是其定义:]() 
++ [**@Profile** 注解的实现在Spring4.0开始同样依赖于 **@Conditional** 和 **Condition** 实现!! 以下是其定义:]() :bangbang:
     ```java
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE, ElementType.METHOD})
@@ -319,6 +320,7 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     }
     ```
     
+    :bangbang:  
     > @Profile本身也使用了@Conditional注解，并且引用ProfileCondition作为Condition实现。
     > 如下所示，ProfileCondition实现了Condition接口，并且在做出决策的过程中，考虑到了ConditionContext和AnnotatedTypeMetadata中的多个因素。  
     
@@ -350,6 +352,136 @@ Spring提供了@ActiveProfiles注解，我们可以使用它来指定运行测�
     
 ####3. _自动装配与歧义性_
 
+:heavy_exclamation_mark: 
+> 仅有一个bean匹配所需的结果时，自动装配才是有效的。如果不仅有一个bean能够匹配结果的话，这种歧义性会阻碍Spring自动装配属性、构造器参数或方法参数。  
+
+比如下面示例会报 **NoUniqueBeanDefinitionException** 错误
+    ```java
+    @Autowired
+    public void setDessert(Dessert dessert) {
+        this.dessert = dessert;
+    }
+    ...
+    @Component
+    public class Cake implements Dessert { ... }
+    @Component
+    public class Cookies implements Dessert { ... }
+    @Component
+    public class IceCream implements Dessert { ... }
+    ...
+    ```
+    
++ 解决方法: [@Primary标识首选bean]()。
+@Primary能够与@Component组合用在组件扫描的bean上，也可以与@Bean组合用在Java配置的bean声明中。  
+请注意: [不要对同一个接口实现类同时标注多个首选bean, 这样仍然会造成歧义，这一点很容易想明白]() ::
+
+    ```java
+    @Component
+    @Primary
+    public class IceCream implements Dessert { ... }
+    ```
+    
+    ```java
+    @Bean
+    @Primary
+    public Dessert iceCream() {
+      return new IceCream();
+    }
+    ```
+    
+    ```xml
+    <bean id="iceCream"
+    class="com.desserteater.IceCream"
+    primary="true" />
+    ```
+
+:heavy_exclamation_mark: 
+> @Primary无法将可选方案的范围限定到唯一一个无歧义性的选项中。
+> 它只能标示一个优先的可选方案。
+> 当首选bean的数量超过一个时，我们并没有其他的方法进一步缩小可选范围。
+
++ 解决方法: [**@Qualifier** 限定自动装配bean]()  
+使用限定符@Qualifier注解, 能够达到只有一个bean满足所规定的限制条件。
+
+@Qualifier注解是使用限定符的主要方式。它可以与@Autowired和@Inject协同使用，在注入的时候指定想要注入进去的是哪个bean.
+
+[为@Qualifier注解所设置的参数就是想要注入的bean的ID。所有使用@Component注解声明的类都会创建为bean，并且bean的ID为首字母变为小写的类名.]()
+
+[所有bean都会有默认的限定符，这个限定符与bean的ID相同.]() :bangbang:
+
+:heavy_exclamation_mark: 
+> 指定的限定符与要注入的bean的名称是紧耦合的, 对类名称的任意改动都会导致限定符失效.
+
++ 解决方法: [在申明bean的时候，创建自定义限定符]()
+    ```java
+    @Component
+    @Qualifier("cold")
+    public class IceCream implements Dessert { ... }
+    ```
+    
+    ```java
+    @Autowired
+    @Qualifier("cold")
+    public void setDessert(Dessert dessert) {
+      this.dessert = dessert;
+    }
+    ```
+    
+> 当使用自定义的@Qualifier值时，最佳实践是为bean选择特征性或描述性的术语，而不是使用随意的名字。
+
+:heavy_exclamation_mark: 
+> 但是当多个bean都具备相同特性，仍然会遇到问题。
+
++ 解决方法: [在注入点和bean定义的地方同时再添加另外一个@Qualifier注解]()
+    ```java
+    @Component
+    @Qualifier("cold")
+    @Qualifier("creamy")
+    public class IceCream implements Dessert { ... }
+    ```
+    
+    ```java
+    @Component
+    @Qualifier("cold")
+    @Qualifier("fruity")
+    public class Popsicle implements Dessert { ... }
+    ```
+    
+    ```java
+    @Autowired
+    @Qualifier("cold")
+    @Qualifier("creamy")
+    public void setDessert(Dessert dessert) {
+      this.dessert = dessert;
+    }
+    ```
+  
+:heavy_exclamation_mark: 
+> 这里只有一个小问题：Java不允许在同一个条目上重复出现相同类型的多个注解。编译器会提示错误。
+
++ 解决方法:[创建自定义的限定符注解]()
+    ```java
+    @Target({ElementType.CONSTRUCTOR, ElementType.FIELD,
+    ElementType.METHOD, ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Qualifier
+    public @interface Cold { }
+    ```
+    
+    ```java
+    @Target({ElementType.CONSTRUCTOR, ElementType.FIELD,
+    ElementType.METHOD, ElementType.TYPE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Qualifier
+    public @interface Creamy { }
+    ```
+    
+    ```java
+    @Component
+    @Cold
+    @Creamy
+    public class IceCream implements Dessert { ... }
+    ```
 
 ####4. _bean的作用域_
 
