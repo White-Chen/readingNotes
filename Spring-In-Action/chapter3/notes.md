@@ -2,11 +2,11 @@
 :bangbang: [这一章的内容以前没太接触过]()
 ####1. _Spring Profile_  
 
-> 开发软件的一个最大的挑战之一就是从开发换件到其他环境的切换. 经常, 在开发环境可以很好运行的软件, 到其他环境就不能使用了. 数据库配置, 加密算法和外部系统的继承只是总舵可能会改变整个部署环境的事情中的一个.   
+开发软件的一个最大的挑战之一就是从开发换件到其他环境的切换. 经常, 在开发环境可以很好运行的软件, 到其他环境就不能使用了. 数据库配置, 加密算法和外部系统的继承只是总舵可能会改变整个部署环境的事情中的一个.   
 
-> 比如配置DatsSource, 一种解决方案是将不同的DataSource放在不同的配置文件中, 然后使用maven的profile在编译器决定何时使用哪一种配置方式. 这个问题是, 它需要应用程序去重新编译每一个环境. 对于从开发到QA, 重新编译不是一个大的问题. 但是, 在QA到生成环境中要求一个重新编译可能会引入一些BUG, 从而导致QA团队的困难.   
+比如配置DatsSource, 一种解决方案是将不同的DataSource放在不同的配置文件中, 然后使用maven的profile在编译器决定何时使用哪一种配置方式. 这个问题是, 它需要应用程序去重新编译每一个环境. 对于从开发到QA, 重新编译不是一个大的问题. 但是, 在QA到生成环境中要求一个重新编译可能会引入一些BUG, 从而导致QA团队的困难.   
 
-> Spring3.1以后提供了一种不需要重新构建的解决方案, Spring会在运行时再根据环境决定每个bean的创建与否, 这使得同一个部署单元可以适用于所有的环境!!
+Spring3.1以后提供了一种不需要重新构建的解决方案, Spring会在运行时再根据环境决定每个bean的创建与否, 这使得同一个部署单元可以适用于所有的环境!!
 
 + 配置profile bean:
     + 在JavaConfig中, 你可以使用@Profile注解去标明一个Bean属于哪个profile. 比如, 上面的DataSource可能像下面这样定义.  
@@ -168,56 +168,54 @@ Spring在确定哪个profile处于激活状态时, 需要依赖两个独立的�
 **Step 2** 但如果没有设置spring.profiles.active属性的话, 那Spring将会查找spring.profiles.default的值.   
 **Step 3** 如果spring.profiles.active和spring.profiles.default均没有设置的话, 那就没有激活的profile, 因此**只会创建那些没有定义在profile中的bean**.   
     
-    [有多重方式来设置这两个属性:]()
-    
-        + 作为DispatcherServlet的初始化参数;
-        + 作为Web应用的上下文参数;
-        + 作为JNDI条目;
-        + 作为环境变量;
-        + 作为JVM的系统属性;
-        + 在集成测试类上, 使用@ActiveProfiles注解设置;
+[有多重方式来设置这两个属性:]()
+    + 作为DispatcherServlet的初始化参数;
+    + 作为Web应用的上下文参数;
+    + 作为JNDI条目;
+    + 作为环境变量;
+    + 作为JVM的系统属性;
+    + 在集成测试类上, 使用@ActiveProfiles注解设置;
         
-    作者推荐在Web开发中使用DispatcherServlet的参数将spring.profile.default设置为开发环境的profile, [同时在Servlet上下文进行设置, 主要是为了兼顾到ContextLoaderListener.]()  
-
-    ```xml
-    <?xml version="1.0" encoding="UTF-8"?>
-    <web-app version="2.5"
-      xmlns="http://java.sun.com/xml/ns/javaee"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
-      http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-        <context-param>
-          <param-name>contextConfigLocation</param-name>
-          <param-value>/WEB-INF/spring/root-context.xml</param-value>
-        </context-param>
-      <context-param>
-        <param-name>spring.profiles.default</param-name>
-        <param-value>dev</param-value>
-        </context-param>
-      <listener>
-          <listener-class>
-              org.springframework.web.context.ContextLoaderListener
-          </listener-class>
-      </listener>
-      <servlet>
-          <servlet-name>appServlet</servlet-name>
-          <servlet-class>
-               org.springframework.web.servlet.DispatcherServlet
-          </servlet-class>
-          <init-param>
-              <param-name>spring.profiles.default</param-name>
-              <param-value>dev</param-value>
-          </init-param>
-          <load-on-startup>1</load-on-startup>
-      </servlet>
-      <servlet-mapping>
+作者推荐在Web开发中使用DispatcherServlet的参数将spring.profile.default设置为开发环境的profile, [同时在Servlet上下文进行设置, 主要是为了兼顾到ContextLoaderListener.]()  
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5"
+  xmlns="http://java.sun.com/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+  http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <context-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/spring/root-context.xml</param-value>
+    </context-param>
+  <context-param>
+    <param-name>spring.profiles.default</param-name>
+    <param-value>dev</param-value>
+    </context-param>
+  <listener>
+      <listener-class>
+          org.springframework.web.context.ContextLoaderListener
+      </listener-class>
+  </listener>
+  <servlet>
       <servlet-name>appServlet</servlet-name>
-      <url-pattern>/</url-pattern>
-      </servlet-mapping>
-    </web-app>
-    ```
-    
-    当更换应用程序部署环境时, 负责部署的人根据情况使用系统属性, 环境变量或JNDI设置spring.profiles.active即可. 当设置spring.profiles.active以后, 至于spring.profiles.default置成什么值就已经无所谓了;系统会优先使用spring.profiles.active中所设置的profile.    
+      <servlet-class>
+           org.springframework.web.servlet.DispatcherServlet
+      </servlet-class>
+      <init-param>
+          <param-name>spring.profiles.default</param-name>
+          <param-value>dev</param-value>
+      </init-param>
+      <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+  <servlet-name>appServlet</servlet-name>
+  <url-pattern>/</url-pattern>
+  </servlet-mapping>
+</web-app>
+```
+
+当更换应用程序部署环境时, 负责部署的人根据情况使用系统属性, 环境变量或JNDI设置spring.profiles.active即可. 当设置spring.profiles.active以后, 至于spring.profiles.default置成什么值就已经无所谓了;系统会优先使用spring.profiles.active中所设置的profile.    
      
 + 使用profile进行测试  :bangbang:
 当运行集成测试时, 通常会希望采用与生产环境（或者是生产环境的部分子集）相同的配置进行测试. 
@@ -320,8 +318,8 @@ Spring提供了@ActiveProfiles注解, 我们可以使用它来指定运行测试
     }
     ```
     
-    > @Profile本身也使用了@Conditional注解, 并且引用ProfileCondition作为Condition实现. 
-    > 如下所示, ProfileCondition实现了Condition接口, 并且在做出决策的过程中, 考虑到了ConditionContext和AnnotatedTypeMetadata中的多个因素. 
+    [@Profile本身也使用了@Conditional注解, 并且引用ProfileCondition作为Condition实现. ]()
+    [如下所示, ProfileCondition实现了Condition接口, 并且在做出决策的过程中, 考虑到了ConditionContext和AnnotatedTypeMetadata中的多个因素.]() 
     
     ```java
     /**
@@ -519,7 +517,9 @@ Spring提供了@ActiveProfiles注解, 我们可以使用它来指定运行测试
 > 通过ScopedProxyMode.INTERFACES, Spring并不会将实际的会话bean实例注入到单例bean中, Spring会注入一个到ShoppingCart bean的代理, 如下图所示. 
 > 这个代理会暴露与当前会话域中bean相同的方法, 所以单例bean会认为它就是一个bean实例. 
 > 但是, 当单例bean调用实例方法时, 代理会对其进行懒解析并将调用委托给会话作用域内真正的bean实例. 
+
 ![](pics/proxy.jpg)
+
 > 如配置所示, proxyMode属性被设置成了ScopedProxyMode.INTERFACES, 这表明这个代理要实现会话域bean接口, 并将调用委托给实现bean. 
 > 如果会话域bean是接口而不是类的话, 这是可以的（也是最为理想的代理模式）. 
 > 但如果是一个具体的类的话, Spring就没有办法创建基于接口的代理了. 
@@ -555,15 +555,15 @@ Spring提供了@ActiveProfiles注解, 我们可以使用它来指定运行测试
 
 ####5. _Spring表达式语言_
 
-> 在注入bean属性或者构造器时, 有时候硬编码是可以的, 但有的时候, 我们可能会希望避免硬编码值, 而是想让这些值在运行时再确定.
-> Spring提供了两种在运行时求值的方式: 
->   1. 属性占位符（Property placeholder）. 
->   2. Spring表达式语言（SpEL）. 
->
-> 两种技术的用法是类似的, 不过它们的目的和行为是有所差别的.
+在注入bean属性或者构造器时, 有时候硬编码是可以的, 但有的时候, 我们可能会希望避免硬编码值, 而是想让这些值在运行时再确定.
+Spring提供了两种在运行时求值的方式: 
+   1. 属性占位符（Property placeholder）. 
+   2. Spring表达式语言（SpEL）. 
 
-+ 注入外部的值
-    > 解析外部属性能够将值的处理推迟到运行时, 但是它的关注点在于根据名称解析来自于Spring Environment和属性源的属性. 而Spring表达式语言提供了一种更通用的方式在运行时计算所要注入的值. 
+两种技术的用法是类似的, 不过它们的目的和行为是有所差别的.
+
++ 注入外部的值  
+解析外部属性能够将值的处理推迟到运行时, 但是它的关注点在于根据名称解析来自于Spring Environment和属性源的属性. 而Spring表达式语言提供了一种更通用的方式在运行时计算所要注入的值. 
 
     + 使用 **@PropertySource** 注解. 这个注解会加载文件到Spring的Environment中, 稍后可以从这里检索属性.
     ```java
@@ -606,13 +606,13 @@ Spring提供了@ActiveProfiles注解, 我们可以使用它来指定运行测试
 
 + [使用Spring表达式语言进行装配]()  
 
-> Spring 3引入了Spring表达式语言它能够以一种强大和简洁的方式将值装配到bean属性和构造器参数中, 在这个过程中所使用的表达式会在运行时计算得到值. 使用SpEL, 你可以实现超乎想象的装配效果, 这是使用其他的装配技术难以做到的（甚至是不可能的）. 
-> SpE特性包括: 
->   使用bean的ID来引用bean;
->   调用方法和访问对象的属性;
->   对值进行算术, 关系和逻辑运算;
->   正则表达式匹配;
->   集合操作;  
+Spring 3引入了Spring表达式语言它能够以一种强大和简洁的方式将值装配到bean属性和构造器参数中, 在这个过程中所使用的表达式会在运行时计算得到值. 使用SpEL, 你可以实现超乎想象的装配效果, 这是使用其他的装配技术难以做到的（甚至是不可能的）. 
+SpE特性包括: 
+  使用bean的ID来引用bean;
+  调用方法和访问对象的属性;
+  对值进行算术, 关系和逻辑运算;
+  正则表达式匹配;
+  集合操作;  
 
 [SpEL表达式要放到"#{ ... }"之中]()  
 
