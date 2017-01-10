@@ -9,6 +9,7 @@
 
 ####1. _AOP_
 + 通知, 切点, 连接点三者关系图.   
+
 ![](pics/aop.png)
 
 + 通知/Advice  
@@ -66,7 +67,8 @@ Spring切面可以应用5种类型的通知：
 + [Spring在运行时通知对象]()
 通过在代理类中包裹切面, Spring在运行期把切面织入到Spring管理的bean中.   
 代理类封装了目标类, 并拦截被通知方法的调用, 再把调用转发给真正的目标bean.   
-当代理拦截到方法调用时, 在调用目标bean方法之前, 会执行切面逻辑.   
+当代理拦截到方法调用时, 在调用目标bean方法之前, 会执行切面逻辑.  
+
 ![](pics/aop.png)
 
 + Spring只支持方法级别的连接点
@@ -96,19 +98,19 @@ Spring缺少对字段连接点的支持, 无法让我们创建细粒度的通知
     }
     ```
     
-    + 使用AspectJ切点表达式来选择Performance的perform()方法方法表达式以"*"号开始, 表明了我们不关心方法返回值的类型. 
-      
-    ![](pics/Aspect.png)
++ 使用AspectJ切点表达式来选择Performance的perform()方法方法表达式以"*"号开始, 表明了我们不关心方法返回值的类型. 
 
-    + 使用within()指示器限制切点范围, 下图配置的切点仅匹配concert包. [注意"&"在XML中有特殊含义, 所以在Spring的XML配置里面描述切点时, 可以使用and来代替"&&".]()  
-    
-    ![](pics/within.png)
+![](pics/Aspect.png)
 
-    + 在切点中选择bean. 引入了一个新的bean()指示器, 它允许我们在切点表达式中使用bean的ID来标识bean. bean()使用bean ID或bean名称作为参数来限制切点只匹配特定的bean. 
-    ```spel
-    execution(* concert.Performance.perform())
-          and bean('woodstock')
-    ```
++ 使用within()指示器限制切点范围, 下图配置的切点仅匹配concert包. [注意"&"在XML中有特殊含义, 所以在Spring的XML配置里面描述切点时, 可以使用and来代替"&&".]()
+  
+![](pics/within.png)
+
++ 在切点中选择bean. 引入了一个新的bean()指示器, 它允许我们在切点表达式中使用bean的ID来标识bean. bean()使用bean ID或bean名称作为参数来限制切点只匹配特定的bean. 
+```spel
+execution(* concert.Performance.perform())
+      and bean('woodstock')
+```
     
 ####3. _使用注解创建切面_
 + 定义切面类
@@ -177,65 +179,69 @@ public class Audience {
     }
 }
 ```
-+ [为定义的切面启动自动代理, 否则只能是Spring容器中的bean.]() :bangbang:
-不管你是使用JavaConfig还是XML, AspectJ自动代理都会为使用@Aspect注解的bean创建一个代理, 这个代理会围绕着所有该切面的切点所匹配的bean. 
-    
-    + JavaConfig中启用AspectJ注解的自动代理
-    ```java
-    @Configuration
-    // 启用AspectJ自动代理
-    @EnableAspectJAutoProxy
-    @ComponentScan
-    public class ConcertConfig {
-      @Bean
-      public Audience audience() {
-          return new Audience();
-      }
-    }
-    ```
-    
-    + 在XML中AspectJ自动代理
-    ```xml
-    <?xml version="1.0" encoding="UTF-8"?>
-    <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:context="http://www.springframework.org/schema/context"
-        xmlns:aop="http://www.springframework.org/schema/aop"
-        xsi:schemaLocation="http://www.springframework.org/schema/aop
-        http://www.springframework.org/schema/aop/spring-aop.xsd
-        http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd">
-        <context:component-scan base-package="concert" />
-        <aop:aspectj-autoproxy />
-        <bean class="concert.Audience" />
-    </beans>
-    ```
++ [为定义的切面启动自动代理, 否则只能是Spring容器中的bean.]() :bangbang:  
 
-+ 创建环绕通知/@Around
+不管你是使用JavaConfig还是XML, AspectJ自动代理都会为使用@Aspect注解的bean创建一个代理, 这个代理会围绕着所有该切面的切点所匹配的bean. 
+
++ JavaConfig中启用AspectJ注解的自动代理
+
+
+```java
+@Configuration
+// 启用AspectJ自动代理
+@EnableAspectJAutoProxy
+@ComponentScan
+public class ConcertConfig {
+  @Bean
+  public Audience audience() {
+      return new Audience();
+  }
+}
+```
+    
++ 在XML中AspectJ自动代理
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xsi:schemaLocation="http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:component-scan base-package="concert" />
+    <aop:aspectj-autoproxy />
+    <bean class="concert.Audience" />
+</beans>
+```
+
++ 创建环绕通知/@Around  
+
 环绕通知是最为强大的通知类型. 它能够让你所编写的逻辑将被通知的目标方法完全包装起来. 实际上就像在一个通知方法中同时编写前置通知和后置通知. 上就像在一个通知方法中同时编写前置通知和后置通知. 
 
-    ```java
-    @Aspect
-    public class Audience {
-        @Pointcut("execution(** concert.Performance.perform(..))")
-        public void performance() {}
-        @Around("performance()")
-        public void watchPerformance(ProceedingJoinPoint jp) {
-            try {
-                System.out.println("Silencing cell phones");
-                System.out.println("Taking seats");
-                // 将控制权交给被通知的方法
-                // 如果不调这个方法的话, 那么你的通知实际上会阻塞对被通知方法的调用. 
-                jp.proceed();
-                System.out.println("CLAP CLAP CLAP!!!");
-            } catch (Throwable e) {
-                System.out.println("Demanding a refund");
-            }
+```java
+@Aspect
+public class Audience {
+    @Pointcut("execution(** concert.Performance.perform(..))")
+    public void performance() {}
+    @Around("performance()")
+    public void watchPerformance(ProceedingJoinPoint jp) {
+        try {
+            System.out.println("Silencing cell phones");
+            System.out.println("Taking seats");
+            // 将控制权交给被通知的方法
+            // 如果不调这个方法的话, 那么你的通知实际上会阻塞对被通知方法的调用. 
+            jp.proceed();
+            System.out.println("CLAP CLAP CLAP!!!");
+        } catch (Throwable e) {
+            System.out.println("Demanding a refund");
         }
     }
-    ```
+}
+```
 
 如上面示例, @Around注解表明watchPerformance()方法会作为performance()切点的环绕通知.   
 [不调用proceed()方法, 实现重试逻辑, 也就是在被通知方法失败后, 进行重复尝试.]()
@@ -304,35 +310,35 @@ Spring为切面提供了另外一种可选方案.
 | \<aop:pointcut>          | 定义一个切点                                    |
 
 + 声明前置和后置通知
-    ```xml
-    <aop:config>
-        <aop:aspect ref="audience">
-            <aop:pointcut
-                id="performance"
-                expression="execution(** concert.Performance.perform(..))" />
-            <!--<aop:before>元素定义了匹配切点的方法执行之前调用前置通知方法-->
-            <aop:before
-                pointcut-ref="performance"
-                method="silenceCellPhones"/>
-            <!--<aop:after-returning>元素定义了一个返回(after-returning)通知, 在切点所匹配的方法调用之后再调用对应方法-->
-            <aop:before
-                pointcut-ref="performance"
-                method="takeSeats"/>
-            <aop:after-returning
-                pointcut-ref="performance"
-                method="applause"/>
-            <!--<aop:after-throwing>元素定义了异常(after-throwing)通知-->
-            <aop:after-throwing
-                pointcut-ref="performance"
-                method="demandRefund"/>
-            
-            <!--<aop:around>指定了一个切点和一个通知方法的名字. -->
-            <aop:around
-                pointcut-ref="performance"
-                method="watchPerformance"/>
-        </aop:aspect>
-    </aop:config>
-    ```
+```xml
+<aop:config>
+    <aop:aspect ref="audience">
+        <aop:pointcut
+            id="performance"
+            expression="execution(** concert.Performance.perform(..))" />
+        <!--<aop:before>元素定义了匹配切点的方法执行之前调用前置通知方法-->
+        <aop:before
+            pointcut-ref="performance"
+            method="silenceCellPhones"/>
+        <!--<aop:after-returning>元素定义了一个返回(after-returning)通知, 在切点所匹配的方法调用之后再调用对应方法-->
+        <aop:before
+            pointcut-ref="performance"
+            method="takeSeats"/>
+        <aop:after-returning
+            pointcut-ref="performance"
+            method="applause"/>
+        <!--<aop:after-throwing>元素定义了异常(after-throwing)通知-->
+        <aop:after-throwing
+            pointcut-ref="performance"
+            method="demandRefund"/>
+        
+        <!--<aop:around>指定了一个切点和一个通知方法的名字. -->
+        <aop:around
+            pointcut-ref="performance"
+            method="watchPerformance"/>
+    </aop:aspect>
+</aop:config>
+```
     
 ![](pics/xml.png)
 
@@ -347,54 +353,54 @@ default-impl属性用全限定类名来显式指定Encoreable的实现.
 ####5. [_注入AspectJ切面_]() :bangbang:
 + 关键字: **aspect**
 + 示例:  
-    ```java
-    public aspect CriticAspect {
-        public CriticAspect() {}
-        pointcut performance() : execution(* perform(..));
-        afterReturning() : performance() {
-          System.out.println(criticismEngine.getCriticism());
-        }
-        private CriticismEngine criticismEngine;
-        public void setCriticismEngine(CriticismEngine criticismEngine) {
-          this.criticismEngine = criticismEngine;
-        }
+```java
+public aspect CriticAspect {
+    public CriticAspect() {}
+    pointcut performance() : execution(* perform(..));
+    afterReturning() : performance() {
+      System.out.println(criticismEngine.getCriticism());
     }
-    ```
-    
-    ```java
-    public class CriticismEngineImpl implements CriticismEngine {
-        public CriticismEngineImpl() {}
-        public String getCriticism() {
-            int i = (int) (Math.random() * criticismPool.length);
-            return criticismPool[i];
-        }
-        // injected
-        private String[] criticismPool;
-            public void setCriticismPool(String[] criticismPool) {
-            this.criticismPool = criticismPool;
-        }
+    private CriticismEngine criticismEngine;
+    public void setCriticismEngine(CriticismEngine criticismEngine) {
+      this.criticismEngine = criticismEngine;
     }
-    ```
-    
-    ```xml
-    ...
-    <bean id="criticismEngine"
-      class="com.springinaction.springidol.CriticismEngineImpl">
-        <property name="criticismPool">
-            <list>
-            <value>Worst performance ever!</value>
-            <value>I laughed, I cried, then I realized I was at the
-                      wrong show.</value>
-            <value>A must see show!</value>
-            </list>
-        </property>
-    </bean>
-    ...
-    <bean class="com.springinaction.springidol.CriticAspect"
-          factory-method="aspectOf">
-        <property name="criticismEngine" ref="criticismEngine" />
-    </bean>
-    ```
+}
+```
+
+```java
+public class CriticismEngineImpl implements CriticismEngine {
+    public CriticismEngineImpl() {}
+    public String getCriticism() {
+        int i = (int) (Math.random() * criticismPool.length);
+        return criticismPool[i];
+    }
+    // injected
+    private String[] criticismPool;
+        public void setCriticismPool(String[] criticismPool) {
+        this.criticismPool = criticismPool;
+    }
+}
+```
+
+```xml
+...
+<bean id="criticismEngine"
+  class="com.springinaction.springidol.CriticismEngineImpl">
+    <property name="criticismPool">
+        <list>
+        <value>Worst performance ever!</value>
+        <value>I laughed, I cried, then I realized I was at the
+                  wrong show.</value>
+        <value>A must see show!</value>
+        </list>
+    </property>
+</bean>
+...
+<bean class="com.springinaction.springidol.CriticAspect"
+      factory-method="aspectOf">
+    <property name="criticismEngine" ref="criticismEngine" />
+</bean>
+```
 
 + [所有的AspectJ切面都提供了一个静态的aspectOf()方法, 该方法返回切面的一个单例. 所以为了获得切面的实例, 我们必须使用factory-method来调用asepctOf()方法而不是调用CriticAspect的构造器方法.]() :bangbang:
 + [在使用aspect的情况下, Spring不能使用<bean>声明来创建一个切面实例——它已经在运行时由AspectJ创建完成了. Spring需要通过aspectOf()工厂方法获得切面的引用, 然后像<bean>元素规定的那样在该对象上执行依赖注入.]()
