@@ -143,21 +143,21 @@
     }
     
     /*Output:
-    Jan 07, 2017 7:57:16 PM net.mindview.test.LoggingExceptions logException
+    Jan 07, 2017 7:57:16 PM LoggingExceptions logException
     SEVERE: java.lang.NullPointerException
-    	at net.mindview.test.LoggingExceptions.main(LoggingExceptions.java:41)
+    	at LoggingExceptions.main(LoggingExceptions.java:41)
     
-    Jan 07, 2017 7:57:16 PM net.mindview.test.LoggingExceptions logException
-    SEVERE: net.mindview.test.MyException2: Detail message: 0 null
-    	at net.mindview.test.LoggingExceptions.main(LoggingExceptions.java:46)
+    Jan 07, 2017 7:57:16 PM LoggingExceptions logException
+    SEVERE: MyException2: Detail message: 0 null
+    	at LoggingExceptions.main(LoggingExceptions.java:46)
     
-    Jan 07, 2017 7:57:16 PM net.mindview.test.LoggingExceptions logException
-    SEVERE: net.mindview.test.MyException2: Detail message: 0 3rd try block
-    	at net.mindview.test.LoggingExceptions.main(LoggingExceptions.java:51)
+    Jan 07, 2017 7:57:16 PM LoggingExceptions logException
+    SEVERE: MyException2: Detail message: 0 3rd try block
+    	at LoggingExceptions.main(LoggingExceptions.java:51)
     
-    Jan 07, 2017 7:57:16 PM net.mindview.test.LoggingExceptions logException
-    SEVERE: net.mindview.test.MyException2: Detail message: 4 4th try block
-    	at net.mindview.test.LoggingExceptions.main(LoggingExceptions.java:56)
+    Jan 07, 2017 7:57:16 PM LoggingExceptions logException
+    SEVERE: MyException2: Detail message: 4 4th try block
+    	at LoggingExceptions.main(LoggingExceptions.java:56)
     
     e.val = 4
     */
@@ -198,27 +198,27 @@
     }
 
     /*Output: 顺序是按照栈的出栈顺序定义的. 
-    net.mindview.test.WhoCalled  14
-    net.mindview.test.WhoCalled  26
+    WhoCalled  14
+    WhoCalled  26
     sun.reflect.NativeMethodAccessorImpl  -2
     sun.reflect.NativeMethodAccessorImpl  62
     sun.reflect.DelegatingMethodAccessorImpl  43
     java.lang.reflect.Method  498
     com.intellij.rt.execution.application.AppMain  147
     -----------------new function-----------------
-    net.mindview.test.WhoCalled  14
-    net.mindview.test.WhoCalled  22
-    net.mindview.test.WhoCalled  27
+    WhoCalled  14
+    WhoCalled  22
+    WhoCalled  27
     sun.reflect.NativeMethodAccessorImpl  -2
     sun.reflect.NativeMethodAccessorImpl  62
     sun.reflect.DelegatingMethodAccessorImpl  43
     java.lang.reflect.Method  498
     com.intellij.rt.execution.application.AppMain  147
     -----------------new function-----------------
-    net.mindview.test.WhoCalled  14
-    net.mindview.test.WhoCalled  22
-    net.mindview.test.WhoCalled  23
-    net.mindview.test.WhoCalled  28
+    WhoCalled  14
+    WhoCalled  22
+    WhoCalled  23
+    WhoCalled  28
     sun.reflect.NativeMethodAccessorImpl  -2
     sun.reflect.NativeMethodAccessorImpl  62
     sun.reflect.DelegatingMethodAccessorImpl  43
@@ -273,10 +273,10 @@
   
     /*Output: 看下面输出信息可以明显发现e只记录了原抛出点信息, 而没有记录新的抛出点位置. 
     java.lang.Exception
-    	at net.mindview.test.WhoCalled.f(WhoCalled.java:14)
-    	at net.mindview.test.WhoCalled.g(WhoCalled.java:21)
-    	at net.mindview.test.WhoCalled.h(WhoCalled.java:28)
-    	at net.mindview.test.WhoCalled.main(WhoCalled.java:36)
+    	at WhoCalled.f(WhoCalled.java:14)
+    	at WhoCalled.g(WhoCalled.java:21)
+    	at WhoCalled.h(WhoCalled.java:28)
+    	at WhoCalled.main(WhoCalled.java:36)
   	    ......
     */
     ```
@@ -317,8 +317,8 @@
   
     /*Output: 可以明显发现通过fillInStackTrace()方法重新定位了异常的抛出位置. 
     java.lang.Exception
-    	at net.mindview.test.WhoCalled.h(WhoCalled.java:30)
-    	at net.mindview.test.WhoCalled.main(WhoCalled.java:36)
+    	at WhoCalled.h(WhoCalled.java:30)
+    	at WhoCalled.main(WhoCalled.java:36)
   	    ......
     */
     ```
@@ -364,23 +364,23 @@ jdk1.4 以后所有Throwable的子类在构造器中都可以接受一个cause(�
     
     /*
     java.lang.Exception: h() exception
-    	at net.mindview.test.WhoCalled.h(WhoCalled.java:30)
-    	at net.mindview.test.WhoCalled.main(WhoCalled.java:36)
+    	at WhoCalled.h(WhoCalled.java:30)
+    	at WhoCalled.main(WhoCalled.java:36)
     	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
     	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
     	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
     	at java.lang.reflect.Method.invoke(Method.java:498)
     	at com.intellij.rt.execution.application.AppMain.main(AppMain.java:147)
     Caused by: java.lang.Exception: g() exception
-    	at net.mindview.test.WhoCalled.g(WhoCalled.java:23)
-    	at net.mindview.test.WhoCalled.h(WhoCalled.java:28)
+    	at WhoCalled.g(WhoCalled.java:23)
+    	at WhoCalled.h(WhoCalled.java:28)
     	... 6 more
     Caused by: java.lang.Exception: f() exception
-    	at net.mindview.test.WhoCalled.f(WhoCalled.java:16)
-    	at net.mindview.test.WhoCalled.g(WhoCalled.java:21)
+    	at WhoCalled.f(WhoCalled.java:16)
+    	at WhoCalled.g(WhoCalled.java:21)
     	... 7 more
     Caused by: java.lang.Exception
-    	at net.mindview.test.WhoCalled.f(WhoCalled.java:14)
+    	at WhoCalled.f(WhoCalled.java:14)
     	... 8 more
     */
     ```
@@ -607,7 +607,7 @@ jdk1.4 以后所有Throwable的子类在构造器中都可以接受一个cause(�
     FileNotFondException java.io.FileNotFoundException
     IOException java.io.IOException
     Throwable java.lang.RuntimeException: Where am I?
-    SomeOtherException : net.mindview.test.SomeOtherException
+    SomeOtherException : SomeOtherException
     */
     ```
     

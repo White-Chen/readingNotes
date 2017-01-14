@@ -1,4 +1,4 @@
-package net.mindview.test;
+package net.mindview.test.chapter_1_12;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

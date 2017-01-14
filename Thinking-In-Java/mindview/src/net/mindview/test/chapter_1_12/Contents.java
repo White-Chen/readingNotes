@@ -1,4 +1,4 @@
-package net.mindview.test;
+package net.mindview.test.chapter_1_12;
 
 /**
  * \* Created with Chen Zhe on 1/3/2017.
@@ -8,6 +8,6 @@ package net.mindview.test;
  * \* @version 1.0.0
  * \
  */
-public interface Destination {
-    String readLabel();
+public interface Contents {
+    int value();
 }

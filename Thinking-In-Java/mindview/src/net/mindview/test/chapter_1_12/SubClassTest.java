@@ -1,4 +1,4 @@
-package net.mindview.test;
+package net.mindview.test.chapter_1_12;
 
 /**
  * Created by ChenZhePC on 2016/12/22.

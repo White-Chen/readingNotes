@@ -56,7 +56,7 @@
                     new Powder()
             );
     
-            //如果移除下面注释. 编译器会报错: Error:(50, 41) java: incompatible types: java.util.List<net.mindview.test.Powder> cannot be converted to java.util.List<net.mindview.test.Snow>
+            //如果移除下面注释. 编译器会报错: Error:(50, 41) java: incompatible types: java.util.List<Powder> cannot be converted to java.util.List<Snow>
             //List<Snow> snows = Arrays.asList(
             //        new Light(),
             //        new Heavy()
@@ -75,7 +75,7 @@
     Exception in thread "main" java.lang.UnsupportedOperationException
         at java.util.AbstractList.add(AbstractList.java:148)
         at java.util.AbstractList.add(AbstractList.java:108)
-        at net.mindview.test.AddingGroups.main(AddingGroups.java:25)
+        at AddingGroups.main(AddingGroups.java:25)
         at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
         at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
         at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -113,8 +113,8 @@
     // 下面的输出是在JDK1.6中报的错, 这个问题似乎在JDK1.8这个版本被修复了, 至少我用JDK1.8编译是没有问题的
     /*Output:
     Error:(50, 41) java: incompatible types: 
-    java.util.List<net.mindview.test.Powder> 
-    cannot be converted to java.util.List<net.mindview.test.Snow>
+    java.util.List<Powder> 
+    cannot be converted to java.util.List<Snow>
     */
     ```
     

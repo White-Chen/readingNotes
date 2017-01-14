@@ -1,4 +1,4 @@
-package net.mindview.test;
+package net.mindview.test.chapter_1_12;
 
 import java.util.*;
 
@@ -33,7 +33,7 @@ public class AddingGroups {
         /*Exception in thread "main" java.lang.UnsupportedOperationException
         at java.util.AbstractList.add(AbstractList.java:148)
         at java.util.AbstractList.add(AbstractList.java:108)
-        at net.mindview.test.AddingGroups.main(AddingGroups.java:25)
+        at AddingGroups.main(AddingGroups.java:25)
         at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
         at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
         at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -46,7 +46,7 @@ public class AddingGroups {
                 new Powder()
         );
 
-        //如果移除下面注释。编译器会报错：Error:(50, 41) java: incompatible types: java.util.List<net.mindview.test.Powder> cannot be converted to java.util.List<net.mindview.test.Snow>
+        //如果移除下面注释。编译器会报错：Error:(50, 41) java: incompatible types: java.util.List<Powder> cannot be converted to java.util.List<Snow>
         //List<Snow> snows = Arrays.asList(
         //        new Light(),
         //        new Heavy()
