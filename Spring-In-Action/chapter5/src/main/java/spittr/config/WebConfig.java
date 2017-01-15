@@ -21,7 +21,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration                  //声明当前Java类为Spring配置类
 @EnableWebMvc                   //启用Spring MVC
-@ComponentScan("spitter.web")   //配置组件扫描路径，否则Spring将只能找到显式声明在当前类中的控制器
+@ComponentScan("spittr.web")   //配置组件扫描路径，否则Spring将只能找到显式声明在当前类中的控制器
 public class WebConfig
         extends WebMvcConfigurerAdapter{
 
