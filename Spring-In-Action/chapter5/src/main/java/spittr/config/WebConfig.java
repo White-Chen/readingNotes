@@ -12,7 +12,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 /**
  * \* Created with Chen Zhe on 1/15/2017.
  * \* Description:
- *      DispatcherServlet会加载当前类中@Configuration注解的bean
+ *      DispatcherServlet会加载当前类也就是@Configuration注解的类，用于配置DispatcherServlet
  * \* @author ChenZhe
  * \* @author q953387601@163.com
  * \* @version 1.0.0
