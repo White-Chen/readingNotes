@@ -15,6 +15,7 @@ public class SpittrWebAppInitializer
 
     /**
      * 配置RootConfig类的位置
+     * @return 返回带有@configuration注解的类，用于配置ContextLoaderListener应用上下文
      */
     @Override
     protected Class<?>[] getRootConfigClasses() {
@@ -23,6 +24,7 @@ public class SpittrWebAppInitializer
 
     /**
      * 配置WebConfig类的位置
+     * @return 返回带有@Configuration注解的bean，用于配置DispatcherServlet应用上下文
      */
     @Override
     protected Class<?>[] getServletConfigClasses() {

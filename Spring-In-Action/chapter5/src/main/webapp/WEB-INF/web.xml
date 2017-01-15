@@ -5,5 +5,5 @@
                       http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1"
          metadata-complete="true">
-  <display-name>Spittr</display-name>
+  <display-name>Spittr Web Application</display-name>
 </web-app>
