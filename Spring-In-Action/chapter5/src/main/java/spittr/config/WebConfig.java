@@ -20,11 +20,14 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
  */
 
 @Configuration                  //声明当前Java类为Spring配置类
-@EnableWebMvc                   // 启用Spring MVC
-@ComponentScan("spittr.web")    //配置扫描路径
+@EnableWebMvc                   //启用Spring MVC
+@ComponentScan("spitter.web")   //配置组件扫描路径，否则Spring将只能找到显式声明在当前类中的控制器
 public class WebConfig
         extends WebMvcConfigurerAdapter{
 
+    /**
+     * Description : 配置试图解析器, 如果不配置则会使用默认的BeanNameViewResolver.
+     */
     @Bean
     public ViewResolver viewResolver(){
         InternalResourceViewResolver resolver =
@@ -35,6 +38,9 @@ public class WebConfig
         return resolver;
     }
 
+    /**
+     * Description : 配置静态资源的处理, 否则的话DispatcherServlet会处理所有静态资源的请求
+     */
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
