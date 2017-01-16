@@ -8,7 +8,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceView;
+import spittr.data.SpitterRepository;
 import spittr.data.SpittleRepository;
+import spittr.entity.Spitter;
 import spittr.entity.Spittle;
 
 import java.util.ArrayList;
@@ -117,12 +119,50 @@ public class HomeControllerTest {
     @Test   //test passed
     public void shouldShowRegistration() throws Exception{
 
-         SpitterController controller =  new SpitterController();
-         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+        SpitterRepository spitterRepository = Mockito.mock(SpitterRepository.class);
+        SpitterController controller =  new SpitterController(spitterRepository);
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
-         mockMvc
-                 .perform(MockMvcRequestBuilders.get("/spitter/register"))
-                 .andExpect(MockMvcResultMatchers.view().name("registerForm"));
+        mockMvc
+                .perform(MockMvcRequestBuilders.get("/spitter/register"))
+                .andExpect(MockMvcResultMatchers.view().name("registerForm"));
+    }
+
+    @Test
+    public void shouldProcessRegistration() throws Exception{
+
+        SpitterRepository spitterRepository = Mockito.mock(SpitterRepository.class);
+        Spitter unsaved =
+                new Spitter(
+                        "jbauer",
+                        "24hours",
+                        "Jack",
+                        "Bauer",
+                        "q953387601@163.com");
+        Spitter saved =
+                new Spitter(
+                        24L,
+                        "jbauer",
+                        "24hours",
+                        "Jack",
+                        "Bauer",
+                        "q953387601@163.com");
+        Mockito.when(spitterRepository.save(unsaved)).thenReturn(saved);
+
+        SpitterController controller = new SpitterController(spitterRepository);
+        MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.post("/spitter/register")
+                        .param("firstName", "Jack")
+                        .param("lastName", "Bauer")
+                        .param("username", "jbauer")
+                        .param("password", "24hours")
+                        .param("email", "q953387601@163.cn"))
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/spitter/jbauer"))
+                .andExpect(MockMvcResultMatchers.model().attribute("spitter", unsaved));
+
+        Mockito.verify(spitterRepository, Mockito.atLeastOnce()).save(unsaved);
     }
 
     private List<Spittle> createsSpittleList(int count){
