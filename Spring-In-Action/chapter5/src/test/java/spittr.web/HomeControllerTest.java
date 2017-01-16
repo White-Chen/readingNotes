@@ -116,6 +116,7 @@ public class HomeControllerTest {
 
     @Test   //test passed
     public void shouldShowRegistration() throws Exception{
+
          SpitterController controller =  new SpitterController();
          MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
 
