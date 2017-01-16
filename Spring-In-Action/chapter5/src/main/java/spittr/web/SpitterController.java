@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import spittr.entity.Spitter;
 
+import javax.validation.Valid;
+
 /**
  * Created by ChenZhePC on 2017/1/16.
  */
