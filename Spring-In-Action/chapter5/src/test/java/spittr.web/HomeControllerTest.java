@@ -1,13 +1,22 @@
 package spittr.web;
 
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import spittr.data.SpittleRepository;
+import spittr.entity.Spittle;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by ChenZhePC on 2017/1/16.
+ * Description : 这种测试方法可以避免在测试Controller时，反复的部署服务器然后测试
+ *               测试结果为通过
  */
 public class HomeControllerTest {
 
@@ -19,7 +28,26 @@ public class HomeControllerTest {
                 .build();
 
         mockMvc
-                .perform(MockMvcRequestBuilders.get("/"))
+                .perform(MockMvcRequestBuilders.get("/homepage"))
                 .andExpect(MockMvcResultMatchers.view().name("home"));
     }
+
+    @Test
+    public void shouldShowRecentSpittles() throws Exception{
+        List<Spittle> expectedSpittles = createsSpittleList(20);
+        SpittleRepository mockRepository = Mockito.mock(SpittleRepository.class);
+        Mockito
+                .when(mockRepository.findSpittles(Long.MAX_VALUE, 20))
+                .thenReturn(expectedSpittles);
+
+    }
+
+    private List<Spittle> createsSpittleList(int count){
+        List<Spittle> spittles = new ArrayList<>();
+        for (int spi = 0; spi < count; spi++) {
+            spittles.add(new Spittle("Spittle" + spi, new Date()));
+        }
+        return spittles;
+    }
+
 }
