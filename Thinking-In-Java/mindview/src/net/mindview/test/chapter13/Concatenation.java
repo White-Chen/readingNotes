@@ -43,6 +43,6 @@ ngBuilder;
       33: getstatic     #10                 // Field java/lang/System.out:Ljava/io/PrintStream;
       36: aload_2
       37: invokevirtual #11                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
-      40: return
+      40: retur
 }
 */
