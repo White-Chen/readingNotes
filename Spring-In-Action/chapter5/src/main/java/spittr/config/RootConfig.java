@@ -16,6 +16,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  */
 
 @Configuration
+//书上写的包路径有问题，配置包路径与实际包名称不符，需要自己注意
 @ComponentScan(basePackages = {"spittr.web"},
     excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ANNOTATION, value = EnableWebMvc.class)
