@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class HomeControllerTest {
 
-    @Test
+    @Test   //test passed
     public void testHomePage() throws Exception {
         HomeController controller = new HomeController();
         MockMvc mockMvc = MockMvcBuilders
@@ -34,7 +34,7 @@ public class HomeControllerTest {
                 .andExpect(MockMvcResultMatchers.view().name("home"));
     }
 
-    @Test
+    @Test   //test passed
     public void shouldShowRecentSpittles() throws Exception{
         List<Spittle> expectedSpittles = createsSpittleList(20);
         SpittleRepository mockRepository = Mockito.mock(SpittleRepository.class);
@@ -58,7 +58,7 @@ public class HomeControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("spittleList", CoreMatchers.hasItems(expectedSpittles.toArray())));
     }
 
-    @Test
+    @Test   //test passed
     public void shouldShowPagedSpittles() throws Exception{
         List<Spittle> expectedSpittles = createsSpittleList(50);
         SpittleRepository mockRepository = Mockito.mock(SpittleRepository.class);
@@ -82,7 +82,7 @@ public class HomeControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("spittleList", CoreMatchers.hasItems(expectedSpittles.toArray())));
     }
 
-    @Test
+    @Test   //test passed
     public void testSpittleByParams() throws Exception{
         Spittle expectedSpittle = new Spittle("Hello", new Date());
         SpittleRepository mockRepository = Mockito.mock(SpittleRepository.class);
@@ -98,7 +98,7 @@ public class HomeControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("spittle", expectedSpittle));
     }
 
-    @Test
+    @Test   //test passed
     public void testSpittleByPath() throws Exception{
         Spittle expectedSpittle = new Spittle("Hello", new Date());
         SpittleRepository mockRepository = Mockito.mock(SpittleRepository.class);
@@ -112,6 +112,16 @@ public class HomeControllerTest {
                 .andExpect(MockMvcResultMatchers.view().name("spittle"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("spittle"))
                 .andExpect(MockMvcResultMatchers.model().attribute("spittle", expectedSpittle));
+    }
+
+    @Test   //test passed
+    public void shouldShowRegistration() throws Exception{
+         SpitterController controller =  new SpitterController();
+         MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+
+         mockMvc
+                 .perform(MockMvcRequestBuilders.get("/spitter/register"))
+                 .andExpect(MockMvcResultMatchers.view().name("registerForm"));
     }
 
     private List<Spittle> createsSpittleList(int count){
