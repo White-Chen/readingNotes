@@ -79,30 +79,16 @@
 
 + **AbstractAnnotationConfigDispatcherServletInitializer** 剖析
 
-    >   在Servlet 3.0+ 环境中, 容器会在类路径中查找实现javax.servlet.ServletContainerInitializer
-        接口的类, 如果能发现的话, 就会用它来配置Servlet容器. 
-        Spring提供了这个接口的实现, 名为SpringServletContainerInitializer, 这个类
-        反过来又会查找实现WebApplicationInitializer的类并将配置的任务交给它们来完成. 
-        Spring 3.2引入了一个便利的WebApplicationInitializer基础实现, 也就是
-        AbstractAnnotationConfigDispatcherServletInitializer. 因为我们的SpittrWebAppInitializer
-        扩展了AbstractAnnotationConfigDispatcherServletInitializer（同时也就实现了
-        WebApplicationInitializer）, 因此当部署到Servlet 3.0容器中的时候, 容器会自
-        动发现它, 并用它来配置Servlet上下文. 
+    >   在Servlet 3.0+ 环境中, 容器会在类路径中查找实现javax.servlet.ServletContainerInitializer接口的类, 如果能发现的话, 就会用它来配置Servlet容器.Spring提供了这个接口的实现, 名为SpringServletContainerInitializer, 这个类反过来又会查找实现WebApplicationInitializer的类并将配置的任务交给它们来完成. 
+        Spring 3.2引入了一个便利的WebApplicationInitializer基础实现, 也就是AbstractAnnotationConfigDispatcherServletInitializer. 因为我们的SpittrWebAppInitializer扩展了AbstractAnnotationConfigDispatcherServletInitializer（同时也就实现了WebApplicationInitializer）, 因此当部署到Servlet 3.0容器中的时候, 容器会自动发现它, 并用它来配置Servlet上下文. 
         getServletMappings(),  它会将一个或多个路径映射到DispatcherServlet上. 上面示例中, 它映射的是"/", 这表示它会是应用的默认Servlet. 它会处理进入应用的所有请求.  
         getServletConfigClasses()方法返回的带有@Configuration注解的类将会用来定义DispatcherServlet应用上下文中的bean. 
     >   getRootConfigClasses()方法返回的带有@Configuration注解的类将会用来配置ContextLoaderListener创建的应用上下文中的bean. 
 
-    >   DispatcherServlet和一个Servlet监听器（也就是ContextLoaderListener）的关系. 
-        当DispatcherServlet启动的时候, 它会创建Spring应用上下文, 并加载配置文件或配
-        置类中所声明的bean. 在程序清单5.1的getServletConfigClasses()方法中, 我们要
-        求DispatcherServlet加载应用上下文时, 使用定义在WebConfig配置类（使用Java配
-        置）中的bean. 但是在Spring Web应用中, 通常还会有另外一个应用上下文. 另外的
-        这个应用上下文是由ContextLoaderListener创建的. 
-        我们希望DispatcherServlet加载包含Web组件的bean, 如控制器、视图解析器以及处理
-        器映射, 而ContextLoaderListener要加载应用中的其他bean. 这些bean通常是驱动应
-    >   用后端的中间层和数据层组件. 
+    >   DispatcherServlet和一个Servlet监听器（也就是ContextLoaderListener）的关系. 当DispatcherServlet启动的时候, 它会创建Spring应用上下文, 并加载配置文件或配置类中所声明的bean. 在程序清单5.1的getServletConfigClasses()方法中, 我们要求DispatcherServlet加载应用上下文时, 使用定义在WebConfig配置类（使用Java配置）中的bean. 但是在Spring Web应用中, 通常还会有另外一个应用上下文. 另外的这个应用上下文是由ContextLoaderListener创建的. 
+    >   我们希望DispatcherServlet加载包含Web组件的bean, 如控制器, 视图解析器以及处理器映射, 而ContextLoaderListener要加载应用中的其他bean. 这些bean通常是驱动应用后端的中间层和数据层组件. 
 
-+ 启动Spring MVC
++ [启动Spring MVC]()
     + 创建带有@EnableWebMvc注解的类. [注意看代码注释.]()
     ```java
     package spittr.config;
@@ -153,7 +139,10 @@
          */
         @Override
         public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-            configurer.enable();
+            
+          // 静态资源的请求转发到Servlet容器中默认的Servlet上, 而不是使用DispatcherServlet本身来处理此类请求
+          configurer.enable();
+        
         }
     }
 
@@ -186,3 +175,255 @@
     }
 
     ```
+    
+####3. [_控制器/@Controller_]()
++ 通过 **@Controller** 注解声明控制器类, 但实际上这个注解对Spring MVC本身的影响并不大, 这里是用于辅助实现组件扫描的.
++ **@Controller** 注解基于 **@Component** 注解, 因此使用 **@Component** 注解效果相同, [但是在表意性上可能会差一些]().
++ 通过 **@RequestMapping** 注解可以从各个角度限定方法处理的请求. 详情见下. 
+
+####4. [_@RequestMapping使用_]() :bangbang:
++ value, method使用. value: 指定请求的实际地址, 指定的地址可以是URI Template 模式（后面将会说明）; method: 指定请求的method类型,  GET, POST, PUT, DELETE等. 
+    + 通过value指定方法处理的请求路径
+    ```java
+    @RequestMapping(value="/departments", method = RequestMethod.GET)
+    public String simplePattern(){
+    
+      System.out.println("simplePattern method was called");
+      return "someResult";
+    
+    }
+    ```
+    
+    + 参数绑定
+    ```java
+    @RequestMapping(value="/departments")
+    public String findDepatment(
+      @RequestParam("departmentId") String departmentId, method = RequestMethod.GET){
+      
+        System.out.println("Find department with ID: " + departmentId);
+        return "someResult";
+    
+    }
+    ```
+    
+    + REST风格的参数
+    ```java
+    @RequestMapping(value="/departments/{departmentId}")
+    public String findDepatment(@PathVariable String departmentId, method = RequestMethod.GET){
+    
+      System.out.println("Find department with ID: " + departmentId);
+      return "someResult";
+    
+    }
+    ```
+    
+    + REST风格的参数绑定形式之2
+    ```java
+    @RequestMapping(value="/departments/{departmentId}", method = RequestMethod.GET)
+    public String findDepatmentAlternative(
+      @PathVariable("departmentId") String someDepartmentId){
+    
+        System.out.println("Find department with ID: " + someDepartmentId);
+        return "someResult";
+    
+    }
+    ```
+    
+    + url中同时绑定多个id
+    ```java
+    @RequestMapping(value="/departments/{departmentId}/employees/{employeeId}", method = RequestMethod.GET)
+    public String findEmployee(
+      @PathVariable String departmentId,
+      @PathVariable String employeeId){
+    
+        System.out.println("Find employee with ID: " + employeeId + 
+          " from department: " + departmentId);
+        return "someResult";
+    
+    }
+    ```
+    
+    + 支持正则表达式
+    ```java
+    @RequestMapping(value="/{textualPart:[a-z-]+}.{numericPart:[\\d]+}", method = RequestMethod.GET)
+    public String regularExpression(
+      @PathVariable String textualPart,
+      @PathVariable String numericPart){
+    
+        System.out.println("Textual part: " + textualPart + 
+          ", numeric part: " + numericPart);
+        return "someResult";
+    }
+    ```
+    
++ consumes, produces使用. consumes: 指定处理请求的提交内容类型（Content-Type）, 例如application/json, text/html; produces: 指定返回的内容类型, 仅当request请求头中的(Accept)类型中包含该指定类型才返回; 
+    + cousumes的样例: 
+    ```java
+    @Controller  
+    @RequestMapping(value = "/pets", method = RequestMethod.POST, consumes="application/json")  
+    public void addPet(@RequestBody Pet pet, Model model) {      
+        // 方法仅处理request Content-Type为"application/json"类型的请求.   
+    }  
+    ```
+    
+    + produces的样例: 
+    ```java
+    @Controller  
+    @RequestMapping(value = "/pets/{petId}", method = RequestMethod.GET, produces="application/json")  
+    @ResponseBody  
+    public Pet getPet(@PathVariable String petId, Model model) {      
+        // 方法仅处理request请求中Accept头中包含了"application/json"的请求, 同时暗示了返回的内容类型为application/json;  
+    }  
+    ```
+    
++ params, headers使用. params: 指定request中必须包含某些参数值是, 才让该方法处理; headers: 指定request中必须包含某些指定的header值, 才能让该方法处理请求. 
+    + params的样例: 
+    ```java
+    @Controller  
+    @RequestMapping("/owners/{ownerId}")  
+    public class RelativePathUriTemplateController {  
+      
+      @RequestMapping(value = "/pets/{petId}", method = RequestMethod.GET, params="myParam=myValue")  
+      public void findPet(@PathVariable String ownerId, @PathVariable String petId, Model model) {      
+        //  仅处理请求中包含了名为"myParam", 值为"myValue"的请求;  
+      }  
+    }
+    ```
+    
+    + headers的样例: 
+    ```java
+    @Controller  
+    @RequestMapping("/owners/{ownerId}")  
+    public class RelativePathUriTemplateController {  
+      
+    @RequestMapping(value = "/pets", method = RequestMethod.GET, headers="Referer=http://www.ifeng.com/")  
+      public void findPet(@PathVariable String ownerId, @PathVariable String petId, Model model) {      
+        // 仅处理request的header中包含了指定"Refer"请求头和对应值为"http://www.ifeng.com/"的请求; 
+      }  
+    }  
+    ```
+    
+####4. [_handler method 参数绑定_]() :bangbang:
++ handler method 参数绑定常用的注解, 根据他们处理的Request的不同内容部分分为四类(常用)
+    + 处理requet uri 部分（这里指uri template中variable, 不含queryString部分）的注解: @PathVariable. 
+    + 处理request header部分的注解: @RequestHeader, @CookieValue. 
+    + 处理request body部分的注解: @RequestParam, @RequestBody. 
+    + 处理attribute类型是注解: @SessionAttributes, @ModelAttribute. 
+
++ **@PathVariable**
+    + 当使用@RequestMapping URI template 样式映射时, 即 someUrl/{paramId}, 这时的paramId可通过@Pathvariable注解绑定它传过来的值到方法的参数上. 
+    + 示例代码: 
+    ```java
+    @Controller  
+    @RequestMapping("/owners/{ownerId}")  
+    public class RelativePathUriTemplateController {  
+      
+      @RequestMapping("/pets/{petId}")  
+      public void findPet(@PathVariable String ownerId, @PathVariable String petId, Model model) {      
+        // 代码把URI template 中变量 ownerId的值和petId的值, 绑定到方法的参数上. 若方法参数名称和需要绑定的uri template中变量名称不一致, 需要在@PathVariable("name")指定uri template中的名称.   
+      }  
+    }  
+    ```
+    
++ **@PathVariable**
+    + @RequestHeader注解, 可以把Request请求header部分的值绑定到方法的参数上. 
+    + 示例代码: 
+    ```java
+    /*
+    Host                    localhost:8080  
+    Accept                  text/html,application/xhtml+xml,application/xml;q=0.9  
+    Accept-Language         fr,en-gb;q=0.7,en;q=0.3  
+    Accept-Encoding         gzip,deflate  
+    Accept-Charset          ISO-8859-1,utf-8;q=0.7,*;q=0.7  
+    Keep-Alive              300  
+    */
+    @RequestMapping("/displayHeaderInfo.do")  
+    public void displayHeaderInfo(@RequestHeader("Accept-Encoding") String encoding,  
+                                  @RequestHeader("Keep-Alive") long keepAlive)  {  
+      
+      //把request header部分的 Accept-Encoding的值, 绑定到参数encoding上了,  Keep-Alive header的值绑定到参数keepAlive上.  
+    }
+    ```
+
++ **@CookieValue**
+    + 把Request header中关于cookie的值绑定到方法的参数上. 
+    + 示例代码: 
+    ```java
+    /*
+    JSESSIONID=415A4AC178C59DACE0B2C9CA727CDD84
+    */
+    @RequestMapping("/displayHeaderInfo.do")  
+    public void displayHeaderInfo(@CookieValue("JSESSIONID") String cookie)  {  
+      //把JSESSIONID的值绑定到参数cookie上.  
+    }  
+    ```
+    
++ **@RequestParam**
+    + 1. 常用来处理简单类型的绑定, 通过Request.getParameter()获取的String可直接转换为简单类型的情况（String--> 简单类型的转换操作由ConversionService配置的转换器来完成）; 因为使用request.getParameter()方式获取参数, 所以可以处理get方式中queryString的值, 也可以处理post方式中body data的值; 
+    + 2. 用来处理Content-Type: 为application/x-www-form-urlencoded编码的内容, 提交方式GET, POST; 
+    + 3. 注解有两个属性: value, required; value用来指定要传入值的id名称, required用来指示参数是否必须绑定; 
+    + 示例代码: 
+    ```java
+    @Controller  
+    @RequestMapping("/pets")  
+    @SessionAttributes("pet")  
+    public class EditPetForm {  
+      
+        // ...  
+      
+        @RequestMapping(method = RequestMethod.GET)  
+        public String setupForm(@RequestParam("petId") int petId, ModelMap model) {  
+            Pet pet = this.clinic.loadPet(petId);  
+            model.addAttribute("pet", pet);  
+            return "petForm";  
+        }  
+      
+        // ...  
+    }
+    ```
+    
++ **@RequestBody**
+    + 常用来处理Content-Type: 不是application/x-www-form-urlencoded编码的内容, 例如application/json, application/xml等; 它是通过使用HandlerAdapter 配置的HttpMessageConverters来解析post data body, 然后绑定到相应的bean上的. 因为配置有FormHttpMessageConverter, 所以也可以用来处理 application/x-www-form-urlencoded的内容, 处理完的结果放在一个MultiValueMap<String, String>里, 这种情况在某些特殊需求下使用, 
+    + 示例代码:   
+    ```java
+    @RequestMapping(value = "/something", method = RequestMethod.PUT)  
+    public void handle(@RequestBody String body, Writer writer) throws IOException {  
+      writer.write(body);  
+    }  
+    ```
+    
++ **@SessionAttributes**
+    + 用来绑定HttpSession中的attribute对象的值, 便于在方法中的参数里使用. 该注解有value, types两个属性, 可以通过名字和类型指定要使用的attribute对象; 
+    + 示例代码: 
+    ```java
+    @Controller  
+    @RequestMapping("/editPet.do")  
+    @SessionAttributes("pet")  
+    public class EditPetForm {  
+        // ...  
+    }  
+    ```
+    
++ **@ModelAttribute**
+    + 用于方法上时: 通常用来在处理@RequestMapping之前, 为请求绑定需要从后台查询的model; 
+    + 用于参数上时: 用来通过名称对应, 把相应名称的值绑定到注解的参数bean上; 要绑定的值来源于: 
+    + 示例代码: 
+    ```java
+    // Add one attribute  
+    // The return value of the method is added to the model under the name "account"  
+    // You can customize the name via @ModelAttribute("myAccount")  
+      
+    @ModelAttribute  
+    public Account addAccount(@RequestParam String number) {
+        //在调用@RequestMapping的方法之前, 为request对象的model里put（"account",  Account）; 
+        return accountManager.findAccount(number);  
+    }  
+  
+    RequestMapping(value="/owners/{ownerId}/pets/{petId}/edit", method = RequestMethod.POST)  
+    public String processSubmit(@ModelAttribute Pet pet) {  
+       //首先查询 @SessionAttributes有无绑定的Pet对象, 若没有则查询@ModelAttribute方法层面上是否绑定了Pet对象, 若没有则将URI template中的值按对应的名称绑定到Pet对象的各属性上. 
+    }  
+    ```
+    
+####5. __
+    
