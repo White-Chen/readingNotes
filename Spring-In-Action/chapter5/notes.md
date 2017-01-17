@@ -676,7 +676,7 @@
     + 4, 卸载测试环境
 
 + 相关API
-    + MockMvcBuilder/MockMvcBuilders: MockMvcBuilder是用来构造MockMvc的构造器, 其主要有两个实现: StandaloneMockMvcBuilder和DefaultMockMvcBuilder, 分别对应之前的两种测试方式. 对于我们来说直接使用静态工厂MockMvcBuilders创建即可.
+    + [**_MockMvcBuilder/MockMvcBuilders_**](): MockMvcBuilder是用来构造MockMvc的构造器, 其主要有两个实现: StandaloneMockMvcBuilder和DefaultMockMvcBuilder, 分别对应之前的两种测试方式. 对于我们来说直接使用静态工厂MockMvcBuilders创建即可.
     
     | 方法                                                                                                                                                          | 描述                                                                                     |
     |---------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
@@ -705,7 +705,7 @@
     | StandaloneMockMvcBuilder setUseTrailingSlashPatternMatch(boolean useTrailingSlashPatternMatch)                                                                | 设置是否自动后缀路径模式匹配, 如"/user"是否匹配"/user/", 默认真即匹配;                   |
     | StandaloneMockMvcBuilder addPlaceHolderValue(String name, String value)                                                                                       | 添加request mapping中的占位符替代;                                                       |
     
-    + MockMvc
+    + [**_MockMvc_**]()
     
     | 方法                    | 描述                                                                                                                               |
     |-------------------------|------------------------------------------------------------------------------------------------------------------------------------|
@@ -717,7 +717,7 @@
     | setGlobalResultMatchers | 设置全局的预期结果验证规则, 如我们通过MockMvc测试多个控制器时, 假设它们都想验证某个规则时, 就可以使用这个;                         |
     | setGlobalResultHandlers | 设置全局的ResultHandler结果处理器;                                                                                                 |
     
-    + RequestBuilder/MockMvcRequestBuilders
+    + [**_RequestBuilder/MockMvcRequestBuilders_**]()
     
     | 方法                                                                                                                                         | 描述                                                                                                |
     |----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
@@ -747,7 +747,7 @@
     | MockHttpServletRequestBuilder with(RequestPostProcessor postProcessor)                                                                       | 请求的后处理器, 用于自定义一些请求处理的扩展点;                                                     |
     | MockMultipartHttpServletRequestBuilder file(String name, byte[] content)/MockMultipartHttpServletRequestBuilder file(MockMultipartFile file) | 指定要上传的文件;                                                                                   |
     
-    + ResultActions: 调用MockMvc.perform(RequestBuilder requestBuilder)后将得到ResultActions, 通过ResultActions完成如下三件事.
+    + [**_ResultActions_**](): 调用MockMvc.perform(RequestBuilder requestBuilder)后将得到ResultActions, 通过ResultActions完成如下三件事.
     
     | 方法                                           | 描述                                                                        |
     |------------------------------------------------|-----------------------------------------------------------------------------|
@@ -755,7 +755,7 @@
     | ResultActions andDo(ResultHandler handler)     | 添加结果处理器, 用于对验证成功后执行的动作, 如输出下请求/结果信息用于调试;  |
     | MvcResult andReturn()                          | 返回验证成功后的MvcResult; 用于自定义验证/下一步的异步处理;                 |
     
-    + ResultMatcher/MockMvcResultMatchers: ResultMatcher用来匹配执行完请求后的结果验证, 其就一个match(MvcResult result)断言方法, 如果匹配失败将抛出相应的异常; spring mvc测试框架提供了很多***ResultMatchers来满足测试需求. 注意这些***ResultMatchers并不是ResultMatcher的子类, 而是返回ResultMatcher实例的. 
+    + [**_ResultMatcher/MockMvcResultMatchers_**](): ResultMatcher用来匹配执行完请求后的结果验证, 其就一个match(MvcResult result)断言方法, 如果匹配失败将抛出相应的异常; spring mvc测试框架提供了很多***ResultMatchers来满足测试需求. 注意这些***ResultMatchers并不是ResultMatcher的子类, 而是返回ResultMatcher实例的. 
     
     | 方法                                                                                                                                      | 描述                                                                                    |
     |-------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
@@ -776,9 +776,9 @@
     | ResultMatcher redirectedUrlPattern(final String expectedUrl)                                                                              | 验证处理完请求后重定向的url（Ant风格模式匹配, @since spring4）;                         |
     | ModelResultMatchers.attributeExists(final String... names)                                                                                | 判断Model属性是否存在                                                                   |
     
-    + ResultHandler/MockMvcResultHandlers: ResultHandler用于对处理的结果进行相应处理的, 比如输出整个请求/响应等信息方便调试, Spring mvc测试框架提供了MockMvcResultHandlers静态工厂方法, 该工厂提供了ResultHandler print()返回一个输出MvcResult详细信息到控制台的ResultHandler实现. 
+    + [**_ResultHandler/MockMvcResultHandlers_**](): ResultHandler用于对处理的结果进行相应处理的, 比如输出整个请求/响应等信息方便调试, Spring mvc测试框架提供了MockMvcResultHandlers静态工厂方法, 该工厂提供了ResultHandler print()返回一个输出MvcResult详细信息到控制台的ResultHandler实现. 
     
-    + MvcResult: 即执行完控制器后得到的整个结果, 并不仅仅是返回值, 其包含了测试时需要的所有信息.
+    + [**_MvcResult_**](): 即执行完控制器后得到的整个结果, 并不仅仅是返回值, 其包含了测试时需要的所有信息.
     
     | 方法                                                        | 描述                                       |
     |-------------------------------------------------------------|--------------------------------------------|
