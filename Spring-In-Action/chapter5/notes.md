@@ -180,9 +180,9 @@
 + 通过 **@Controller** 注解声明控制器类, 但实际上这个注解对Spring MVC本身的影响并不大, 这里是用于辅助实现组件扫描的.
 + **@Controller** 注解基于 **@Component** 注解, 因此使用 **@Component** 注解效果相同, [但是在表意性上可能会差一些]().
 + 通过 **@RequestMapping** 注解可以从各个角度限定方法处理的请求. 详情见下. 
-+ [**@RequestMapping** 可以被用到类级别，从而从类级别限定请求路径等, 并且支持String数组, 从而匹配多个请求路径.]()
-+ 传递模型数据：
-    + [Model实际上就是一个Map（也就是key-value对的集合），它会传递给视图，这样数据就能渲染到客户端了。当调用addAttribute()方法并且不指定key的时候，那么key会根据值的对象类型推断确定。]() :bangbang:
++ [**@RequestMapping** 可以被用到类级别, 从而从类级别限定请求路径等, 并且支持String数组, 从而匹配多个请求路径.]()
++ 传递模型数据: 
+    + [Model实际上就是一个Map（也就是key-value对的集合）, 它会传递给视图, 这样数据就能渲染到客户端了. 当调用addAttribute()方法并且不指定key的时候, 那么key会根据值的对象类型推断确定. ]() :bangbang:
     ```java
     @RequestMapping(method=RequestMethod.GET)
     public String spittles(Model model) {
@@ -193,7 +193,7 @@
     }
     ```
     
-    + 如果你希望使用非Spring类型的话，那么可以用java.util.Map来代替Model。
+    + 如果你希望使用非Spring类型的话, 那么可以用java.util.Map来代替Model. 
     ```java
     @RequestMapping(method=RequestMethod.GET)
     public String spittles(Model model) {
@@ -202,7 +202,7 @@
     }
     ```
     
-    + [Model可以不再方法传递是显示声明，也可以在返回时不显式地设定模型.]() :bangbang:
+    + [Model可以不再方法传递是显示声明, 也可以在返回时不显式地设定模型.]() :bangbang:
     ```java
     @RequestMapping(method=RequestMethod.GET)
     public List<Spittle> spittles() {
@@ -210,7 +210,7 @@
     }
     ```
     
-+ 当视图是JSP的时候，模型数据会作为请求属性放到请求（request）之中，这样就可以使用JSTL等标签进行操作。
++ 当视图是JSP的时候, 模型数据会作为请求属性放到请求（request）之中, 这样就可以使用JSTL等标签进行操作. 
 
 ####4. [_@RequestMapping使用_]() :bangbang:
 + value, method使用. value: 指定请求的实际地址, 指定的地址可以是URI Template 模式（后面将会说明）; method: 指定请求的method类型,  GET, POST, PUT, DELETE等. 
@@ -358,7 +358,7 @@
     
 + **@PathVariable**
     + @RequestHeader注解, 可以把Request请求header部分的值绑定到方法的参数上.
-    + [如果@PathVariable中没有value属性的话，它会假设占位符的名称与方法的参数名相同。这能够让代码稍微简洁一些，因为不必重复写占位符的名称了。但需要注意的是，如果你想要重命名参数时，必须要同时修改占位符的名称，使其互相匹配.]()
+    + [如果@PathVariable中没有value属性的话, 它会假设占位符的名称与方法的参数名相同. 这能够让代码稍微简洁一些, 因为不必重复写占位符的名称了. 但需要注意的是, 如果你想要重命名参数时, 必须要同时修改占位符的名称, 使其互相匹配.]()
     + 示例代码: 
     ```java
     /*
@@ -455,15 +455,15 @@
     ```
     
 ####5. _处理表单_
-+ **@RequestMapping** method属性调整为GET方法用以显示表单。
-+ **@RequestMapping** method属性调整为POST方法用以校验表单。
++ **@RequestMapping** method属性调整为GET方法用以显示表单. 
++ **@RequestMapping** method属性调整为POST方法用以校验表单. 
 + [页面重定向]()
 
-当InternalResourceViewResolver看到视图格式中的“redirect:”前缀时，它就知道要将其解析为重定向的规则，而不是视图的名称。
+当InternalResourceViewResolver看到视图格式中的"redirect:"前缀时, 它就知道要将其解析为重定向的规则, 而不是视图的名称. 
 
-需要注意的是，除了“redirect:”，InternalResourceViewResolver还能识别“forward:”前缀。当它发现视图格式中以“forward:”作为前缀时，请求将会前往（forward）指定的URL路径，而不再是重定向。
+需要注意的是, 除了"redirect:", InternalResourceViewResolver还能识别"forward:"前缀. 当它发现视图格式中以"forward:"作为前缀时, 请求将会前往（forward）指定的URL路径, 而不再是重定向. 
 
-+ 示例代码：
++ 示例代码: 
     ```java
     @Controller
     @RequestMapping("/spitter")
@@ -495,7 +495,7 @@
     ```
     
 + 校验表单
-    + 从Spring 3.0开始，在Spring MVC中提供了对Java校验API的支持。在Spring MVC中要使用Java校验API的话，并不需要什么额外的配置。只要保证在类路径下包含这个Java API的实现即可，比如Hibernate Validator。
+    + 从Spring 3.0开始, 在Spring MVC中提供了对Java校验API的支持. 在Spring MVC中要使用Java校验API的话, 并不需要什么额外的配置. 只要保证在类路径下包含这个Java API的实现即可, 比如Hibernate Validator. 
     ```xml
     <dependency>
         <groupId>javax.validation</groupId>
@@ -513,19 +513,19 @@
     
     | 注解         | 描述                                                                               |
     |--------------|------------------------------------------------------------------------------------|
-    | @AssertFalse | 所注解的元素必须是Boolean类型，并且值为false                                       |
-    | @AssertTrue  | 所注解的元素必须是Boolean类型，并且值为true                                        |
-    | @DecimalMax  | @DecimalMax 所注解的元素必须是数字，并且它的值要小于或等于给定的BigDecimalString值 |
-    | @DecimalMin  | 所注解的元素必须是数字，并且它的值要大于或等于给定的BigDecimalString值             |
-    | @Digits      | 所注解的元素必须是数字，并且它的值必须有指定的位数                                 |
+    | @AssertFalse | 所注解的元素必须是Boolean类型, 并且值为false                                       |
+    | @AssertTrue  | 所注解的元素必须是Boolean类型, 并且值为true                                        |
+    | @DecimalMax  | @DecimalMax 所注解的元素必须是数字, 并且它的值要小于或等于给定的BigDecimalString值 |
+    | @DecimalMin  | 所注解的元素必须是数字, 并且它的值要大于或等于给定的BigDecimalString值             |
+    | @Digits      | 所注解的元素必须是数字, 并且它的值必须有指定的位数                                 |
     | @Future      | 所注解的元素的值必须是一个将来的日期                                               |
-    | @Max         | 所注解的元素必须是数字，并且它的值要小于或等于给定的值                             |
-    | @Min         | 所注解的元素必须是数字，并且它的值要大于或等于给定的值                             |
+    | @Max         | 所注解的元素必须是数字, 并且它的值要小于或等于给定的值                             |
+    | @Min         | 所注解的元素必须是数字, 并且它的值要大于或等于给定的值                             |
     | @NotNull     | 所注解元素的值必须不能为null                                                       |
     | @Null        | 所注解元素的值必须为null                                                           |
     | @Past        | 所注解的元素的值必须是一个已过去的日期                                             |
     | @Pattern     | 所注解的元素的值必须匹配给定的正则表达式                                           |
-    | @Size        | 所注解的元素的值必须是String、集合或数组，并且它的长度要符合给定的范围             |
+    | @Size        | 所注解的元素的值必须是String, 集合或数组, 并且它的长度要符合给定的范围             |
     
     + 属性校验示例代码
     ```java
@@ -661,71 +661,135 @@
     }
     ```
     
-    + 如果有校验出现错误的话，那么这些错误可以通过Errors对象进行访问，现在这个对象已作为processRegistration()方法的参数。（很重要一点需要注意，Errors参数要紧跟在带有@Valid注解的参数后面，@Valid注解所标注的就是要检验的参数。）processRegistration()方法所做的第一件事就是调用Errors.hasErrors()来检查是否有错误。
-      如果有错误的话，Errors.hasErrors()将会返回到registerForm，也就是注册表单的视图。这能够让用户的浏览器重新回到注册表单页面，所以他们能够修正错误，然后重新尝试提交。
+    + 如果有校验出现错误的话, 那么这些错误可以通过Errors对象进行访问, 现在这个对象已作为processRegistration()方法的参数. （很重要一点需要注意, Errors参数要紧跟在带有@Valid注解的参数后面, @Valid注解所标注的就是要检验的参数. ）processRegistration()方法所做的第一件事就是调用Errors.hasErrors()来检查是否有错误. 
+      如果有错误的话, Errors.hasErrors()将会返回到registerForm, 也就是注册表单的视图. 这能够让用户的浏览器重新回到注册表单页面, 所以他们能够修正错误, 然后重新尝试提交. 
       
 
 #### [_Spring MVC Test_]() :bangbang: :bangbang:
-+ 从Spring 3.2开始，我们可以按照控制器的方式来测试Spring MVC中的控制器了，而不仅仅是作为POJO进行测试。Spring现在包含了一种mock Spring MVC并针对控制器执行HTTP请求的机制。这样的话，在测试控制器的时候，就没有必要再启动Web服务器和Web浏览器了。
++ 从Spring 3.2开始, 我们可以按照控制器的方式来测试Spring MVC中的控制器了, 而不仅仅是作为POJO进行测试. Spring现在包含了一种mock Spring MVC并针对控制器执行HTTP请求的机制. 这样的话, 在测试控制器的时候, 就没有必要再启动Web服务器和Web浏览器了. 
 + 基于MockMvc的测试大致流程
-    + 1、准备测试环境
-    + 2、通过MockMvc执行请求
-        + 3.1、添加验证断言
-        + 3.2、添加结果处理器
-        + 3.3、得到MvcResult进行自定义断言/进行下一步的异步请求
-    + 4、卸载测试环境
+    + 1, 准备测试环境
+    + 2, 通过MockMvc执行请求
+        + 3.1, 添加验证断言
+        + 3.2, 添加结果处理器
+        + 3.3, 得到MvcResult进行自定义断言/进行下一步的异步请求
+    + 4, 卸载测试环境
 
 + 相关API
-    + MockMvcBuilder/MockMvcBuilders: MockMvcBuilder是用来构造MockMvc的构造器，其主要有两个实现：StandaloneMockMvcBuilder和DefaultMockMvcBuilder，分别对应之前的两种测试方式。对于我们来说直接使用静态工厂MockMvcBuilders创建即可.
+    + MockMvcBuilder/MockMvcBuilders: MockMvcBuilder是用来构造MockMvc的构造器, 其主要有两个实现: StandaloneMockMvcBuilder和DefaultMockMvcBuilder, 分别对应之前的两种测试方式. 对于我们来说直接使用静态工厂MockMvcBuilders创建即可.
     
     | 方法                                                                                                                                                          | 描述                                                                                     |
     |---------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
-    | MockMvcBuilders.webAppContextSetup(WebApplicationContext context)                                                                                             | 指定WebApplicationContext，将会从该上下文获取相应的控制器并得到相应的MockMvc；           |
-    | MockMvcBuilders.webAppContextSetup(WebApplicationContext context)                                                                                             | 指定WebApplicationContext，将会从该上下文获取相应的控制器并得到相应的MockMvc；           |
-    | MockMvcBuilders.standaloneSetup(Object... controllers)                                                                                                        | 通过参数指定一组控制器，这样就不需要从上下文获取了；                                     |
-    | DefaultMockMvcBuilder.addFilters(Filter... filters)/addFilter(Filter filter, String... urlPatterns)                                                           | 添加javax.servlet.Filter过滤器                                                           |
-    | DefaultMockMvcBuilder.defaultRequest(RequestBuilder requestBuilder)                                                                                           | 默认的RequestBuilder，每次执行时会合并到自定义的RequestBuilder中，即提供公共请求数据的； |
-    | DefaultMockMvcBuilder.alwaysExpect(ResultMatcher resultMatcher)                                                                                               | 定义全局的结果验证器，即每次执行请求时都进行验证的规则；                                 |
-    | DefaultMockMvcBuilder.alwaysDo(ResultHandler resultHandler)                                                                                                   | 定义全局结果处理器，即每次请求时都进行结果处理；                                         |
-    | DefaultMockMvcBuilder.dispatchOptions                                                                                                                         | DispatcherServlet是否分发OPTIONS请求方法到控制器；                                       |
-    | StandaloneMockMvcBuilder.setMessageConverters(HttpMessageConverter...messageConverters)                                                                       | 设置HTTP消息转换器；                                                                     |
-    | StandaloneMockMvcBuilder.setValidator(Validator validator)                                                                                                    | 设置验证器；                                                                             |
-    | StandaloneMockMvcBuilder.setConversionService(FormattingConversionService conversionService)                                                                  | 设置转换服务；                                                                           |
-    | StandaloneMockMvcBuilder.addInterceptors(HandlerInterceptor... interceptors)/addMappedInterceptors(String[] pathPatterns, HandlerInterceptor... interceptors) | 添加spring mvc拦截器；                                                                   |
-    | StandaloneMockMvcBuilder.setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager)                                                    | 设置内容协商管理器；                                                                     |
-    | StandaloneMockMvcBuilder.setAsyncRequestTimeout(long timeout)                                                                                                 | 设置异步超时时间；                                                                       |
-    | StandaloneMockMvcBuilder.setCustomArgumentResolvers(HandlerMethodArgumentResolver... argumentResolvers)                                                       | 设置自定义控制器方法参数解析器；                                                         |
-    | StandaloneMockMvcBuilder.setCustomReturnValueHandlers(HandlerMethodReturnValueHandler... handlers)                                                            | 设置自定义控制器方法返回值处理器；                                                       |
-    | StandaloneMockMvcBuilder.setHandlerExceptionResolvers(List exceptionResolvers)/setHandlerExceptionResolvers(HandlerExceptionResolver... exceptionResolvers)   | 设置异常解析器；                                                                         |
-    | StandaloneMockMvcBuilder.setViewResolvers(ViewResolver...resolvers)                                                                                           | 设置视图解析器；                                                                         |
-    | StandaloneMockMvcBuilder.setSingleView(View view)                                                                                                             | 设置单个视图，即视图解析时总是解析到这一个（仅适用于只有一个视图的情况）；               |
-    | StandaloneMockMvcBuilder.setLocaleResolver(LocaleResolver localeResolver)                                                                                     | 设置Local解析器；                                                                        |
-    | StandaloneMockMvcBuilder.setFlashMapManager(FlashMapManager flashMapManager)                                                                                  | 设置FlashMapManager，如存储重定向数据；                                                  |
-    | StandaloneMockMvcBuilder.setUseSuffixPatternMatch(boolean useSuffixPatternMatch)                                                                              | 设置是否是后缀模式匹配，如“/user”是否匹配"/user.*"，默认真即匹配；                       |
-    | StandaloneMockMvcBuilder.setUseTrailingSlashPatternMatch(boolean useTrailingSlashPatternMatch)                                                                | 设置是否自动后缀路径模式匹配，如“/user”是否匹配“/user/”，默认真即匹配；                  |
-    | StandaloneMockMvcBuilder.addPlaceHolderValue(String name, String value)                                                                                       | 添加request mapping中的占位符替代；                                                      |
+    | MockMvcBuilders webAppContextSetup(WebApplicationContext context)                                                                                             | 指定WebApplicationContext, 将会从该上下文获取相应的控制器并得到相应的MockMvc;            |
+    | MockMvcBuilders webAppContextSetup(WebApplicationContext context)                                                                                             | 指定WebApplicationContext, 将会从该上下文获取相应的控制器并得到相应的MockMvc;            |
+    | MockMvcBuilders standaloneSetup(Object... controllers)                                                                                                        | 通过参数指定一组控制器, 这样就不需要从上下文获取了;                                      |
+    | DefaultMockMvcBuilder addFilters(Filter... filters)/addFilter(Filter filter, String... urlPatterns)                                                           | 添加javax.servlet.Filter过滤器                                                           |
+    | DefaultMockMvcBuilder defaultRequest(RequestBuilder requestBuilder)                                                                                           | 默认的RequestBuilder, 每次执行时会合并到自定义的RequestBuilder中, 即提供公共请求数据的;  |
+    | DefaultMockMvcBuilder alwaysExpect(ResultMatcher resultMatcher)                                                                                               | 定义全局的结果验证器, 即每次执行请求时都进行验证的规则;                                  |
+    | DefaultMockMvcBuilder alwaysDo(ResultHandler resultHandler)                                                                                                   | 定义全局结果处理器, 即每次请求时都进行结果处理;                                          |
+    | DefaultMockMvcBuilder dispatchOptions                                                                                                                         | DispatcherServlet是否分发OPTIONS请求方法到控制器;                                        |
+    | StandaloneMockMvcBuilder setMessageConverters(HttpMessageConverter...messageConverters)                                                                       | 设置HTTP消息转换器;                                                                      |
+    | StandaloneMockMvcBuilder setValidator(Validator validator)                                                                                                    | 设置验证器;                                                                              |
+    | StandaloneMockMvcBuilder setConversionService(FormattingConversionService conversionService)                                                                  | 设置转换服务;                                                                            |
+    | StandaloneMockMvcBuilder addInterceptors(HandlerInterceptor... interceptors)/addMappedInterceptors(String[] pathPatterns, HandlerInterceptor... interceptors) | 添加spring mvc拦截器;                                                                    |
+    | StandaloneMockMvcBuilder setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager)                                                    | 设置内容协商管理器;                                                                      |
+    | StandaloneMockMvcBuilder setAsyncRequestTimeout(long timeout)                                                                                                 | 设置异步超时时间;                                                                        |
+    | StandaloneMockMvcBuilder setCustomArgumentResolvers(HandlerMethodArgumentResolver... argumentResolvers)                                                       | 设置自定义控制器方法参数解析器;                                                          |
+    | StandaloneMockMvcBuilder setCustomReturnValueHandlers(HandlerMethodReturnValueHandler... handlers)                                                            | 设置自定义控制器方法返回值处理器;                                                        |
+    | StandaloneMockMvcBuilder setHandlerExceptionResolvers(List exceptionResolvers)/setHandlerExceptionResolvers(HandlerExceptionResolver... exceptionResolvers)   | 设置异常解析器;                                                                          |
+    | StandaloneMockMvcBuilder setViewResolvers(ViewResolver...resolvers)                                                                                           | 设置视图解析器;                                                                          |
+    | StandaloneMockMvcBuilder setSingleView(View view)                                                                                                             | 设置单个视图, 即视图解析时总是解析到这一个（仅适用于只有一个视图的情况）;                |
+    | StandaloneMockMvcBuilder setLocaleResolver(LocaleResolver localeResolver)                                                                                     | 设置Local解析器;                                                                         |
+    | StandaloneMockMvcBuilder setFlashMapManager(FlashMapManager flashMapManager)                                                                                  | 设置FlashMapManager, 如存储重定向数据;                                                   |
+    | StandaloneMockMvcBuilder setUseSuffixPatternMatch(boolean useSuffixPatternMatch)                                                                              | 设置是否是后缀模式匹配, 如"/user"是否匹配"/user.*", 默认真即匹配;                        |
+    | StandaloneMockMvcBuilder setUseTrailingSlashPatternMatch(boolean useTrailingSlashPatternMatch)                                                                | 设置是否自动后缀路径模式匹配, 如"/user"是否匹配"/user/", 默认真即匹配;                   |
+    | StandaloneMockMvcBuilder addPlaceHolderValue(String name, String value)                                                                                       | 添加request mapping中的占位符替代;                                                       |
     
     + MockMvc
     
-    
+    | 方法                    | 描述                                                                                                                               |
+    |-------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+    | perform                 | 执行一个RequestBuilder请求, 会自动执行SpringMVC的流程并映射到相应的控制器执行处理;                                                 |
+    | andExpect               | 添加ResultMatcher验证规则, 验证控制器执行完成后结果是否正确;                                                                       |
+    | andDo                   | 添加ResultHandler结果处理器, 比如调试时打印结果到控制台;                                                                           |
+    | andReturn               | 最后返回相应的MvcResult; 然后进行自定义验证/进行下一步的异步处理;                                                                  |
+    | setDefaultRequest       | 设置默认的RequestBuilder, 用于在每次perform执行相应的RequestBuilder时自动把该默认的RequestBuilder合并到perform的RequestBuilder中;  |
+    | setGlobalResultMatchers | 设置全局的预期结果验证规则, 如我们通过MockMvc测试多个控制器时, 假设它们都想验证某个规则时, 就可以使用这个;                         |
+    | setGlobalResultHandlers | 设置全局的ResultHandler结果处理器;                                                                                                 |
     
     + RequestBuilder/MockMvcRequestBuilders
     
+    | 方法                                                                                                                                         | 描述                                                                                                |
+    |----------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
+    | MockHttpServletRequestBuilder get(String urlTemplate, Object... urlVariables)                                                                | 根据uri模板和uri变量值得到一个GET请求方式的MockHttpServletRequestBuilder; 如get("/user/{id}", 1L);  |
+    | MockHttpServletRequestBuilder post(String urlTemplate, Object... urlVariables)                                                               | 同get类似, 但是是POST方法;                                                                          |
+    | MockHttpServletRequestBuilder put(String urlTemplate, Object... urlVariables)                                                                | 同get类似, 但是是PUT方法;                                                                           |
+    | MockHttpServletRequestBuilder delete(String urlTemplate, Object... urlVariables)                                                             | 同get类似, 但是是DELETE方法;                                                                        |
+    | MockHttpServletRequestBuilder options(String urlTemplate, Object... urlVariables)                                                            | 同get类似, 但是是OPTIONS方法;                                                                       |
+    | MockHttpServletRequestBuilder request(HttpMethod httpMethod, String urlTemplate, Object... urlVariables)                                     | 提供自己的Http请求方法及uri模板和uri变量, 如上API都是委托给这个API;                                 |
+    | MockMultipartHttpServletRequestBuilder fileUpload(String urlTemplate, Object... urlVariables).                                               | 提供文件上传方式的请求, 得到MockMultipartHttpServletRequestBuilder;                                 |
+    | RequestBuilder.asyncDispatch(final MvcResult mvcResult)                                                                                      | 创建一个从启动异步处理的请求的MvcResult进行异步分派的RequestBuilder;                                |
+    | MockHttpServletRequestBuilder header(String name, Object... values)/MockHttpServletRequestBuilder headers(HttpHeaders httpHeaders)           | 添加头信息;                                                                                         |
+    | MockHttpServletRequestBuilder contentType(MediaType mediaType)                                                                               | 指定请求的contentType头信息;                                                                        |
+    | MockHttpServletRequestBuilder accept(MediaType... mediaTypes)/MockHttpServletRequestBuilder accept(String... mediaTypes)                     | 指定请求的Accept头信息;                                                                             |
+    | MockHttpServletRequestBuilder content(byte[] content)/MockHttpServletRequestBuilder content(String content)                                  | 指定请求Body体内容;                                                                                 |
+    | MockHttpServletRequestBuilder cookie(Cookie... cookies)                                                                                      | 指定请求的Cookie;                                                                                   |
+    | MockHttpServletRequestBuilder locale(Locale locale)                                                                                          | 指定请求的Locale;                                                                                   |
+    | MockHttpServletRequestBuilder characterEncoding(String encoding)                                                                             | 指定请求字符编码;                                                                                   |
+    | MockHttpServletRequestBuilder requestAttr(String name, Object value)                                                                         | 设置请求属性数据;                                                                                   |
+    | MockHttpServletRequestBuilder sessionAttr(String name, Object value)/MockHttpServletRequestBuilder sessionAttrs(Map sessionAttributes)       | 设置请求session属性数据;                                                                            |
+    | MockHttpServletRequestBuilder flashAttr(String name, Object value)/MockHttpServletRequestBuilder flashAttrs(Map flashAttributes)             | 指定请求的flash信息, 比如重定向后的属性信息;                                                        |
+    | MockHttpServletRequestBuilder session(MockHttpSession session)                                                                               | 指定请求的Session;                                                                                  |
+    | MockHttpServletRequestBuilder principal(Principal principal)                                                                                 | 指定请求的Principal;                                                                                |
+    | MockHttpServletRequestBuilder contextPath(String contextPath)                                                                                | 指定请求的上下文路径, 必须以"/"开头, 且不能以"/"结尾;                                               |
+    | MockHttpServletRequestBuilder pathInfo(String pathInfo)                                                                                      | 请求的路径信息, 必须以"/"开头;                                                                      |
+    | MockHttpServletRequestBuilder secure(boolean secure)                                                                                         | 请求是否使用安全通道;                                                                               |
+    | MockHttpServletRequestBuilder with(RequestPostProcessor postProcessor)                                                                       | 请求的后处理器, 用于自定义一些请求处理的扩展点;                                                     |
+    | MockMultipartHttpServletRequestBuilder file(String name, byte[] content)/MockMultipartHttpServletRequestBuilder file(MockMultipartFile file) | 指定要上传的文件;                                                                                   |
     
+    + ResultActions: 调用MockMvc.perform(RequestBuilder requestBuilder)后将得到ResultActions, 通过ResultActions完成如下三件事.
     
-    + ResultActions
+    | 方法                                           | 描述                                                                        |
+    |------------------------------------------------|-----------------------------------------------------------------------------|
+    | ResultActions andExpect(ResultMatcher matcher) | 添加验证断言来判断执行请求后的结果是否是预期的;                             |
+    | ResultActions andDo(ResultHandler handler)     | 添加结果处理器, 用于对验证成功后执行的动作, 如输出下请求/结果信息用于调试;  |
+    | MvcResult andReturn()                          | 返回验证成功后的MvcResult; 用于自定义验证/下一步的异步处理;                 |
     
+    + ResultMatcher/MockMvcResultMatchers: ResultMatcher用来匹配执行完请求后的结果验证, 其就一个match(MvcResult result)断言方法, 如果匹配失败将抛出相应的异常; spring mvc测试框架提供了很多***ResultMatchers来满足测试需求. 注意这些***ResultMatchers并不是ResultMatcher的子类, 而是返回ResultMatcher实例的. 
     
+    | 方法                                                                                                                                      | 描述                                                                                    |
+    |-------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
+    | HandlerResultMatchers handler()                                                                                                           | 请求的Handler验证器, 比如验证处理器类型/方法名; 此处的Handler其实就是处理请求的控制器;  |
+    | RequestResultMatchers request()                                                                                                           | 得到RequestResultMatchers验证器;                                                        |
+    | ModelResultMatchers model()                                                                                                               | 得到模型验证器;                                                                         |
+    | ViewResultMatchers view()                                                                                                                 | 得到视图验证器;                                                                         |
+    | FlashAttributeResultMatchers flash()                                                                                                      | 得到Flash属性验证;                                                                      |
+    | StatusResultMatchers status()                                                                                                             | 得到响应状态验证器;                                                                     |
+    | HeaderResultMatchers header()                                                                                                             | 得到响应Header验证器;                                                                   |
+    | CookieResultMatchers cookie()                                                                                                             | 得到响应Cookie验证器;                                                                   |
+    | ContentResultMatchers content()                                                                                                           | 得到响应内容验证器;                                                                     |
+    | JsonPathResultMatchers jsonPath(String expression, Object ... args)/ResultMatcher jsonPath(String expression, Matcher matcher)            | 得到Json表达式验证器;                                                                   |
+    | XpathResultMatchers xpath(String expression, Object... args)/XpathResultMatchers xpath(String expression, Map namespaces, Object... args) | 得到Xpath表达式验证器;                                                                  |
+    | ResultMatcher forwardedUrl(final String expectedUrl)                                                                                      | 验证处理完请求后转发的url（绝对匹配）;                                                  |
+    | ResultMatcher forwardedUrlPattern(final String urlPattern)                                                                                | 验证处理完请求后转发的url（Ant风格模式匹配, @since spring4）;                           |
+    | ResultMatcher redirectedUrl(final String expectedUrl)                                                                                     | 验证处理完请求后重定向的url（绝对匹配）;                                                |
+    | ResultMatcher redirectedUrlPattern(final String expectedUrl)                                                                              | 验证处理完请求后重定向的url（Ant风格模式匹配, @since spring4）;                         |
+    | ModelResultMatchers.attributeExists(final String... names)                                                                                | 判断Model属性是否存在                                                                   |
     
-    + ResultMatcher/MockMvcResultMatchers
+    + ResultHandler/MockMvcResultHandlers: ResultHandler用于对处理的结果进行相应处理的, 比如输出整个请求/响应等信息方便调试, Spring mvc测试框架提供了MockMvcResultHandlers静态工厂方法, 该工厂提供了ResultHandler print()返回一个输出MvcResult详细信息到控制台的ResultHandler实现. 
     
+    + MvcResult: 即执行完控制器后得到的整个结果, 并不仅仅是返回值, 其包含了测试时需要的所有信息.
     
-    
-    + ResultHandler/MockMvcResultHandlers
-    
-    
-    
-    + MvcResult
+    | 方法                                                        | 描述                                       |
+    |-------------------------------------------------------------|--------------------------------------------|
+    | MockHttpServletRequest getRequest()                         | 得到执行的请求;                            |
+    | MockHttpServletResponse getResponse()                       | 得到执行后的响应;                          |
+    | Object getHandler()                                         | 得到执行的处理器, 一般就是控制器;          |
+    | HandlerInterceptor[] getInterceptors()                      | 得到对处理器进行拦截的拦截器;              |
+    | ModelAndView getModelAndView()                              | 得到执行后的ModelAndView;                  |
+    | Exception getResolvedException()                            | 得到HandlerExceptionResolver解析后的异常;  |
+    | FlashMap getFlashMap()                                      | 得到FlashMap;                              |
+    | Object getAsyncResult()/Object getAsyncResult(long timeout) | 得到异步执行的结果;                        |
 
 + 本章顶部项目的Controller测试代码:
     ```java
@@ -750,7 +814,7 @@
     
     /**
      * Created by ChenZhePC on 2017/1/16.
-     * Description : 这种测试方法可以避免在测试Controller时，反复的部署服务器然后测试
+     * Description : 这种测试方法可以避免在测试Controller时, 反复的部署服务器然后测试
      *               测试结果为通过
      */
     public class HomeControllerTest {
