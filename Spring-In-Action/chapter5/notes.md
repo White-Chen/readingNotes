@@ -180,6 +180,37 @@
 + 通过 **@Controller** 注解声明控制器类, 但实际上这个注解对Spring MVC本身的影响并不大, 这里是用于辅助实现组件扫描的.
 + **@Controller** 注解基于 **@Component** 注解, 因此使用 **@Component** 注解效果相同, [但是在表意性上可能会差一些]().
 + 通过 **@RequestMapping** 注解可以从各个角度限定方法处理的请求. 详情见下. 
++ [**@RequestMapping** 可以被用到类级别，从而从类级别限定请求路径等, 并且支持String数组, 从而匹配多个请求路径.]()
++ 传递模型数据：
+    + [Model实际上就是一个Map（也就是key-value对的集合），它会传递给视图，这样数据就能渲染到客户端了。当调用addAttribute()方法并且不指定key的时候，那么key会根据值的对象类型推断确定。]() :bangbang:
+    ```java
+    @RequestMapping(method=RequestMethod.GET)
+    public String spittles(Model model) {
+        model.addAttribute(
+            spittleRepository.findSpittles(
+                Long.MAX_VALUE, 20));
+        return "spittles";
+    }
+    ```
+    
+    + 如果你希望使用非Spring类型的话，那么可以用java.util.Map来代替Model。
+    ```java
+    @RequestMapping(method=RequestMethod.GET)
+    public String spittles(Model model) {
+        model.addAttribute("spittleList",spittleRepository.findSpittles(Long.MAX_VALUE, 20));
+        return "spittles";
+    }
+    ```
+    
+    + [Model可以不再方法传递是显示声明，也可以在返回时不显式地设定模型.]() :bangbang:
+    ```java
+    @RequestMapping(method=RequestMethod.GET)
+    public List<Spittle> spittles() {
+      return spittleRepository.findSpittles(Long.MAX_VALUE, 20));
+    }
+    ```
+    
++ 当视图是JSP的时候，模型数据会作为请求属性放到请求（request）之中，这样就可以使用JSTL等标签进行操作。
 
 ####4. [_@RequestMapping使用_]() :bangbang:
 + value, method使用. value: 指定请求的实际地址, 指定的地址可以是URI Template 模式（后面将会说明）; method: 指定请求的method类型,  GET, POST, PUT, DELETE等. 
@@ -326,7 +357,8 @@
     ```
     
 + **@PathVariable**
-    + @RequestHeader注解, 可以把Request请求header部分的值绑定到方法的参数上. 
+    + @RequestHeader注解, 可以把Request请求header部分的值绑定到方法的参数上.
+    + [如果@PathVariable中没有value属性的话，它会假设占位符的名称与方法的参数名相同。这能够让代码稍微简洁一些，因为不必重复写占位符的名称了。但需要注意的是，如果你想要重命名参数时，必须要同时修改占位符的名称，使其互相匹配.]()
     + 示例代码: 
     ```java
     /*
@@ -368,16 +400,13 @@
     @RequestMapping("/pets")  
     @SessionAttributes("pet")  
     public class EditPetForm {  
-      
         // ...  
-      
         @RequestMapping(method = RequestMethod.GET)  
         public String setupForm(@RequestParam("petId") int petId, ModelMap model) {  
             Pet pet = this.clinic.loadPet(petId);  
             model.addAttribute("pet", pet);  
             return "petForm";  
         }  
-      
         // ...  
     }
     ```
@@ -425,5 +454,455 @@
     }  
     ```
     
-####5. __
+####5. _处理表单_
++ **@RequestMapping** method属性调整为GET方法用以显示表单。
++ **@RequestMapping** method属性调整为POST方法用以校验表单。
++ [页面重定向]()
+
+当InternalResourceViewResolver看到视图格式中的“redirect:”前缀时，它就知道要将其解析为重定向的规则，而不是视图的名称。
+
+需要注意的是，除了“redirect:”，InternalResourceViewResolver还能识别“forward:”前缀。当它发现视图格式中以“forward:”作为前缀时，请求将会前往（forward）指定的URL路径，而不再是重定向。
+
++ 示例代码：
+    ```java
+    @Controller
+    @RequestMapping("/spitter")
+    public class SpitterController {
+        private SpitterRepository spitterRepository;
+        @Autowired
+        public SpitterController(
+          SpitterRepository spitterRepository) {
+              this.spitterRepository = spitterRepository;
+        }
+        @RequestMapping(value="/register", method=GET)
+        public String showRegistrationForm() {
+              return "registerForm";
+        }
+        @RequestMapping(value="/{username}", method=GET)
+        public String showSpitterProfile(
+        @PathVariable String username, Model model) {
+              Spitter spitter = spitterRepository.findByUsername(username);
+              model.addAttribute(spitter);
+              return "profile";
+        }
+        @RequestMapping(value="/register", method=POST)
+        public String processRegistration(Spitter spitter) {
+              spitterRepository.save(spitter);
+              return "redirect:/spitter/" +
+                      spitter.getUsername();
+        }
+    }
+    ```
     
++ 校验表单
+    + 从Spring 3.0开始，在Spring MVC中提供了对Java校验API的支持。在Spring MVC中要使用Java校验API的话，并不需要什么额外的配置。只要保证在类路径下包含这个Java API的实现即可，比如Hibernate Validator。
+    ```xml
+    <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>1.1.0.Final</version>
+    </dependency>
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-validator</artifactId>
+        <version>5.2.4.Final</version>
+    </dependency>
+    ```
+    
+    + Java校验API所提供的校验注解
+    
+    | 注解         | 描述                                                                               |
+    |--------------|------------------------------------------------------------------------------------|
+    | @AssertFalse | 所注解的元素必须是Boolean类型，并且值为false                                       |
+    | @AssertTrue  | 所注解的元素必须是Boolean类型，并且值为true                                        |
+    | @DecimalMax  | @DecimalMax 所注解的元素必须是数字，并且它的值要小于或等于给定的BigDecimalString值 |
+    | @DecimalMin  | 所注解的元素必须是数字，并且它的值要大于或等于给定的BigDecimalString值             |
+    | @Digits      | 所注解的元素必须是数字，并且它的值必须有指定的位数                                 |
+    | @Future      | 所注解的元素的值必须是一个将来的日期                                               |
+    | @Max         | 所注解的元素必须是数字，并且它的值要小于或等于给定的值                             |
+    | @Min         | 所注解的元素必须是数字，并且它的值要大于或等于给定的值                             |
+    | @NotNull     | 所注解元素的值必须不能为null                                                       |
+    | @Null        | 所注解元素的值必须为null                                                           |
+    | @Past        | 所注解的元素的值必须是一个已过去的日期                                             |
+    | @Pattern     | 所注解的元素的值必须匹配给定的正则表达式                                           |
+    | @Size        | 所注解的元素的值必须是String、集合或数组，并且它的长度要符合给定的范围             |
+    
+    + 属性校验示例代码
+    ```java
+    package spittr.entity;
+    
+    import org.apache.commons.lang3.builder.EqualsBuilder;
+    import org.apache.commons.lang3.builder.HashCodeBuilder;
+    import org.hibernate.validator.constraints.Email;
+    
+    import javax.validation.constraints.NotNull;
+    import javax.validation.constraints.Size;
+    
+    /**
+     * Created by ChenZhePC on 2017/1/16.
+     */
+    
+    public class Spitter {
+        private Long id;
+    
+        @NotNull
+        @Size(min = 5, max = 16)
+        private String username;
+    
+        @NotNull
+        @Size(min = 5, max = 25)
+        private String password;
+    
+        @NotNull
+        @Size(min = 2, max = 30)
+        private String firstName;
+    
+        @NotNull
+        @Size(min = 2, max = 30)
+        private String lastName;
+    
+        @NotNull
+        @Email
+        private String email;
+    
+        public Spitter() {}
+    
+        public Spitter(String username, String password, String firstName, String lastName, String email) {
+            this(null, username, password, firstName, lastName, email);
+        }
+    
+        public Spitter(Long id, String username, String password, String firstName, String lastName, String email) {
+            this.id = id;
+            this.username = username;
+            this.password = password;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.email = email;
+        }
+    
+        public Long getId() {
+            return id;
+        }
+    
+        public void setId(Long id) {
+            this.id = id;
+        }
+    
+        public String getUsername() {
+            return username;
+        }
+    
+        public void setUsername(String username) {
+            this.username = username;
+        }
+    
+        public String getPassword() {
+            return password;
+        }
+    
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    
+        public String getFirstName() {
+            return firstName;
+        }
+    
+        public void setFirstName(String firstName) {
+            this.firstName = firstName;
+        }
+    
+        public String getLastName() {
+            return lastName;
+        }
+    
+        public void setLastName(String lastName) {
+            this.lastName = lastName;
+        }
+    
+        public String getEmail() {
+            return email;
+        }
+    
+        public void setEmail(String email) {
+            this.email = email;
+        }
+    
+        @Override
+        public boolean equals(Object obj) {
+            return EqualsBuilder.reflectionEquals(this, obj,
+                    "firstName", "lastName", "username", "password", "email");
+        }
+    
+        @Override
+        public int hashCode() {
+            return HashCodeBuilder.reflectionHashCode(this,
+                    "firstName", "lastName", "username", "password", "email");
+        }
+    }
+    ```
+    
+    + 表单数据校验示例代码
+    ```java
+    @Controller
+    @RequestMapping("/spitter")
+    public class SpitterController {
+        //...    
+        @RequestMapping(value = "/register", method = RequestMethod.POST)
+        public String processRegistration(
+                @Valid Spitter spitter,
+                Errors errors){
+            if (errors.hasErrors())
+                return "registerForm";
+            spitterRepository.save(spitter);
+            return "redirect:/spitter/" + spitter.getUsername();
+        }
+        // ...
+    }
+    ```
+    
+    + 如果有校验出现错误的话，那么这些错误可以通过Errors对象进行访问，现在这个对象已作为processRegistration()方法的参数。（很重要一点需要注意，Errors参数要紧跟在带有@Valid注解的参数后面，@Valid注解所标注的就是要检验的参数。）processRegistration()方法所做的第一件事就是调用Errors.hasErrors()来检查是否有错误。
+      如果有错误的话，Errors.hasErrors()将会返回到registerForm，也就是注册表单的视图。这能够让用户的浏览器重新回到注册表单页面，所以他们能够修正错误，然后重新尝试提交。
+      
+
+#### [_Spring MVC Test_]() :bangbang: :bangbang:
++ 从Spring 3.2开始，我们可以按照控制器的方式来测试Spring MVC中的控制器了，而不仅仅是作为POJO进行测试。Spring现在包含了一种mock Spring MVC并针对控制器执行HTTP请求的机制。这样的话，在测试控制器的时候，就没有必要再启动Web服务器和Web浏览器了。
++ 基于MockMvc的测试大致流程
+    + 1、准备测试环境
+    + 2、通过MockMvc执行请求
+        + 3.1、添加验证断言
+        + 3.2、添加结果处理器
+        + 3.3、得到MvcResult进行自定义断言/进行下一步的异步请求
+    + 4、卸载测试环境
+
++ 相关API
+    + MockMvcBuilder/MockMvcBuilders: MockMvcBuilder是用来构造MockMvc的构造器，其主要有两个实现：StandaloneMockMvcBuilder和DefaultMockMvcBuilder，分别对应之前的两种测试方式。对于我们来说直接使用静态工厂MockMvcBuilders创建即可.
+    
+    | 方法                                                                                                                                                          | 描述                                                                                     |
+    |---------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+    | MockMvcBuilders.webAppContextSetup(WebApplicationContext context)                                                                                             | 指定WebApplicationContext，将会从该上下文获取相应的控制器并得到相应的MockMvc；           |
+    | MockMvcBuilders.webAppContextSetup(WebApplicationContext context)                                                                                             | 指定WebApplicationContext，将会从该上下文获取相应的控制器并得到相应的MockMvc；           |
+    | MockMvcBuilders.standaloneSetup(Object... controllers)                                                                                                        | 通过参数指定一组控制器，这样就不需要从上下文获取了；                                     |
+    | DefaultMockMvcBuilder.addFilters(Filter... filters)/addFilter(Filter filter, String... urlPatterns)                                                           | 添加javax.servlet.Filter过滤器                                                           |
+    | DefaultMockMvcBuilder.defaultRequest(RequestBuilder requestBuilder)                                                                                           | 默认的RequestBuilder，每次执行时会合并到自定义的RequestBuilder中，即提供公共请求数据的； |
+    | DefaultMockMvcBuilder.alwaysExpect(ResultMatcher resultMatcher)                                                                                               | 定义全局的结果验证器，即每次执行请求时都进行验证的规则；                                 |
+    | DefaultMockMvcBuilder.alwaysDo(ResultHandler resultHandler)                                                                                                   | 定义全局结果处理器，即每次请求时都进行结果处理；                                         |
+    | DefaultMockMvcBuilder.dispatchOptions                                                                                                                         | DispatcherServlet是否分发OPTIONS请求方法到控制器；                                       |
+    | StandaloneMockMvcBuilder.setMessageConverters(HttpMessageConverter...messageConverters)                                                                       | 设置HTTP消息转换器；                                                                     |
+    | StandaloneMockMvcBuilder.setValidator(Validator validator)                                                                                                    | 设置验证器；                                                                             |
+    | StandaloneMockMvcBuilder.setConversionService(FormattingConversionService conversionService)                                                                  | 设置转换服务；                                                                           |
+    | StandaloneMockMvcBuilder.addInterceptors(HandlerInterceptor... interceptors)/addMappedInterceptors(String[] pathPatterns, HandlerInterceptor... interceptors) | 添加spring mvc拦截器；                                                                   |
+    | StandaloneMockMvcBuilder.setContentNegotiationManager(ContentNegotiationManager contentNegotiationManager)                                                    | 设置内容协商管理器；                                                                     |
+    | StandaloneMockMvcBuilder.setAsyncRequestTimeout(long timeout)                                                                                                 | 设置异步超时时间；                                                                       |
+    | StandaloneMockMvcBuilder.setCustomArgumentResolvers(HandlerMethodArgumentResolver... argumentResolvers)                                                       | 设置自定义控制器方法参数解析器；                                                         |
+    | StandaloneMockMvcBuilder.setCustomReturnValueHandlers(HandlerMethodReturnValueHandler... handlers)                                                            | 设置自定义控制器方法返回值处理器；                                                       |
+    | StandaloneMockMvcBuilder.setHandlerExceptionResolvers(List exceptionResolvers)/setHandlerExceptionResolvers(HandlerExceptionResolver... exceptionResolvers)   | 设置异常解析器；                                                                         |
+    | StandaloneMockMvcBuilder.setViewResolvers(ViewResolver...resolvers)                                                                                           | 设置视图解析器；                                                                         |
+    | StandaloneMockMvcBuilder.setSingleView(View view)                                                                                                             | 设置单个视图，即视图解析时总是解析到这一个（仅适用于只有一个视图的情况）；               |
+    | StandaloneMockMvcBuilder.setLocaleResolver(LocaleResolver localeResolver)                                                                                     | 设置Local解析器；                                                                        |
+    | StandaloneMockMvcBuilder.setFlashMapManager(FlashMapManager flashMapManager)                                                                                  | 设置FlashMapManager，如存储重定向数据；                                                  |
+    | StandaloneMockMvcBuilder.setUseSuffixPatternMatch(boolean useSuffixPatternMatch)                                                                              | 设置是否是后缀模式匹配，如“/user”是否匹配"/user.*"，默认真即匹配；                       |
+    | StandaloneMockMvcBuilder.setUseTrailingSlashPatternMatch(boolean useTrailingSlashPatternMatch)                                                                | 设置是否自动后缀路径模式匹配，如“/user”是否匹配“/user/”，默认真即匹配；                  |
+    | StandaloneMockMvcBuilder.addPlaceHolderValue(String name, String value)                                                                                       | 添加request mapping中的占位符替代；                                                      |
+    
+    + MockMvc
+    
+    
+    
+    + RequestBuilder/MockMvcRequestBuilders
+    
+    
+    
+    + ResultActions
+    
+    
+    
+    + ResultMatcher/MockMvcResultMatchers
+    
+    
+    
+    + ResultHandler/MockMvcResultHandlers
+    
+    
+    
+    + MvcResult
+
++ 本章顶部项目的Controller测试代码:
+    ```java
+    package spittr.web;
+    
+    import org.hamcrest.CoreMatchers;
+    import org.junit.Test;
+    import org.mockito.Mockito;
+    import org.springframework.test.web.servlet.MockMvc;
+    import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+    import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+    import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+    import org.springframework.web.servlet.view.InternalResourceView;
+    import spittr.data.SpitterRepository;
+    import spittr.data.SpittleRepository;
+    import spittr.entity.Spitter;
+    import spittr.entity.Spittle;
+    
+    import java.util.ArrayList;
+    import java.util.Date;
+    import java.util.List;
+    
+    /**
+     * Created by ChenZhePC on 2017/1/16.
+     * Description : 这种测试方法可以避免在测试Controller时，反复的部署服务器然后测试
+     *               测试结果为通过
+     */
+    public class HomeControllerTest {
+    
+        @Test   //test passed
+        public void testHomePage() throws Exception {
+            HomeController controller = new HomeController();
+            MockMvc mockMvc = MockMvcBuilders
+                    .standaloneSetup(controller)
+                    .build();
+    
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get("/homepage"))
+                    .andExpect(MockMvcResultMatchers.view().name("home"));
+        }
+    
+        @Test   //test passed
+        public void shouldShowRecentSpittles() throws Exception{
+            List<Spittle> expectedSpittles = createsSpittleList(20);
+            SpittleRepository mockRepository = Mockito.mock(SpittleRepository.class);
+            Mockito
+                    .when(mockRepository.findSpittles(Long.MAX_VALUE, 20))
+                    .thenReturn(expectedSpittles);
+    
+            SpittleController controller =
+                    new SpittleController(mockRepository);
+    
+            MockMvc mockMvc = MockMvcBuilders
+                    .standaloneSetup(controller)
+                    .setSingleView(
+                            new InternalResourceView("/WEB-INF/views/spittles.jsp"))
+                    .build();
+    
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get("/spittles"))
+                    .andExpect(MockMvcResultMatchers.view().name("spittles"))
+                    .andExpect(MockMvcResultMatchers.model().attributeExists("spittleList"))
+                    .andExpect(MockMvcResultMatchers.model().attribute("spittleList", CoreMatchers.hasItems(expectedSpittles.toArray())));
+        }
+    
+        @Test   //test passed
+        public void shouldShowPagedSpittles() throws Exception{
+            List<Spittle> expectedSpittles = createsSpittleList(50);
+            SpittleRepository mockRepository = Mockito.mock(SpittleRepository.class);
+            Mockito
+                    .when(mockRepository.findSpittles(238900, 50))
+                    .thenReturn(expectedSpittles);
+    
+            SpittleController controller =
+                    new SpittleController(mockRepository);
+    
+            MockMvc mockMvc = MockMvcBuilders
+                    .standaloneSetup(controller)
+                    .setSingleView(
+                            new InternalResourceView("/WEB-INF/views/spittles.jsp"))
+                    .build();
+    
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get("/spittles?max=238900&count=50"))
+                    .andExpect(MockMvcResultMatchers.view().name("spittles"))
+                    .andExpect(MockMvcResultMatchers.model().attributeExists("spittleList"))
+                    .andExpect(MockMvcResultMatchers.model().attribute("spittleList", CoreMatchers.hasItems(expectedSpittles.toArray())));
+        }
+    
+        @Test   //test passed
+        public void testSpittleByParams() throws Exception{
+            Spittle expectedSpittle = new Spittle("Hello", new Date());
+            SpittleRepository mockRepository = Mockito.mock(SpittleRepository.class);
+            Mockito.when(mockRepository.findOne(12345)).thenReturn(expectedSpittle);
+    
+            SpittleController controller = new SpittleController(mockRepository);
+            MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get("/spittles/show?spittle_id=12345"))
+                    .andExpect(MockMvcResultMatchers.view().name("spittle"))
+                    .andExpect(MockMvcResultMatchers.model().attributeExists("spittle"))
+                    .andExpect(MockMvcResultMatchers.model().attribute("spittle", expectedSpittle));
+        }
+    
+        @Test   //test passed
+        public void testSpittleByPath() throws Exception{
+            Spittle expectedSpittle = new Spittle("Hello", new Date());
+            SpittleRepository mockRepository = Mockito.mock(SpittleRepository.class);
+            Mockito.when(mockRepository.findOne(12345)).thenReturn(expectedSpittle);
+    
+            SpittleController controller = new SpittleController(mockRepository);
+            MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get("/spittles/12345"))
+                    .andExpect(MockMvcResultMatchers.view().name("spittle"))
+                    .andExpect(MockMvcResultMatchers.model().attributeExists("spittle"))
+                    .andExpect(MockMvcResultMatchers.model().attribute("spittle", expectedSpittle));
+        }
+    
+        @Test   //test passed
+        public void shouldShowRegistration() throws Exception{
+    
+            SpitterRepository spitterRepository = Mockito.mock(SpitterRepository.class);
+            SpitterController controller =  new SpitterController(spitterRepository);
+            MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    
+            mockMvc
+                    .perform(MockMvcRequestBuilders.get("/spitter/register"))
+                    .andExpect(MockMvcResultMatchers.view().name("registerForm"));
+        }
+    
+        @Test   //test passed
+        public void shouldProcessRegistration() throws Exception{
+    
+            SpitterRepository spitterRepository = Mockito.mock(SpitterRepository.class);
+            Spitter unsaved =
+                    new Spitter(
+                            "jbauer",
+                            "24hours",
+                            "Jack",
+                            "Bauer",
+                            "q953387601@163.com");
+            Spitter saved =
+                    new Spitter(
+                            24L,
+                            "jbauer",
+                            "24hours",
+                            "Jack",
+                            "Bauer",
+                            "q953387601@163.com");
+            Mockito.when(spitterRepository.save(unsaved)).thenReturn(saved);
+    
+            SpitterController controller = new SpitterController(spitterRepository);
+            MockMvc mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    
+            mockMvc
+                    .perform(MockMvcRequestBuilders.post("/spitter/register")
+                            .param("firstName", "Jack")
+                            .param("lastName", "Bauer")
+                            .param("username", "jbauer")
+                            .param("password", "24hours")
+                            .param("email", "q953387601@163.cn"))
+                    .andExpect(MockMvcResultMatchers.redirectedUrl("/spitter/jbauer"))
+                    .andExpect(MockMvcResultMatchers.model().attribute("spitter", unsaved));
+    
+            Mockito.verify(spitterRepository, Mockito.atLeastOnce()).save(unsaved);
+        }
+    
+        private List<Spittle> createsSpittleList(int count){
+            List<Spittle> spittles = new ArrayList<>();
+            for (int spi = 0; spi < count; spi++) {
+                spittles.add(new Spittle("Spittle" + spi, new Date()));
+            }
+            return spittles;
+        }
+    
+    }
+    ```
