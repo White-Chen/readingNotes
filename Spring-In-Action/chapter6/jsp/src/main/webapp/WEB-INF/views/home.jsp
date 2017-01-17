@@ -14,9 +14,11 @@
     <link rel="stylesheet" type="text/css" href="<c:url value="/resources/style.css"/>">
 </head>
 <body>
-    <h1><s:message code="spitter.welcome"/></h1>
+    <h1><s:message code="spitter.welcome" text="Welcome"/></h1>
 
-    <a href="<c:url value="/spittles" />">Spittles</a>
-    <a href="<c:url value="/spitter/register"/>">Register</a>
+    <s:url value="/spitter/register" var="registerUrl" />
+
+    <a href="<s:url value="/spittles"/> ">Spittles</a>
+    <a href="${registerUrl}">Register</a>
 </body>
 </html>

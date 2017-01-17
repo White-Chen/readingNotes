@@ -9,7 +9,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Spitter</title>
+    <link rel="stylesheet"
+          type="text/css"
+          href="<c:url value="/resources/style.css" />" >
+    </head>
 </head>
 <body>
     <div class="spittleView">

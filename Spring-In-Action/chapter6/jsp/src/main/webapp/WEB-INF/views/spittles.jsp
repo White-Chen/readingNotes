@@ -5,11 +5,13 @@
   Time: 13:08
   To change this template use File | Settings | File Templates.
 --%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="s"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Spitter</title>
+    <link rel="stylesheet" type="text/css" href="<c:url value="/resources/style.css" />" >
 </head>
 <body>
     <c:forEach items="${spittleList}" var="spittle">
