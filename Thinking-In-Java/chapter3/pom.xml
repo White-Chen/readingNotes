@@ -13,6 +13,14 @@
     <name>readingNotes.Thinking-In-Java.chapter3</name>
     <url>http://maven.apache.org</url>
 
+    <dependencies>
+        <dependency>
+            <groupId>readingNotes.Thinking-In-Java</groupId>
+            <artifactId>readingNotes.Thinking-In-Java.mindview</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
