@@ -21,6 +21,13 @@ public class JdbcSpittleRepository implements SpittleRepository {
     this.jdbc = jdbc;
   }
 
+  @Override
+  public Long size() {
+     return jdbc.queryForObject(
+            "select count(*) size from Spittle",
+             (rs, rowNum) -> rs.getLong("size"));
+  }
+
   public List<Spittle> findRecentSpittles() {
     return jdbc.query(
         "select id, message, created_at, latitude, longitude" +
@@ -34,8 +41,8 @@ public class JdbcSpittleRepository implements SpittleRepository {
         "select id, message, created_at, latitude, longitude" +
         " from Spittle" +
         " where id < ?" +
-        " order by created_at desc limit 20",
-        new SpittleRowMapper(), max);
+        " order by created_at desc limit ?",
+        new SpittleRowMapper(), max, count);
   }
 
   public Spittle findOne(long id) {
@@ -66,5 +73,5 @@ public class JdbcSpittleRepository implements SpittleRepository {
           rs.getDouble("latitude"));
     }
   }
-  
+
 }

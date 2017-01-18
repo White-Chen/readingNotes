@@ -50,6 +50,15 @@ public class SpittleController {
                         max,count
                 )
         );
+        model.addAttribute(
+                "maxCount", max + count
+        );
+        model.addAttribute(
+                "count", count
+        );
+        model.addAttribute(
+                "size", spittleRepository.size()
+        );
         return "spittles";
     }
 
@@ -65,6 +74,15 @@ public class SpittleController {
                 spittleRepository.findSpittles(
                         Long.MAX_VALUE,20
                 )
+        );
+        model.addAttribute(
+                "maxCount", 20
+        );
+        model.addAttribute(
+                "count", 20
+        );
+        model.addAttribute(
+                "size", spittleRepository.size()
         );
         return "spittles";
     }
