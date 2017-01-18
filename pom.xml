@@ -150,6 +150,11 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-jsp</artifactId>
+            <version>3.0.7</version>
+        </dependency>
 
         <!--hibernate-->
         <dependency>

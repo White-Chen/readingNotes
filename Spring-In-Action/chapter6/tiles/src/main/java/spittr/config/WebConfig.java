@@ -10,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.DefaultServletHandlerCo
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 
 /**
  * \* Created with Chen Zhe on 1/17/2017.
@@ -34,6 +35,16 @@ public class WebConfig
         resolver.setSuffix(".jsp");
         resolver.setExposeContextBeansAsAttributes(true);
         return resolver;
+    }
+
+    @Bean
+    public TilesConfigurer tilesConfigurer(){
+        TilesConfigurer tilesConfigurer = new TilesConfigurer();
+        tilesConfigurer.setDefinitions(new String[]{
+                "/WEB-INF/layout/tiles.xml"
+        });
+        tilesConfigurer.setCheckRefresh(true);
+        return tilesConfigurer;
     }
 
     @Bean
