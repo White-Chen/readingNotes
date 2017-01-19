@@ -7,11 +7,11 @@
 ![](pics/dispatcherServlet.jpg)
 
 + DispatcherServlet工作流程:
-    + 1. 在Spring MVC中, DispatcherServlet就是前端控制器. DispatcherServlet的任务是将请求发送给Spring MVC控制器（controller）
+    + 1. 在Spring MVC中, DispatcherServlet就是前端控制器. DispatcherServlet的任务是将请求发送给Spring MVC控制器(controller)
     + 2. DispatcherServlet需要知道应该将请求发送给哪个控制器. 所以DispatcherServlet以会查询一个或多个处理器映射, 来确定请求的下一站在哪里. 处理器映射会根据请求所携带的URL信息来进行决策. 
     + 3. 一旦选择了合适的控制器, DispatcherServlet会将请求发送给选中的控制器. **实际上, 设计良好的控制器本身只处理很少甚至不处理工作, 而是将业务逻辑委托给一个或多个服务对象进行处理.** 
     + 4. 控制器在完成逻辑处理后, 通常会产生一些信息, 这些信息需要返回给用户并在浏览器上显示. 这些信息被称为模型 **model**. 控制器所做的最后一件事就是将模型数据打包, 并且标示出用于渲染输出的视图名. 它接下来会将请求连同模型和视图名发送回DispatcherServlet.
-    + 5. DispatcherServlet将会使用视图解析器（view resolver）来将逻辑视图名匹配为一个特定的视图实现, **它可能是也可能不是JSP**. 
+    + 5. DispatcherServlet将会使用视图解析器(view resolver)来将逻辑视图名匹配为一个特定的视图实现, **它可能是也可能不是JSP**. 
     + 6. DispatcherServlet交付模型数据.
     + 7. 视图将使用模型数据渲染输出, 这个输出会通过响应对象传递给客户端.
     
@@ -80,12 +80,12 @@
 + **AbstractAnnotationConfigDispatcherServletInitializer** 剖析
 
     >   在Servlet 3.0+ 环境中, 容器会在类路径中查找实现javax.servlet.ServletContainerInitializer接口的类, 如果能发现的话, 就会用它来配置Servlet容器.Spring提供了这个接口的实现, 名为SpringServletContainerInitializer, 这个类反过来又会查找实现WebApplicationInitializer的类并将配置的任务交给它们来完成. 
-        Spring 3.2引入了一个便利的WebApplicationInitializer基础实现, 也就是AbstractAnnotationConfigDispatcherServletInitializer. 因为我们的SpittrWebAppInitializer扩展了AbstractAnnotationConfigDispatcherServletInitializer（同时也就实现了WebApplicationInitializer）, 因此当部署到Servlet 3.0容器中的时候, 容器会自动发现它, 并用它来配置Servlet上下文. 
+        Spring 3.2引入了一个便利的WebApplicationInitializer基础实现, 也就是AbstractAnnotationConfigDispatcherServletInitializer. 因为我们的SpittrWebAppInitializer扩展了AbstractAnnotationConfigDispatcherServletInitializer(同时也就实现了WebApplicationInitializer), 因此当部署到Servlet 3.0容器中的时候, 容器会自动发现它, 并用它来配置Servlet上下文. 
         getServletMappings(),  它会将一个或多个路径映射到DispatcherServlet上. 上面示例中, 它映射的是"/", 这表示它会是应用的默认Servlet. 它会处理进入应用的所有请求.  
         getServletConfigClasses()方法返回的带有@Configuration注解的类将会用来定义DispatcherServlet应用上下文中的bean. 
     >   getRootConfigClasses()方法返回的带有@Configuration注解的类将会用来配置ContextLoaderListener创建的应用上下文中的bean. 
 
-    >   DispatcherServlet和一个Servlet监听器（也就是ContextLoaderListener）的关系. 当DispatcherServlet启动的时候, 它会创建Spring应用上下文, 并加载配置文件或配置类中所声明的bean. 在程序清单5.1的getServletConfigClasses()方法中, 我们要求DispatcherServlet加载应用上下文时, 使用定义在WebConfig配置类（使用Java配置）中的bean. 但是在Spring Web应用中, 通常还会有另外一个应用上下文. 另外的这个应用上下文是由ContextLoaderListener创建的. 
+    >   DispatcherServlet和一个Servlet监听器(也就是ContextLoaderListener)的关系. 当DispatcherServlet启动的时候, 它会创建Spring应用上下文, 并加载配置文件或配置类中所声明的bean. 在程序清单5.1的getServletConfigClasses()方法中, 我们要求DispatcherServlet加载应用上下文时, 使用定义在WebConfig配置类(使用Java配置)中的bean. 但是在Spring Web应用中, 通常还会有另外一个应用上下文. 另外的这个应用上下文是由ContextLoaderListener创建的. 
     >   我们希望DispatcherServlet加载包含Web组件的bean, 如控制器, 视图解析器以及处理器映射, 而ContextLoaderListener要加载应用中的其他bean. 这些bean通常是驱动应用后端的中间层和数据层组件. 
 
 + [启动Spring MVC]()
@@ -182,7 +182,7 @@
 + 通过 **@RequestMapping** 注解可以从各个角度限定方法处理的请求. 详情见下. 
 + [**@RequestMapping** 可以被用到类级别, 从而从类级别限定请求路径等, 并且支持String数组, 从而匹配多个请求路径.]()
 + 传递模型数据: 
-    + [Model实际上就是一个Map（也就是key-value对的集合）, 它会传递给视图, 这样数据就能渲染到客户端了. 当调用addAttribute()方法并且不指定key的时候, 那么key会根据值的对象类型推断确定. ]() :bangbang:
+    + [Model实际上就是一个Map(也就是key-value对的集合), 它会传递给视图, 这样数据就能渲染到客户端了. 当调用addAttribute()方法并且不指定key的时候, 那么key会根据值的对象类型推断确定. ]() :bangbang:
     ```java
     @RequestMapping(method=RequestMethod.GET)
     public String spittles(Model model) {
@@ -210,10 +210,10 @@
     }
     ```
     
-+ 当视图是JSP的时候, 模型数据会作为请求属性放到请求（request）之中, 这样就可以使用JSTL等标签进行操作. 
++ 当视图是JSP的时候, 模型数据会作为请求属性放到请求(request)之中, 这样就可以使用JSTL等标签进行操作. 
 
 ####4. [_@RequestMapping使用_]() :bangbang:
-+ value, method使用. value: 指定请求的实际地址, 指定的地址可以是URI Template 模式（后面将会说明）; method: 指定请求的method类型,  GET, POST, PUT, DELETE等. 
++ value, method使用. value: 指定请求的实际地址, 指定的地址可以是URI Template 模式(后面将会说明); method: 指定请求的method类型,  GET, POST, PUT, DELETE等. 
     + 通过value指定方法处理的请求路径
     ```java
     @RequestMapping(value="/departments", method = RequestMethod.GET)
@@ -287,7 +287,7 @@
     }
     ```
     
-+ consumes, produces使用. consumes: 指定处理请求的提交内容类型（Content-Type）, 例如application/json, text/html; produces: 指定返回的内容类型, 仅当request请求头中的(Accept)类型中包含该指定类型才返回; 
++ consumes, produces使用. consumes: 指定处理请求的提交内容类型(Content-Type), 例如application/json, text/html; produces: 指定返回的内容类型, 仅当request请求头中的(Accept)类型中包含该指定类型才返回; 
     + cousumes的样例: 
     ```java
     @Controller  
@@ -336,7 +336,7 @@
     
 ####4. [_handler method 参数绑定_]() :bangbang:
 + handler method 参数绑定常用的注解, 根据他们处理的Request的不同内容部分分为四类(常用)
-    + 处理requet uri 部分（这里指uri template中variable, 不含queryString部分）的注解: @PathVariable. 
+    + 处理requet uri 部分(这里指uri template中variable, 不含queryString部分)的注解: @PathVariable. 
     + 处理request header部分的注解: @RequestHeader, @CookieValue. 
     + 处理request body部分的注解: @RequestParam, @RequestBody. 
     + 处理attribute类型是注解: @SessionAttributes, @ModelAttribute. 
@@ -391,7 +391,7 @@
     ```
     
 + **@RequestParam**
-    + 1. 常用来处理简单类型的绑定, 通过Request.getParameter()获取的String可直接转换为简单类型的情况（String--> 简单类型的转换操作由ConversionService配置的转换器来完成）; 因为使用request.getParameter()方式获取参数, 所以可以处理get方式中queryString的值, 也可以处理post方式中body data的值; 
+    + 1. 常用来处理简单类型的绑定, 通过Request.getParameter()获取的String可直接转换为简单类型的情况(String--> 简单类型的转换操作由ConversionService配置的转换器来完成); 因为使用request.getParameter()方式获取参数, 所以可以处理get方式中queryString的值, 也可以处理post方式中body data的值; 
     + 2. 用来处理Content-Type: 为application/x-www-form-urlencoded编码的内容, 提交方式GET, POST; 
     + 3. 注解有两个属性: value, required; value用来指定要传入值的id名称, required用来指示参数是否必须绑定; 
     + 示例代码: 
@@ -444,7 +444,7 @@
       
     @ModelAttribute  
     public Account addAccount(@RequestParam String number) {
-        //在调用@RequestMapping的方法之前, 为request对象的model里put（"account",  Account）; 
+        //在调用@RequestMapping的方法之前, 为request对象的model里put("account",  Account); 
         return accountManager.findAccount(number);  
     }  
   
@@ -461,7 +461,7 @@
 
 当InternalResourceViewResolver看到视图格式中的"redirect:"前缀时, 它就知道要将其解析为重定向的规则, 而不是视图的名称. 
 
-需要注意的是, 除了"redirect:", InternalResourceViewResolver还能识别"forward:"前缀. 当它发现视图格式中以"forward:"作为前缀时, 请求将会前往（forward）指定的URL路径, 而不再是重定向. 
+需要注意的是, 除了"redirect:", InternalResourceViewResolver还能识别"forward:"前缀. 当它发现视图格式中以"forward:"作为前缀时, 请求将会前往(forward)指定的URL路径, 而不再是重定向. 
 
 + 示例代码: 
     ```java
@@ -661,7 +661,7 @@
     }
     ```
     
-    + 如果有校验出现错误的话, 那么这些错误可以通过Errors对象进行访问, 现在这个对象已作为processRegistration()方法的参数. （很重要一点需要注意, Errors参数要紧跟在带有@Valid注解的参数后面, @Valid注解所标注的就是要检验的参数. ）processRegistration()方法所做的第一件事就是调用Errors.hasErrors()来检查是否有错误. 
+    + 如果有校验出现错误的话, 那么这些错误可以通过Errors对象进行访问, 现在这个对象已作为processRegistration()方法的参数. (很重要一点需要注意, Errors参数要紧跟在带有@Valid注解的参数后面, @Valid注解所标注的就是要检验的参数. )processRegistration()方法所做的第一件事就是调用Errors.hasErrors()来检查是否有错误. 
       如果有错误的话, Errors.hasErrors()将会返回到registerForm, 也就是注册表单的视图. 这能够让用户的浏览器重新回到注册表单页面, 所以他们能够修正错误, 然后重新尝试提交. 
       
 
@@ -698,7 +698,7 @@
     | StandaloneMockMvcBuilder setCustomReturnValueHandlers(HandlerMethodReturnValueHandler... handlers)                                                            | 设置自定义控制器方法返回值处理器;                                                        |
     | StandaloneMockMvcBuilder setHandlerExceptionResolvers(List exceptionResolvers)/setHandlerExceptionResolvers(HandlerExceptionResolver... exceptionResolvers)   | 设置异常解析器;                                                                          |
     | StandaloneMockMvcBuilder setViewResolvers(ViewResolver...resolvers)                                                                                           | 设置视图解析器;                                                                          |
-    | StandaloneMockMvcBuilder setSingleView(View view)                                                                                                             | 设置单个视图, 即视图解析时总是解析到这一个（仅适用于只有一个视图的情况）;                |
+    | StandaloneMockMvcBuilder setSingleView(View view)                                                                                                             | 设置单个视图, 即视图解析时总是解析到这一个(仅适用于只有一个视图的情况);                |
     | StandaloneMockMvcBuilder setLocaleResolver(LocaleResolver localeResolver)                                                                                     | 设置Local解析器;                                                                         |
     | StandaloneMockMvcBuilder setFlashMapManager(FlashMapManager flashMapManager)                                                                                  | 设置FlashMapManager, 如存储重定向数据;                                                   |
     | StandaloneMockMvcBuilder setUseSuffixPatternMatch(boolean useSuffixPatternMatch)                                                                              | 设置是否是后缀模式匹配, 如"/user"是否匹配"/user.*", 默认真即匹配;                        |
@@ -770,10 +770,10 @@
     | ContentResultMatchers content()                                                                                                           | 得到响应内容验证器;                                                                     |
     | JsonPathResultMatchers jsonPath(String expression, Object ... args)/ResultMatcher jsonPath(String expression, Matcher matcher)            | 得到Json表达式验证器;                                                                   |
     | XpathResultMatchers xpath(String expression, Object... args)/XpathResultMatchers xpath(String expression, Map namespaces, Object... args) | 得到Xpath表达式验证器;                                                                  |
-    | ResultMatcher forwardedUrl(final String expectedUrl)                                                                                      | 验证处理完请求后转发的url（绝对匹配）;                                                  |
-    | ResultMatcher forwardedUrlPattern(final String urlPattern)                                                                                | 验证处理完请求后转发的url（Ant风格模式匹配, @since spring4）;                           |
-    | ResultMatcher redirectedUrl(final String expectedUrl)                                                                                     | 验证处理完请求后重定向的url（绝对匹配）;                                                |
-    | ResultMatcher redirectedUrlPattern(final String expectedUrl)                                                                              | 验证处理完请求后重定向的url（Ant风格模式匹配, @since spring4）;                         |
+    | ResultMatcher forwardedUrl(final String expectedUrl)                                                                                      | 验证处理完请求后转发的url(绝对匹配);                                                  |
+    | ResultMatcher forwardedUrlPattern(final String urlPattern)                                                                                | 验证处理完请求后转发的url(Ant风格模式匹配, @since spring4);                           |
+    | ResultMatcher redirectedUrl(final String expectedUrl)                                                                                     | 验证处理完请求后重定向的url(绝对匹配);                                                |
+    | ResultMatcher redirectedUrlPattern(final String expectedUrl)                                                                              | 验证处理完请求后重定向的url(Ant风格模式匹配, @since spring4);                         |
     | ModelResultMatchers.attributeExists(final String... names)                                                                                | 判断Model属性是否存在                                                                   |
     
     + [**_ResultHandler/MockMvcResultHandlers_**](): ResultHandler用于对处理的结果进行相应处理的, 比如输出整个请求/响应等信息方便调试, Spring mvc测试框架提供了MockMvcResultHandlers静态工厂方法, 该工厂提供了ResultHandler print()返回一个输出MvcResult详细信息到控制台的ResultHandler实现. 
