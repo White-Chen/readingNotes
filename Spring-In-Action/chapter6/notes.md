@@ -2,7 +2,7 @@
 
 > 本章节主要介绍了Spring MVC中视图解析的配置, 以及三个较为常用的Web视图技术的部分内容
 
-####1. _视图解析_
+####1. [_视图解析_]() :bangbang:
 + 将控制器中请求处理的逻辑和视图中的渲染实现解耦是Spring MVC的一个重要特性. 
 + Spring MVC定义了一个名为ViewResolver的接口
 ```java
@@ -153,7 +153,7 @@ public interface View {
     
     + ResourceBundleMessageSource与ReloadableResourceBundleMessageSource关键区别在于: 能够重新加载信息属性, 而不必重新编译或重启应用.
 
-####3. _tiles相关_
+####3. [_tiles相关_]() :bangbang:
 
 > 总的来说这是一种布局引擎, 用于定义适应所有页面的通用布局.
 
@@ -263,7 +263,7 @@ public ViewResolver viewResolver() {
 
 + org.springframework.web.servlet.view.tiles2与org.springframework.web.servlet.view.tiles3包中提供了相同的名称的TilesConfigurer/TilesViewResolver. 区别在于Tiles版本, 这取决于你的Spring支持版本.
 
-####4. _thymeleaf相关_
+####4. [_thymeleaf相关_]() :bangbang:
 
 > 个人感觉这是一个类似于Tag Lib整合的技术, 另外许多操作更偏向于前端, 不过网上搜了下他的性能很差很差, 适合于原型开发吧.
 
