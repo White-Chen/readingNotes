@@ -34,7 +34,6 @@ public class MyServletInitializer implements WebApplicationInitializer {
 ```
 
 + [注册Filter](). 两种方案, 后者更加便捷, 前者定制性更强.
-    + 
 ```java
 @Override
 public void onStartup(ServletContext servletContext)
