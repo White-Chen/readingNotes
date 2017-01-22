@@ -44,6 +44,12 @@ public class SpitterController {
         return "redirect:/spitter/" + spitter.getUsername();
     }
 
+    @RequestMapping(value = "/me", method = RequestMethod.GET)
+    public String me(){
+        System.out.println("ME ME ME ME ME ME ME ME ME ME ME ME ME");
+        return "home";
+    }
+
     @RequestMapping(value = "/{username}", method = RequestMethod.GET)
     public String showSpitterProfile(
             @PathVariable String username,

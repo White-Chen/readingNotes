@@ -4,8 +4,8 @@
 <html>
   <head>
     <title>Spittr</title>
-    <link rel="stylesheet" 
-          type="text/css" 
+    <link rel="stylesheet"
+          type="text/css"
           href="<s:url value="/resources/style.css" />" >
   </head>
   <body>

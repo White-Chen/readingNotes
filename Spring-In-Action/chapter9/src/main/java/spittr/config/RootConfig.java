@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 
 @Configuration
-@Import(DataConfig.class)
+@Import({ DataConfig.class, SecurityConfig.class})
 @ComponentScan(basePackages = {"spittr"},
         excludeFilters = {
             @ComponentScan.Filter(type = FilterType.CUSTOM, value = RootConfig.WebPackage.class)
