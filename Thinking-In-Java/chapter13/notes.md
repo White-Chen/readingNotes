@@ -351,11 +351,11 @@ public class Hex {
 | \e           | 转义(Escape)                                          |
 | ------       |                                                       |
 | .            | 任意字符                                              |
-| [abc]        | 包含a、b和c的任意字符(与a|b|c作用相同)                |
-| [^abc]       | 除了a、b和c之外的任何字符(否定)                       |
-| [a-zA-Z]     | 从a到z或从A到Z的任意字符(范围)                        |
-| [abc[hij]]   | 任意a、b、c、h、i和j字符(与a|b|c|h|i|j作用相同)(合并) |
-| [a-z&&[hij]] | 任意h、i或j(相交)                                     |
+| \[abc]        | 包含a、b和c的任意字符(与a|b|c作用相同)                |
+| \[^abc]       | 除了a、b和c之外的任何字符(否定)                       |
+| \[a-zA-Z]     | 从a到z或从A到Z的任意字符(范围)                        |
+| \[abc\[hij]]   | 任意a、b、c、h、i和j字符(与a|b|c|h|i|j作用相同)(合并) |
+| \[a-z&&\[hij]] | 任意h、i或j(相交)                                     |
 | \s           | 空白符(空格、tab、换行和回车)                         |
 | \S           | 非空白符([^\s])                                       |
 | \d           | 数字[0-9]                                             |
@@ -377,6 +377,12 @@ public class Hex {
 
 + 量词
 
+贪婪型：会为所有可能的模式发现尽可能多的匹配。
+
+勉强型：量词匹配满足模式所需的最少字符数。
+
+占有型：只有在Java语言中才可用。当正则表达式被应用于字符串时，会产生相当多的状态，一边在匹配失败时可以回溯。而占有型量词并不保存这些中间状态，因此它们可以防止回溯。这个常常用于防止正则表达式失控，因此可以使正则表达式执行起来更加有效。
+
 | 贪婪型  | 勉强型   | 占有型   | 如何匹配              |
 |---------|----------|----------|-----------------------|
 |  X?     | X??      | X?+      | 一个或零个X           |
@@ -385,6 +391,89 @@ public class Hex {
 | X{n}    | X{n}?    | X{n}+    | 恰好n次X              |
 | X{n,}   | X{n,}?   | X{n,}+   | 至少n次X              |
 | X{n, m} | X{n, m}? | X{n, m}+ | X至少n次, 且不超过m次 |
+
++ 多数正则表达式都接受CharSequence类型的参数。
++ 使用java.util.regex包进行字符串检索
+    + 1. 首先使用static Pattern.compile()根据输入的String类型生成一个Pattern对象。
+    + 2. 调用生成的Pattern对象的matcher()方法进行正则表达式匹配，并生成一个Matcher对象。
+    + 3. Matcher对象提供了很多基于当前Pattern与String的相关操作，比如替换操作等。
+    
+```java
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * \* Created with Chen Zhe on 1/23/2017.
+ * \* Description: Input: abcabcabcdefabc abc+ (abc)+ (abc){2,}
+ * \* @author ChenZhe
+ * \* @author q953387601@163.com
+ * \* @version 1.0.0
+ * \
+ */
+public class TestRegularExpression {
+    public static void main(String[] args) {
+        if (args.length < 2){
+            System.out.println("Usage: \njava TestRegularExpression " +
+                                "CharacterSequence regularExpression+");
+            System.exit(0);
+        }
+        System.out.println("Input: \"" + args[0] + "\"");
+        for (String arg : args) {
+            System.out.println("Regular expression： \"" + arg + "\"");
+            Pattern pattern = Pattern.compile(arg);
+            Matcher matcher = pattern.matcher(args[0]);
+            while (matcher.find()){
+                System.out.println("Match \"" + matcher.group() + "\" at positions " +
+                                    matcher.start() + "-" + (matcher.end() - 1));
+            }
+        }
+    }
+}
+
+/* Output:
+Input: "abcabcabcdefabc"
+Regular expression： "abcabcabcdefabc"
+Match "abcabcabcdefabc" at positions 0-14
+Regular expression： "abc+"
+Match "abc" at positions 0-2
+Match "abc" at positions 3-5
+Match "abc" at positions 6-8
+Match "abc" at positions 12-14
+Regular expression： "(abc)+"
+Match "abcabcabc" at positions 0-8
+Match "abc" at positions 12-14
+Regular expression： "(abc){2,}"
+Match "abcabcabc" at positions 0-8
+*/
+```
+
++ Matcher类相关操作
+
+| 方法名               | 用途                                                                                                                    |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------|
+| Matcher.matches()    | 对整个字符串进行匹配,只有整个字符串都匹配了才返回true                                                                   |
+| Matcher.lookingAt()  | 对字符串进行匹配,只有匹配到的字符串在最前面才返回true                                                                   |
+| Matcher.find()       | 对字符串进行匹配, 匹配到的字符串可以在任何位置.                                                                         |
+| Matcher.find(int)    | 从输入位置进行匹配                                                                                                      |
+| Matcher.start()      | 返回匹配到的子字符串在字符串中的索引位置(注意从这开始到一下，所有操作必须在匹配完才可以，否则会报IllegalStateException) |
+| Matcher.end()        | 返回匹配到的子字符串的最后一个字符在字符串中的索引位置+1值.                                                             |
+| Matcher.group()      | 返回匹配到的子字符串                                                                                                    |
+| Matcher.groupCount() | 返回分组数                                                                                                              |
+| Matcher.start(int)   | Matcher.start()的重载，匹配时选择对应输入值的分组                                                                       |
+| Matcher.end(int)     | Matcher.end()的重载，匹配时选择对应输入值的分组                                                                         |
+| Matcher.group(int)   | Matcher.group()的重载，匹配对应输入值的分组                                                                             |
+
++ [Pattern.compile(String regex, int flag)的使用.]() :bangbang:
+
+| 编译标记                     | 效果                                                                                                                                                                                         |
+|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Pattern.CANON_EQ             | 当且仅当两个字符的"正规分解(canonical decomposition)"都完全相同的情况下，才认定匹配。比如用了这个标志之后，表达式"a\u030A"会匹配"?"。默认情况下，不考虑"规范相等性(canonical equivalence)"。 |
+| [Pattern.CASE_INSENSITIVE(?i)]() | 默认情况下，大小写不明感的匹配只适用于US-ASCII字符集。这个标志能让表达式忽略大小写进行匹配。要想对Unicode字符进行大小不明感的匹 配，只要将UNICODE_CASE与这个标志合起来就行了。               |
+| [Pattern.COMMENTS(?x)]()         | 在这种模式下，匹配时会忽略(正则表达式里的)空格字符(译者注：不是指表达式里的"\\s"，而是指表达式里的空格，tab，回车之类)。注释从#开始，一直到这行结束。可以通过嵌入式的标志来启用Unix行模式。  |
+| Pattern.DOTALL(?s)           | 在这种模式下，表达式'.'可以匹配任意字符，包括表示一行的结束符。默认情况下，表达式'.'不匹配行的结束符。                                                                                       |
+| [Pattern.MULTILINE(?m)]()        | 在这种模式下，'^'和'$'分别匹配一行的开始和结束。此外，'^'仍然匹配字符串的开始，'$'也匹配字符串的结束。默认情况下，这两个表达式仅仅匹配字符串的开始和结束。                                   |
+| Pattern.UNICODE_CASE(?u)     | 在这个模式下，如果你还启用了CASE_INSENSITIVE标志，那么它会对Unicode字符进行大小写不明感的匹配。默认情况下，大小写不敏感的匹配只适用于US-ASCII字符集。                                        |
+| Pattern.UNIX_LINES(?d)       | 在这个模式下，只有'\n'才被认作一行的中止，并且与'.'，'^'，以及'$'进行匹配。                                                                                                                  |
 
 ####8. _扫描输入_
 
