@@ -357,11 +357,11 @@ public class Hex {
 | \[abc\[hij]]   | 任意a、b、c、h、i和j字符(与a|b|c|h|i|j作用相同)(合并) |
 | \[a-z&&\[hij]] | 任意h、i或j(相交)                                     |
 | \s           | 空白符(空格、tab、换行和回车)                         |
-| \S           | 非空白符([^\s])                                       |
-| \d           | 数字[0-9]                                             |
-| \D           | 非数字[^0-9]                                          |
-| \w           | 词字母[a-zA-Z0-9]                                     |
-| \W           | 非词字母[^\w]                                         |
+| \S           | 非空白符(\[^\s])                                       |
+| \d           | 数字\[0-9]                                             |
+| \D           | 非数字\[^0-9]                                          |
+| \w           | 词字母\[a-zA-Z0-9]                                     |
+| \W           | 非词字母\[^\w]                                         |
 |              |                                                       |
 | 逻辑操作符   | --------------------------------------                |
 | XY           | Y跟在X后面                                            |
@@ -474,6 +474,59 @@ Match "abcabcabc" at positions 0-8
 | [Pattern.MULTILINE(?m)]()        | 在这种模式下，'^'和'$'分别匹配一行的开始和结束。此外，'^'仍然匹配字符串的开始，'$'也匹配字符串的结束。默认情况下，这两个表达式仅仅匹配字符串的开始和结束。                                   |
 | Pattern.UNICODE_CASE(?u)     | 在这个模式下，如果你还启用了CASE_INSENSITIVE标志，那么它会对Unicode字符进行大小写不明感的匹配。默认情况下，大小写不敏感的匹配只适用于US-ASCII字符集。                                        |
 | Pattern.UNIX_LINES(?d)       | 在这个模式下，只有'\n'才被认作一行的中止，并且与'.'，'^'，以及'$'进行匹配。                                                                                                                  |
+
++ String.split(int limited): limited输入参数限制了分割数组的最大长度
+
++ [StringBuffer相关扩展]() :bangbang:
+    + matcher.appendReplacement(StringBuffer sb, String replacement): 在输入字符串中知道匹配位置，然后替换为replacement，并将其压入sb
+    + matcher.appendTail(StringBuffer sb): 一般是使用过上面的方法后，将字符串中最后没有匹配的子字符串压入sb的尾部。
+    + 示例
+    ```java
+    import java.util.regex.Matcher;
+    import java.util.regex.Pattern;
+    
+    /**
+     * \* Created with Chen Zhe on 1/24/2017.
+     * \* Description:
+     * \* @author ChenZhe
+     * \* @author q953387601@163.com
+     * \* @version 1.0.0
+     * \
+     */
+    public class TestStringBufferRegex {
+        public static void main(String[] args) {
+            String input =
+                    "Here's a block of text to use as input to " +
+                            "the regular expression matcher. Note that we'll " +
+                            "first extract the block of text by looking for " +
+                            "the special delimiters, then process the " +
+                            "extracted block";
+            StringBuffer stringBuffer = new StringBuffer();
+            Matcher matcher = Pattern
+                                    .compile("[aeiou]")
+                                    .matcher(input);
+            while (matcher.find())
+                matcher.appendReplacement(
+                        stringBuffer,
+                        matcher.group().toUpperCase());
+            matcher.appendTail(stringBuffer);
+            System.out.println(stringBuffer);
+        }
+    }
+    
+    /* Output:
+    * HErE's A blOck Of tExt tO UsE As
+    * InpUt tO thE rEgUlAr ExprEssIOn
+    * mAtchEr. NOtE thAt wE'll fIrst
+    * ExtrAct thE blOck Of tExt by
+    * lOOkIng fOr thE spEcIAl dElImItErs,
+    * thEn prOcEss thE ExtrActEd blOck
+    */
+    ```
+    
++ Matcher重置
+    + Matcher.reset(): 将Matcher对象重新设置到当前字符序列的起始位置。
+    + Matcher.reset(CharSequence newInput): 将字符串newInput替换当前Matcher对象中的字符序列。
 
 ####8. _扫描输入_
 
