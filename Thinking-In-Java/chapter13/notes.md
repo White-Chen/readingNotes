@@ -377,11 +377,11 @@ public class Hex {
 
 + 量词
 
-贪婪型：会为所有可能的模式发现尽可能多的匹配。
+贪婪型: 会为所有可能的模式发现尽可能多的匹配. 
 
-勉强型：量词匹配满足模式所需的最少字符数。
+勉强型: 量词匹配满足模式所需的最少字符数. 
 
-占有型：只有在Java语言中才可用。当正则表达式被应用于字符串时，会产生相当多的状态，一边在匹配失败时可以回溯。而占有型量词并不保存这些中间状态，因此它们可以防止回溯。这个常常用于防止正则表达式失控，因此可以使正则表达式执行起来更加有效。
+占有型: 只有在Java语言中才可用. 当正则表达式被应用于字符串时, 会产生相当多的状态, 一边在匹配失败时可以回溯. 而占有型量词并不保存这些中间状态, 因此它们可以防止回溯. 这个常常用于防止正则表达式失控, 因此可以使正则表达式执行起来更加有效. 
 
 | 贪婪型  | 勉强型   | 占有型   | 如何匹配              |
 |---------|----------|----------|-----------------------|
@@ -392,11 +392,11 @@ public class Hex {
 | X{n,}   | X{n,}?   | X{n,}+   | 至少n次X              |
 | X{n, m} | X{n, m}? | X{n, m}+ | X至少n次, 且不超过m次 |
 
-+ 多数正则表达式都接受CharSequence类型的参数。
++ 多数正则表达式都接受CharSequence类型的参数. 
 + 使用java.util.regex包进行字符串检索
-    + 1. 首先使用static Pattern.compile()根据输入的String类型生成一个Pattern对象。
-    + 2. 调用生成的Pattern对象的matcher()方法进行正则表达式匹配，并生成一个Matcher对象。
-    + 3. Matcher对象提供了很多基于当前Pattern与String的相关操作，比如替换操作等。
+    + 1. 首先使用static Pattern.compile()根据输入的String类型生成一个Pattern对象. 
+    + 2. 调用生成的Pattern对象的matcher()方法进行正则表达式匹配, 并生成一个Matcher对象. 
+    + 3. Matcher对象提供了很多基于当前Pattern与String的相关操作, 比如替换操作等. 
     
 ```java
 import java.util.regex.Matcher;
@@ -419,7 +419,7 @@ public class TestRegularExpression {
         }
         System.out.println("Input: \"" + args[0] + "\"");
         for (String arg : args) {
-            System.out.println("Regular expression： \"" + arg + "\"");
+            System.out.println("Regular expression:  \"" + arg + "\"");
             Pattern pattern = Pattern.compile(arg);
             Matcher matcher = pattern.matcher(args[0]);
             while (matcher.find()){
@@ -432,17 +432,17 @@ public class TestRegularExpression {
 
 /* Output:
 Input: "abcabcabcdefabc"
-Regular expression： "abcabcabcdefabc"
+Regular expression:  "abcabcabcdefabc"
 Match "abcabcabcdefabc" at positions 0-14
-Regular expression： "abc+"
+Regular expression:  "abc+"
 Match "abc" at positions 0-2
 Match "abc" at positions 3-5
 Match "abc" at positions 6-8
 Match "abc" at positions 12-14
-Regular expression： "(abc)+"
+Regular expression:  "(abc)+"
 Match "abcabcabc" at positions 0-8
 Match "abc" at positions 12-14
-Regular expression： "(abc){2,}"
+Regular expression:  "(abc){2,}"
 Match "abcabcabc" at positions 0-8
 */
 ```
@@ -455,31 +455,31 @@ Match "abcabcabc" at positions 0-8
 | Matcher.lookingAt()  | 对字符串进行匹配,只有匹配到的字符串在最前面才返回true                                                                   |
 | Matcher.find()       | 对字符串进行匹配, 匹配到的字符串可以在任何位置.                                                                         |
 | Matcher.find(int)    | 从输入位置进行匹配                                                                                                      |
-| Matcher.start()      | 返回匹配到的子字符串在字符串中的索引位置(注意从这开始到一下，所有操作必须在匹配完才可以，否则会报IllegalStateException) |
+| Matcher.start()      | 返回匹配到的子字符串在字符串中的索引位置(注意从这开始到一下, 所有操作必须在匹配完才可以, 否则会报IllegalStateException) |
 | Matcher.end()        | 返回匹配到的子字符串的最后一个字符在字符串中的索引位置+1值.                                                             |
 | Matcher.group()      | 返回匹配到的子字符串                                                                                                    |
 | Matcher.groupCount() | 返回分组数                                                                                                              |
-| Matcher.start(int)   | Matcher.start()的重载，匹配时选择对应输入值的分组                                                                       |
-| Matcher.end(int)     | Matcher.end()的重载，匹配时选择对应输入值的分组                                                                         |
-| Matcher.group(int)   | Matcher.group()的重载，匹配对应输入值的分组                                                                             |
+| Matcher.start(int)   | Matcher.start()的重载, 匹配时选择对应输入值的分组                                                                       |
+| Matcher.end(int)     | Matcher.end()的重载, 匹配时选择对应输入值的分组                                                                         |
+| Matcher.group(int)   | Matcher.group()的重载, 匹配对应输入值的分组                                                                             |
 
 + [Pattern.compile(String regex, int flag)的使用.]() :bangbang:
 
 | 编译标记                     | 效果                                                                                                                                                                                         |
 |------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Pattern.CANON_EQ             | 当且仅当两个字符的"正规分解(canonical decomposition)"都完全相同的情况下，才认定匹配。比如用了这个标志之后，表达式"a\u030A"会匹配"?"。默认情况下，不考虑"规范相等性(canonical equivalence)"。 |
-| [Pattern.CASE_INSENSITIVE(?i)]() | 默认情况下，大小写不明感的匹配只适用于US-ASCII字符集。这个标志能让表达式忽略大小写进行匹配。要想对Unicode字符进行大小不明感的匹 配，只要将UNICODE_CASE与这个标志合起来就行了。               |
-| [Pattern.COMMENTS(?x)]()         | 在这种模式下，匹配时会忽略(正则表达式里的)空格字符(译者注：不是指表达式里的"\\s"，而是指表达式里的空格，tab，回车之类)。注释从#开始，一直到这行结束。可以通过嵌入式的标志来启用Unix行模式。  |
-| Pattern.DOTALL(?s)           | 在这种模式下，表达式'.'可以匹配任意字符，包括表示一行的结束符。默认情况下，表达式'.'不匹配行的结束符。                                                                                       |
-| [Pattern.MULTILINE(?m)]()        | 在这种模式下，'^'和'$'分别匹配一行的开始和结束。此外，'^'仍然匹配字符串的开始，'$'也匹配字符串的结束。默认情况下，这两个表达式仅仅匹配字符串的开始和结束。                                   |
-| Pattern.UNICODE_CASE(?u)     | 在这个模式下，如果你还启用了CASE_INSENSITIVE标志，那么它会对Unicode字符进行大小写不明感的匹配。默认情况下，大小写不敏感的匹配只适用于US-ASCII字符集。                                        |
-| Pattern.UNIX_LINES(?d)       | 在这个模式下，只有'\n'才被认作一行的中止，并且与'.'，'^'，以及'$'进行匹配。                                                                                                                  |
+| Pattern.CANON_EQ             | 当且仅当两个字符的"正规分解(canonical decomposition)"都完全相同的情况下, 才认定匹配. 比如用了这个标志之后, 表达式"a\u030A"会匹配"?". 默认情况下, 不考虑"规范相等性(canonical equivalence)".  |
+| [Pattern.CASE_INSENSITIVE(?i)]() | 默认情况下, 大小写不明感的匹配只适用于US-ASCII字符集. 这个标志能让表达式忽略大小写进行匹配. 要想对Unicode字符进行大小不明感的匹 配, 只要将UNICODE_CASE与这个标志合起来就行了.                |
+| [Pattern.COMMENTS(?x)]()         | 在这种模式下, 匹配时会忽略(正则表达式里的)空格字符(译者注: 不是指表达式里的"\\s", 而是指表达式里的空格, tab, 回车之类). 注释从#开始, 一直到这行结束. 可以通过嵌入式的标志来启用Unix行模式.   |
+| Pattern.DOTALL(?s)           | 在这种模式下, 表达式'.'可以匹配任意字符, 包括表示一行的结束符. 默认情况下, 表达式'.'不匹配行的结束符.                                                                                        |
+| [Pattern.MULTILINE(?m)]()        | 在这种模式下, '^'和'$'分别匹配一行的开始和结束. 此外, '^'仍然匹配字符串的开始, '$'也匹配字符串的结束. 默认情况下, 这两个表达式仅仅匹配字符串的开始和结束.                                    |
+| Pattern.UNICODE_CASE(?u)     | 在这个模式下, 如果你还启用了CASE_INSENSITIVE标志, 那么它会对Unicode字符进行大小写不明感的匹配. 默认情况下, 大小写不敏感的匹配只适用于US-ASCII字符集.                                         |
+| Pattern.UNIX_LINES(?d)       | 在这个模式下, 只有'\n'才被认作一行的中止, 并且与'.', '^', 以及'$'进行匹配.                                                                                                                   |
 
 + String.split(int limited): limited输入参数限制了分割数组的最大长度
 
 + [StringBuffer相关扩展]() :bangbang:
-    + matcher.appendReplacement(StringBuffer sb, String replacement): 在输入字符串中知道匹配位置，然后替换为replacement，并将其压入sb
-    + matcher.appendTail(StringBuffer sb): 一般是使用过上面的方法后，将字符串中最后没有匹配的子字符串压入sb的尾部。
+    + matcher.appendReplacement(StringBuffer sb, String replacement): 在输入字符串中知道匹配位置, 然后替换为replacement, 并将其压入sb
+    + matcher.appendTail(StringBuffer sb): 一般是使用过上面的方法后, 将字符串中最后没有匹配的子字符串压入sb的尾部. 
     + 示例
     ```java
     import java.util.regex.Matcher;
@@ -525,11 +525,15 @@ Match "abcabcabc" at positions 0-8
     ```
     
 + Matcher重置
-    + Matcher.reset(): 将Matcher对象重新设置到当前字符序列的起始位置。
-    + Matcher.reset(CharSequence newInput): 将字符串newInput替换当前Matcher对象中的字符序列。
+    + Matcher.reset(): 将Matcher对象重新设置到当前字符序列的起始位置. 
+    + Matcher.reset(CharSequence newInput): 将字符串newInput替换当前Matcher对象中的字符序列. 
 
 ####8. _扫描输入_
-
++ 一般操作是通过按行读取, 之后进行分词, 并进行响应的转换从而获得想要的数据. 
++ Scanner类默认的定界符是空格, 但是可以通过useDelimiter(String pattern)从而自定义定界符, 支持正则表达式. 
++ Scanner.next(String pattern)和Scanner.hasNext(String pattern)可以接受字符串类型的正则表达式, 从而进行限定扫描. 
 
 ####9. _StringTokenizer_
+
+> 这是SE4之前用于字符串分词的类, 现在基本已经弃用了, 至少这本书是这样介绍的, 因为他在使用复杂模式分割是比较困难. 
 
